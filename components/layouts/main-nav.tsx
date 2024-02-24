@@ -64,6 +64,9 @@ const components: { title: string; href: string; description: string }[] = [
 function MainNav() {
   const [isOpenPopover1, setOpenPopover1] = React.useState(false);
   const [isOpenPopover2, setOpenPopover2] = React.useState(false);
+  const [isOpenPopover3, setOpenPopover3] = React.useState(false);
+  const [isOpenPopover4, setOpenPopover4] = React.useState(false);
+  const [isOpenPopover5, setOpenPopover5] = React.useState(false);
   const menuList1 = [
     {
       name: "Квартиры",
@@ -250,7 +253,7 @@ function MainNav() {
         </Link>
         <Popover open={isOpenPopover1}>
           <PopoverTrigger asChild onMouseOver={() => setOpenPopover1(true)}>
-            <button className="font-semibold flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
+            <span className="font-semibold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -266,7 +269,7 @@ function MainNav() {
                 />
               </svg>
               Продажа
-            </button>
+            </span>
           </PopoverTrigger>
           <PopoverContent
             className="rounded-2xl bg-slate-900 "
@@ -276,12 +279,12 @@ function MainNav() {
           >
             <ul className="w-full text-neutral-100">
               {menuList1.map((el, ind) => (
-                <button
+                <li
                   key={ind}
-                  className="p-2 text-left text-sm font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
+                  className="p-2 text-left cursor-pointer text-sm font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
                 >
                   {el.icon} {el.name}
-                </button>
+                </li>
               ))}
             </ul>
           </PopoverContent>
@@ -289,7 +292,7 @@ function MainNav() {
 
         <Popover open={isOpenPopover2}>
           <PopoverTrigger asChild onMouseOver={() => setOpenPopover2(true)}>
-            <button className="font-semibold flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
+            <span className="font-semibold cursor-pointer flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -305,7 +308,7 @@ function MainNav() {
                 />
               </svg>
               Аренда
-            </button>
+            </span>
           </PopoverTrigger>
           <PopoverContent
             className="rounded-2xl bg-slate-900 "
@@ -315,12 +318,12 @@ function MainNav() {
           >
             <ul className="w-full text-neutral-100">
               {menuList2.map((el, ind) => (
-                <button
+                <li
                   key={ind}
-                  className="p-2 text-left text-sm font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
+                  className="p-2 text-left cursor-pointer text-sm font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
                 >
                   {el.icon} {el.name}
-                </button>
+                </li>
               ))}
             </ul>
           </PopoverContent>
@@ -349,66 +352,103 @@ function MainNav() {
         </Link>
       </div>
       <div className="flex flex-row items-center  gap-x-3">
-        <Link
-          href="/"
-          className="font-semibold flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
+        <Popover open={isOpenPopover3}>
+          <PopoverTrigger asChild onMouseOver={() => setOpenPopover3(true)}>
+            <span className="font-semibold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                />
+              </svg>
+            </span>
+          </PopoverTrigger>
+          <PopoverContent
+            className="rounded-2xl bg-slate-900 "
+            onMouseOver={() => setOpenPopover3(true)}
+            onMouseOut={() => setOpenPopover3(false)}
+            onBlur={() => setOpenPopover3(false)}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-            />
-          </svg>
-        </Link>
-        <Separator orientation="vertical" className="h-8 bg-slate-700" />
-        <Link
-          href="/"
-          className="font-semibold flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-            />
-          </svg>
-        </Link>
+            <p className="text-neutral-100 text-sm font-semibold text-center">
+              Авторизуйтесь чтобы увидеть{" "}
+              <span className="font-bold text-blue-500">Избранное</span>
+            </p>
+          </PopoverContent>
+        </Popover>
 
         <Separator orientation="vertical" className="h-8 bg-slate-700" />
-        <Link
-          href="/"
-          className="font-semibold flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
+        <Popover open={isOpenPopover4}>
+          <PopoverTrigger asChild onMouseOver={() => setOpenPopover4(true)}>
+            <span className="font-semibold flex flex-row cursor-pointer items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+                />
+              </svg>
+            </span>
+          </PopoverTrigger>
+          <PopoverContent
+            className="rounded-2xl bg-slate-900 "
+            onMouseOver={() => setOpenPopover4(true)}
+            onMouseOut={() => setOpenPopover4(false)}
+            onBlur={() => setOpenPopover4(false)}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
-            />
-          </svg>
-        </Link>
+            <p className="text-neutral-100 text-sm font-semibold text-center">
+              Авторизуйтесь чтобы увидеть{" "}
+              <span className="font-bold text-blue-500">Оповещения</span>
+            </p>
+          </PopoverContent>
+        </Popover>
+
+        <Separator orientation="vertical" className="h-8 bg-slate-700" />
+        <Popover open={isOpenPopover5}>
+          <PopoverTrigger asChild onMouseOver={() => setOpenPopover5(true)}>
+            <span className="font-semibold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
+                />
+              </svg>
+            </span>
+          </PopoverTrigger>
+          <PopoverContent
+            className="rounded-2xl bg-slate-900 "
+            onMouseOver={() => setOpenPopover5(true)}
+            onMouseLeave={() => setOpenPopover5(false)}
+            onBlur={() => setOpenPopover5(false)}
+          >
+            <p className="text-neutral-100 text-sm font-semibold text-center">
+              Авторизуйтесь чтобы увидеть{" "}
+              <span className="font-bold text-blue-500">Сообщения</span>
+            </p>
+          </PopoverContent>
+        </Popover>
 
         <Separator orientation="vertical" className="h-8 bg-slate-700" />
         <Link
