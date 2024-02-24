@@ -9,8 +9,25 @@ import {
   CarouselPrevious,
 } from "../ui/carousel";
 import Image from "next/image";
+import { Skeleton } from "../ui/skeleton";
 
-function AnnoncementCard() {
+export interface cardData {
+  city: string;
+  rating: string;
+  isChecked: boolean;
+  roomNumber: string;
+  floor: string;
+  floorFrom: string;
+  areaSq: string;
+  price: string;
+  images: string[];
+}
+
+interface AnnoncementCardProps {
+  data: cardData;
+}
+
+function AnnoncementCard({ data }: AnnoncementCardProps) {
   const [api, setApi] = React.useState<CarouselApi>();
 
   const [current, setCurrent] = React.useState(0);
@@ -30,15 +47,6 @@ function AnnoncementCard() {
     });
   }, [api]);
 
-  const images = [
-    "/random/1.jpg",
-    "/random/2.jpg",
-    "/random/3.jpg",
-    "/random/4.jpg",
-    "/random/5.jpg",
-    "/random/6.jpg",
-  ];
-
   const scrollPrev = React.useCallback(() => {
     if (api) api.scrollPrev();
   }, [api]);
@@ -49,82 +57,144 @@ function AnnoncementCard() {
   return (
     <div>
       <div>
-        <Carousel
-          setApi={setApi}
-          className="w-full group h-[320px] relative rounded-xl items-center flex justify-center"
-        >
-          <CarouselContent>
-            {images.map((img, index) => (
-              <CarouselItem key={index}>
-                <Image
-                  src={img}
-                  alt={`img+${index}`}
-                  width={240}
-                  height={320}
-                  className=" object-cover rounded-xl  h-[320px]"
+        {data.city ? (
+          <Carousel
+            setApi={setApi}
+            className="w-full group h-[260px] relative rounded-xl items-center flex justify-center"
+          >
+            <CarouselContent>
+              {data?.images.map((img, index) => (
+                <CarouselItem key={index}>
+                  <Image
+                    src={img}
+                    alt={`img+${index}`}
+                    width={240}
+                    height={320}
+                    className=" object-cover rounded-xl  h-[260px]"
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <button
+              className="absolute left-2 rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent"
+              onClick={scrollPrev}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 19.5 8.25 12l7.5-7.5"
                 />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <button
-            className="absolute left-2 rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent"
-            onClick={scrollPrev}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-5 h-5"
+              </svg>
+            </button>
+            <button
+              className="absolute right-2 rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent"
+              onClick={scrollNext}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 19.5 8.25 12l7.5-7.5"
-              />
-            </svg>
-          </button>
-          <button
-            className="absolute right-2 rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent"
-            onClick={scrollNext}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m8.25 4.5 7.5 7.5-7.5 7.5"
-              />
-            </svg>
-          </button>
-          <button className="p-1 rounded-full bg-slate-200  bg-opacity-50 absolute top-2 right-2 transition delay-100 duration-300 hover:bg-opacity-80">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6 hover:fill-red-600 stroke-red-600 "
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-              />
-            </svg>
-          </button>
-          <span className="absolute bottom-2 right-2 p-2 rounded-lg group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent">
-            {current}/{count}
-          </span>
-          <div className="absolute bottom-0 w-full  group-hover:bg-transparent transition delay-150 duration-500 h-[140px] bg-slate-200 bg-opacity-90 rounded-b-xl"></div>
-        </Carousel>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </button>
+            <button className="p-1 rounded-full bg-slate-200  bg-opacity-50 absolute top-2 right-2 transition delay-100 duration-300 hover:bg-opacity-80">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 hover:fill-red-600 stroke-red-600 "
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                />
+              </svg>
+            </button>
+            <span className="py-0.5 px-2  flex flex-row items-center gap-x-1 rounded-full bg-slate-200  bg-opacity-50 absolute top-2 left-2 transition delay-100 duration-300 hover:bg-opacity-80">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5 stroke-yellow-500 fill-yellow-500"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+                />
+              </svg>
+              <span className="font-bold text-slate-900">{data.rating}</span>
+            </span>
+            {data.isChecked && (
+              <span className=" py-0.5 px-1.5  flex flex-row items-center gap-x-1 rounded-r-full bg-blue-500  absolute top-10 left-0 transition delay-100 duration-300 hover:bg-opacity-80">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={3}
+                  stroke="currentColor"
+                  className="w-4 h-4 stroke-neutral-100"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+
+                <span className="font-bold text-neutral-100 text-[10px]">
+                  Проверено
+                </span>
+              </span>
+            )}
+
+            <span className="absolute bottom-2 right-2 py-1 px-2 rounded-lg group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent">
+              {current}/{count}
+            </span>
+            <div className="absolute flex flex-col justify-between bottom-0 w-full py-2 px-4 text-slate-900 group-hover:text-transparent  group-hover:bg-transparent transition delay-150 duration-500 h-[100px] bg-slate-200 bg-opacity-90 rounded-b-xl">
+              <div className="">
+                <p className=" text-sm line-clamp-1 font-medium">
+                  {data.roomNumber}
+                </p>
+                <p className="relative  text-sm font-medium">
+                  этаж {data.floor} из {data.floorFrom},{" "}
+                  <span>
+                    {data.areaSq} м
+                    <span className="text-xs absolute top-0">2</span>
+                  </span>
+                </p>
+              </div>
+              <div className="flex flex-row justify-between mt-2">
+                <p className=" font-extrabold text-lg ">
+                  {parseInt(data.price).toLocaleString().replace(/,/g, " ")} ₸
+                </p>
+              </div>
+            </div>
+          </Carousel>
+        ) : (
+          <Skeleton className="h-[260px] rounded-xl w-[220px] bg-slate-50" />
+        )}
       </div>
     </div>
   );

@@ -5,6 +5,23 @@ import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import { Separator } from "../ui/separator";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import {
+  Bed,
+  BedDouble,
+  Building2,
+  Cuboid,
+  DoorOpen,
+  Factory,
+  Fence,
+  Home,
+  Hotel,
+  LandPlot,
+  ParkingSquare,
+  Store,
+  TentTree,
+  Warehouse,
+} from "lucide-react";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -45,8 +62,108 @@ const components: { title: string; href: string; description: string }[] = [
 ];
 
 function MainNav() {
+  const [isOpenPopover1, setOpenPopover1] = React.useState(false);
+  const [isOpenPopover2, setOpenPopover2] = React.useState(false);
+  const menuList1 = [
+    {
+      name: "Квартиры",
+      icon: <DoorOpen size={19} />,
+    },
+    {
+      name: "Дома, дачи, коттеджи",
+      icon: <Home size={19} />,
+    },
+    {
+      name: "Гаражи",
+      icon: <Warehouse size={19} />,
+    },
+    {
+      name: "Паркинги",
+      icon: <ParkingSquare size={19} />,
+    },
+    {
+      name: "Земельный участок",
+      icon: <LandPlot size={19} />,
+    },
+    {
+      name: "Коммерческая недвижимость",
+      icon: <Building2 size={19} />,
+    },
+    {
+      name: "Помещения",
+      icon: <Cuboid size={19} />,
+    },
+    {
+      name: "Магазины",
+      icon: <Store size={19} />,
+    },
+    {
+      name: "Заводы и промбазы",
+      icon: <Factory size={19} />,
+    },
+    {
+      name: "Прочее",
+      icon: <Fence size={19} />,
+    },
+  ];
+
+  const menuList2 = [
+    {
+      name: "Квартиры, апартаменты",
+      icon: <DoorOpen size={19} />,
+    },
+    {
+      name: "Дома, дачи, коттеджи",
+      icon: <Home size={19} />,
+    },
+    {
+      name: "Комнаты",
+      icon: <BedDouble size={19} />,
+    },
+    {
+      name: "Отели, гостиницы",
+      icon: <Hotel size={19} />,
+    },
+    {
+      name: "Глэмпинги, базы отдыха",
+      icon: <TentTree size={19} />,
+    },
+    {
+      name: "Хостелы",
+      icon: <Bed size={19} />,
+    },
+    {
+      name: "Гаражи",
+      icon: <Warehouse size={19} />,
+    },
+    {
+      name: "Паркинги",
+      icon: <ParkingSquare size={19} />,
+    },
+    {
+      name: "Коммерческая недвижимость",
+      icon: <Building2 size={19} />,
+    },
+    {
+      name: "Помещения",
+      icon: <Cuboid size={19} />,
+    },
+    {
+      name: "Магазины",
+      icon: <Store size={19} />,
+    },
+    {
+      name: "Промбазы",
+      icon: <Factory size={19} />,
+    },
+    {
+      name: "Прочее",
+      icon: <Fence size={19} />,
+    },
+  ];
+
   return (
-    <nav className="w-full bg-slate-900 px-4 flex flex-row justify-between items-center">
+    <nav className="w-full bg-slate-900 px-4 flex flex-row justify-between items-center sticky top-0 z-10">
       <div className="flex flex-row items-center gap-x-4 ">
         <Link href="/" className="">
           <svg
@@ -131,46 +248,83 @@ function MainNav() {
             ></path>
           </svg>
         </Link>
-        <Link
-          href="/"
-          className="font-semibold flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="w-5 h-5"
+        <Popover open={isOpenPopover1}>
+          <PopoverTrigger asChild onMouseOver={() => setOpenPopover1(true)}>
+            <button className="font-semibold flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819"
+                />
+              </svg>
+              Продажа
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            className="rounded-2xl bg-slate-900 "
+            onMouseOver={() => setOpenPopover1(true)}
+            onMouseOut={() => setOpenPopover1(false)}
+            onBlur={() => setOpenPopover1(false)}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819"
-            />
-          </svg>
-          Продажа
-        </Link>
-        <Link
-          href="/"
-          className="font-semibold flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="w-5 h-5"
+            <ul className="w-full text-neutral-100">
+              {menuList1.map((el, ind) => (
+                <button
+                  key={ind}
+                  className="p-2 text-left text-sm font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
+                >
+                  {el.icon} {el.name}
+                </button>
+              ))}
+            </ul>
+          </PopoverContent>
+        </Popover>
+
+        <Popover open={isOpenPopover2}>
+          <PopoverTrigger asChild onMouseOver={() => setOpenPopover2(true)}>
+            <button className="font-semibold flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                />
+              </svg>
+              Аренда
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            className="rounded-2xl bg-slate-900 "
+            onMouseOver={() => setOpenPopover2(true)}
+            onMouseOut={() => setOpenPopover2(false)}
+            onBlur={() => setOpenPopover2(false)}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-            />
-          </svg>
-          Аренда
-        </Link>
+            <ul className="w-full text-neutral-100">
+              {menuList2.map((el, ind) => (
+                <button
+                  key={ind}
+                  className="p-2 text-left text-sm font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
+                >
+                  {el.icon} {el.name}
+                </button>
+              ))}
+            </ul>
+          </PopoverContent>
+        </Popover>
       </div>
       <div className="flex flex-row items-center gap-x-4 ">
         <Link
