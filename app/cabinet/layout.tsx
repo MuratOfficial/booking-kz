@@ -21,18 +21,18 @@ export const metadata: Metadata = {
 
 const sidebarNavItems = [
   {
-    title: "Обьявления",
-    href: "/cabinet",
+    title: "Мои обьявления",
+    href: "/cabinet/annoncements",
     icon: <StickyNote size={19} />,
   },
   {
     title: "Избранное",
-    href: "/admin/data/users",
+    href: "/cabinet/favorite",
     icon: <Star size={19} />,
   },
   {
     title: "Чат",
-    href: "/admin/blog",
+    href: "/cabinet/chat",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -52,17 +52,17 @@ const sidebarNavItems = [
   },
   {
     title: "Счет и Платежи",
-    href: "/admin/site",
+    href: "/cabinet/wallet",
     icon: <Wallet size={19} />,
   },
   {
     title: "Пополнить счет",
-    href: "/admin/site",
+    href: "/cabinet/wallet/add",
     icon: <CircleDollarSign size={19} />,
   },
   {
     title: "Настройки",
-    href: "/admin/site",
+    href: "/cabinet",
     icon: <UserRoundCog size={19} />,
   },
   //   {

@@ -20,7 +20,8 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
   return (
     <nav
       className={cn(
-        "flex flex-row items-center w-full justify-between px-5 py-3  text-sm rounded-2xl bg-slate-600",
+        "flex flex-row items-center w-full justify-between px-5 py-3  text-sm rounded-2xl  bg-slate-700",
+
         className
       )}
       {...props}

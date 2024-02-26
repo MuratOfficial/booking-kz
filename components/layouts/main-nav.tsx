@@ -166,7 +166,7 @@ function MainNav() {
   ];
 
   return (
-    <nav className="w-full bg-slate-900 px-4 flex flex-row justify-between items-center sticky top-0 z-10">
+    <nav className="w-full bg-slate-900 px-4 flex flex-row justify-between items-center sticky top-0 z-40">
       <div className="flex flex-row items-center gap-x-4 ">
         <Link href="/" className="">
           <svg
