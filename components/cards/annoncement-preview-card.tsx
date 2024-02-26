@@ -1,5 +1,19 @@
 "use client";
-import { Copy, MapPin } from "lucide-react";
+import {
+  ArrowUpFromDot,
+  ArrowUpSquare,
+  Copy,
+  Eye,
+  Flame,
+  Gem,
+  MapPin,
+  RotateCcw,
+  Smartphone,
+  Star,
+  ThumbsUp,
+  TicketPercent,
+  Zap,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -10,6 +24,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "../ui/carousel";
+import { Graphics } from "../layouts/graphics";
 
 function AnnoncementPreviewCard() {
   const [api, setApi] = React.useState<CarouselApi>();
@@ -59,6 +74,23 @@ function AnnoncementPreviewCard() {
           <button>
             <Copy size={16} className="hover:stroke-slate-900" />
           </button>
+        </div>
+        <div className="px-2 py-1 text-neutral-100  bg-blue-500 text-xs font-semibold rounded-full  text-center w-fit flex flex-row gap-x-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={3}
+            stroke="currentColor"
+            className="w-4 h-4 stroke-neutral-100"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            />
+          </svg>
+          <p>Проверено</p>
         </div>
       </div>
 
@@ -211,8 +243,185 @@ function AnnoncementPreviewCard() {
         </div>
       </div>
 
-      <div className="w-full bg-blue-500 rounded-2xl flex flex-col gap-y-2 p-4 mt-2 h-[480px]">
-        <p>Подписки</p>
+      <div className="w-full bg-blue-500 relative rounded-2xl flex flex-col gap-y-2 py-8 px-8 mt-2 h-fit z-10 ">
+        <Image
+          src="/svg/svg7.svg"
+          alt="bg-img"
+          width={900}
+          height={900}
+          className="w-3/5 absolute bottom-0 right-0 -z-10 opacity-50"
+        />
+        <p className="text-2xl font-semibold uppercase text-neutral-100">
+          Текущие подписки
+        </p>
+        <div className="w-full flex flex-row gap-2">
+          <div className="w-fit py-2 px-4 rounded-xl bg-blue-600 flex flex-col items-center justify-center">
+            <p className="text-sm font-semibold text-neutral-200">
+              Осталось дней до переноса в Архив
+            </p>
+            <p className="text-sm font-semibold text-neutral-200">
+              {" "}
+              <span className="font-extrabold px-1.5 py-0.5 bg-blue-400 rounded-md">
+                5
+              </span>{" "}
+              дн.
+            </p>
+          </div>
+          <button className="w-fit h-full py-2 px-4 bg-blue-600 group hover:bg-blue-700 transition delay-100 duration-300 rounded-xl flex flex-row items-center justify-center">
+            <RotateCcw className=" stroke-neutral-100 group-hover:-rotate-45 transition-all duration-300 delay-75" />
+            <span className="text-sm font-semibold text-neutral-100 ml-1">
+              Продлить
+            </span>
+          </button>
+          <button className="w-fit text-sm font-semibold text-neutral-100 ml-1 h-full py-2 px-4 bg-blue-400 group hover:bg-blue-700 transition delay-100 duration-300 rounded-xl flex flex-row items-center justify-center">
+            Неделя
+          </button>
+          <button className="w-fit text-sm font-semibold text-neutral-100 ml-1 h-full py-2 px-4 bg-blue-400 group hover:bg-blue-700 transition delay-100 duration-300 rounded-xl flex flex-row items-center justify-center">
+            14 дней
+          </button>
+          <button className="w-fit text-sm font-semibold text-neutral-100 ml-1 h-full py-2 px-4 bg-blue-400 group hover:bg-blue-700 transition delay-100 duration-300 rounded-xl flex flex-row items-center justify-center">
+            30 дней
+          </button>
+        </div>
+        <div className="w-full flex flex-row gap-2 flex-wrap">
+          <div className="w-fit py-2 px-4 h-16 rounded-xl bg-slate-800 flex flex-col items-center justify-center">
+            <p className="text-sm font-semibold text-neutral-200">
+              Осталось модификаторов
+            </p>
+            <div className="flex flex-row gap-x-2 w-full pt-1">
+              <p className="text-sm font-semibold bg-amber-500 text-neutral-100 px-2 py-1 rounded-md flex flex-row gap-x-1 items-center">
+                <ArrowUpFromDot size={19} /> 0 раз
+              </p>
+              <p className="text-sm font-semibold bg-rose-500 text-neutral-100 px-2 py-1 rounded-md flex flex-row gap-x-1 items-center">
+                <Flame size={19} /> 0 раз
+              </p>
+              <p className="text-sm font-semibold bg-cyan-500 text-neutral-100 px-2 py-1 rounded-md flex flex-row gap-x-1 items-center">
+                <Zap size={19} /> 0 раз
+              </p>
+            </div>
+          </div>
+          <button className="w-fit h-16 py-2 px-4 bg-amber-500 group hover:bg-amber-600 transition delay-100 duration-300 rounded-xl flex flex-row items-center justify-center">
+            <ArrowUpFromDot
+              className=" stroke-neutral-100 group-hover:-translate-y-2 transition-all duration-300 delay-75"
+              size={28}
+            />
+            <p className="text-sm font-semibold text-neutral-100 ml-1 flex flex-col">
+              Отправить в ТОП{" "}
+              <span className="text-xs font-light">
+                24 часа выше бесплатных обьявлении
+              </span>
+            </p>
+          </button>
+          <button className="w-fit h-16 py-2 px-4 bg-rose-500 group hover:bg-rose-600 transition delay-100 duration-300 rounded-xl flex flex-row items-center justify-center">
+            <Flame
+              className=" stroke-neutral-100 group-hover:fill-neutral-100 transition duration-300 delay-75"
+              size={28}
+            />
+            <p className="text-sm font-semibold text-neutral-100 ml-1 flex flex-col">
+              Отправить в Горячие{" "}
+              <span className="text-xs font-light">
+                24 часа в Горячих предложениях
+              </span>
+            </p>
+          </button>
+          <button className="w-fit h-16 py-2 px-4 bg-cyan-500 group hover:bg-cyan-600 transition delay-100 duration-300 rounded-xl flex flex-row items-center justify-center">
+            <Zap
+              className=" stroke-neutral-100 group-hover:rotate-180 group-hover:fill-neutral-100 transition duration-500 delay-75"
+              size={28}
+            />
+            <p className="text-sm font-semibold text-neutral-100 ml-3 flex flex-col">
+              Поставить СРОЧНО{" "}
+              {/* <span className="text-xs font-light">
+                24 часа в Горячих предложениях
+              </span> */}
+            </p>
+          </button>
+        </div>
+        <div className="w-full flex flex-col gap-2  mt-6 text-neutral-100">
+          <p className="text-2xl uppercase font-bold">
+            Приобретите КОМБО и сэкономьте на модификаторах!
+          </p>
+          <div className="grid grid-cols-3 gap-2 ">
+            <div className="p-3 rounded-xl group  hover:bg-neutral-100 transition-all delay-100 duration-500 bg-purple-600 flex cursor-pointer hover:text-purple-600 text-neutral-100 flex-col items-center justify-center text-lg  ">
+              <Flame size={28} className="group-hover:fill-purple-600" />
+              <p className="font-extrabold ">Горячие на сутки</p>
+              <p className="font-black text-xl">КОМБО 8x</p>
+              <p className="flex flex-row gap-x-1 text-sm font-semibold mt-2">
+                <Flame size={19} /> 8 раз в Горячие Предложения
+              </p>
+              <p className="flex flex-row gap-x-1 text-sm font-semibold mt-2">
+                <TicketPercent size={19} /> -50% экономии
+              </p>
+            </div>
+            <div className="p-3 rounded-xl group  hover:bg-neutral-100 transition-all delay-100 duration-500 bg-rose-600 flex cursor-pointer hover:text-rose-600 text-neutral-100 flex-col items-center justify-center text-lg  ">
+              <Star size={28} className="group-hover:fill-rose-600" />
+              <p className="font-extrabold ">Turbo</p>
+              <p className="font-black text-xl">КОМБО 15x</p>
+              <p className="flex flex-row gap-x-1 text-sm font-semibold mt-2">
+                <Flame size={19} /> 15 раз в Горячие Предложения
+              </p>
+              <p className="flex flex-row gap-x-1 text-sm font-semibold mt-2">
+                <ArrowUpFromDot size={19} /> 15 раз в Поднять в ТОП
+              </p>
+              <p className="flex flex-row gap-x-1 text-sm font-semibold mt-2">
+                <TicketPercent size={19} /> -50% экономии
+              </p>
+            </div>
+            <div className="p-3 rounded-xl group  hover:bg-neutral-100 transition-all delay-100 duration-500 bg-indigo-800 flex cursor-pointer hover:text-indigo-800 text-neutral-100 flex-col items-center justify-center text-lg  ">
+              <Gem size={28} className="group-hover:fill-indigo-800" />
+              <p className="font-extrabold ">Premium</p>
+              <p className="font-black text-xl">КОМБО 50x</p>
+              <p className="flex flex-row gap-x-1 text-sm font-semibold mt-2">
+                <Flame size={19} /> 50 раз в Горячие Предложения
+              </p>
+              <p className="flex flex-row gap-x-1 text-sm font-semibold mt-2">
+                <ArrowUpFromDot size={19} /> 50 раз в Поднять в ТОП
+              </p>
+              <p className="flex flex-row gap-x-1 text-sm font-semibold mt-2">
+                <TicketPercent size={19} /> -80% экономии
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="w-full bg-white relative rounded-2xl flex flex-col gap-y-2 py-8 px-8 mt-2 h-fit z-10 bg-right-bottom bg-contain bg-opacity-40 bg-no-repeat"
+        style={{ backgroundImage: "url(/svg/svg8.svg)" }}
+      >
+        <p className="text-2xl font-bold uppercase text-slate-900">
+          Статистика
+        </p>
+        <div className="w-full flex flex-row gap-2">
+          <div className="w-fit py-4 px-6 rounded-xl bg-slate-900 flex flex-row gap-2 items-center justify-center">
+            <div className="flex flex-col">
+              <p className="text-sm font-semibold text-neutral-100">
+                Просмотров всего
+              </p>
+              <p className="text-sm font-semibold text-neutral-100 flex flex-row gap-x-1 items-center mt-1">
+                <Eye size={19} /> 8699
+              </p>
+              <p className="text-sm font-semibold text-neutral-100 flex flex-row gap-x-1 items-center">
+                <Smartphone size={19} /> 2699
+              </p>
+            </div>
+            <Separator orientation="vertical" className="h-14 mx-2" />
+            <div className="flex flex-col">
+              <p className="text-sm font-semibold text-neutral-100">
+                За 7 дней
+              </p>
+              <p className="text-sm font-semibold text-neutral-100 flex flex-row gap-x-1 items-center mt-1">
+                <Eye size={19} /> 8699
+              </p>
+              <p className="text-sm font-semibold text-neutral-100 flex flex-row gap-x-1 items-center">
+                <Smartphone size={19} /> 2699
+              </p>
+            </div>
+          </div>
+        </div>
+        <p className="py-1 px-2 rounded-lg text-sm uppercase font-semibold mt-4 bg-white bg-opacity-80 w-fit">
+          График просмотров
+        </p>
+        <Graphics />
       </div>
     </div>
   );
