@@ -42,7 +42,6 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
     setCurrent(api.selectedScrollSnap() + 1);
 
     api.on("select", () => {
-      console.log("current");
       setCurrent(api.selectedScrollSnap() + 1);
     });
   }, [api]);
@@ -60,7 +59,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
         {data.city ? (
           <Carousel
             setApi={setApi}
-            className="w-full group h-[260px] relative rounded-xl items-center flex justify-center"
+            className="w-full group aspect-square relative rounded-xl items-center flex justify-center"
           >
             <CarouselContent>
               {data?.images.map((img, index) => (
@@ -70,7 +69,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                     alt={`img+${index}`}
                     width={240}
                     height={320}
-                    className=" object-cover rounded-xl  h-[260px]"
+                    className=" object-cover rounded-xl  aspect-square"
                   />
                 </CarouselItem>
               ))}
@@ -172,8 +171,8 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
             <span className="absolute bottom-2 right-2 py-1 px-2 rounded-lg group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent">
               {current}/{count}
             </span>
-            <div className="absolute flex flex-col justify-between bottom-0 w-full py-2 px-4 text-slate-900 group-hover:text-transparent  group-hover:bg-transparent transition delay-150 duration-500 h-[100px] bg-slate-200 bg-opacity-90 rounded-b-xl">
-              <div className="">
+            <div className="absolute flex flex-col justify-between bottom-0 w-full py-1 px-2 text-slate-900 group-hover:text-transparent  group-hover:bg-transparent transition delay-150 duration-500 h-2/5 bg-slate-200 bg-opacity-90 rounded-b-xl">
+              <div className="text-slate-600 group-hover:text-transparent transition delay-150 duration-500">
                 <p className=" text-sm line-clamp-1 font-medium">
                   {data.roomNumber}
                 </p>
@@ -185,7 +184,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                   </span>
                 </p>
               </div>
-              <div className="flex flex-row justify-between mt-2">
+              <div className="flex flex-row justify-between ">
                 <p className=" font-extrabold text-lg ">
                   {parseInt(data.price).toLocaleString().replace(/,/g, " ")} ₸
                 </p>

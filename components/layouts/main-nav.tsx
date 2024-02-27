@@ -22,6 +22,7 @@ import {
   TentTree,
   Warehouse,
 } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -67,6 +68,10 @@ function MainNav() {
   const [isOpenPopover3, setOpenPopover3] = React.useState(false);
   const [isOpenPopover4, setOpenPopover4] = React.useState(false);
   const [isOpenPopover5, setOpenPopover5] = React.useState(false);
+  const [isOpenPopover6, setOpenPopover6] = React.useState(false);
+
+  const pathname = usePathname();
+  const router = useRouter();
   const menuList1 = [
     {
       name: "Квартиры",
@@ -253,7 +258,12 @@ function MainNav() {
         </Link>
         <Popover open={isOpenPopover1}>
           <PopoverTrigger asChild onMouseOver={() => setOpenPopover1(true)}>
-            <span className="font-semibold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
+            <span
+              className={cn(
+                "font-bold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
+                isOpenPopover1 && "text-blue-500 border-b-blue-500"
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -292,7 +302,12 @@ function MainNav() {
 
         <Popover open={isOpenPopover2}>
           <PopoverTrigger asChild onMouseOver={() => setOpenPopover2(true)}>
-            <span className="font-semibold cursor-pointer flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
+            <span
+              className={cn(
+                "font-bold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
+                isOpenPopover2 && "text-blue-500 border-b-blue-500"
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -331,7 +346,7 @@ function MainNav() {
       </div>
       <div className="flex flex-row items-center gap-x-4 ">
         <Link
-          href="/"
+          href="/cabinet/annoncements/new"
           className="font-semibold flex flex-row items-center gap-x-1 h-full bg-blue-500 rounded-xl text-neutral-50 text-sm transition delay-150 duration-500 py-3 px-4 hover:text-blue-500 hover:bg-neutral-50"
         >
           <svg
@@ -352,9 +367,63 @@ function MainNav() {
         </Link>
       </div>
       <div className="flex flex-row items-center  gap-x-3">
+        <Popover open={isOpenPopover6}>
+          <PopoverTrigger
+            asChild
+            onMouseOver={() => setOpenPopover6(true)}
+            onClick={() => router.push("/cabinet/annoncements")}
+          >
+            <span
+              className={cn(
+                "font-semibold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
+                pathname.startsWith("/cabinet/annoncements") &&
+                  "border-b-blue-500 text-blue-500"
+              )}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z"
+                />
+              </svg>
+            </span>
+          </PopoverTrigger>
+          <PopoverContent
+            className="rounded-2xl bg-slate-900 "
+            onMouseOver={() => setOpenPopover6(true)}
+            onMouseLeave={() => setOpenPopover6(false)}
+            onBlur={() => setOpenPopover6(false)}
+          >
+            <p className="text-neutral-100 text-sm font-semibold text-center">
+              Авторизуйтесь чтобы увидеть{" "}
+            </p>
+            <p className="font-bold text-blue-500 text-sm  text-center">
+              Ваши обьявления
+            </p>
+          </PopoverContent>
+        </Popover>
+        <Separator orientation="vertical" className="h-8 bg-slate-700" />
         <Popover open={isOpenPopover3}>
-          <PopoverTrigger asChild onMouseOver={() => setOpenPopover3(true)}>
-            <span className="font-semibold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
+          <PopoverTrigger
+            asChild
+            onMouseOver={() => setOpenPopover3(true)}
+            onClick={() => router.push("/cabinet/favorites")}
+          >
+            <span
+              className={cn(
+                "font-semibold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
+                pathname.startsWith("/cabinet/favorites") &&
+                  "border-b-blue-500 text-blue-500"
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -386,8 +455,18 @@ function MainNav() {
 
         <Separator orientation="vertical" className="h-8 bg-slate-700" />
         <Popover open={isOpenPopover4}>
-          <PopoverTrigger asChild onMouseOver={() => setOpenPopover4(true)}>
-            <span className="font-semibold flex flex-row cursor-pointer items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
+          <PopoverTrigger
+            asChild
+            onMouseOver={() => setOpenPopover4(true)}
+            onClick={() => router.push("/cabinet/notifications")}
+          >
+            <span
+              className={cn(
+                "font-semibold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
+                pathname.startsWith("/cabinet/notifications") &&
+                  "border-b-blue-500 text-blue-500"
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -419,8 +498,18 @@ function MainNav() {
 
         <Separator orientation="vertical" className="h-8 bg-slate-700" />
         <Popover open={isOpenPopover5}>
-          <PopoverTrigger asChild onMouseOver={() => setOpenPopover5(true)}>
-            <span className="font-semibold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent">
+          <PopoverTrigger
+            asChild
+            onMouseOver={() => setOpenPopover5(true)}
+            onClick={() => router.push("/cabinet/chats")}
+          >
+            <span
+              className={cn(
+                "font-semibold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
+                pathname.startsWith("/cabinet/chats") &&
+                  "border-b-blue-500 text-blue-500"
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -469,7 +558,7 @@ function MainNav() {
               d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
             />
           </svg>
-          Войти
+          Мой кабинет
         </Link>
       </div>
     </nav>
