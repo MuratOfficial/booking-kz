@@ -1,10 +1,4 @@
 import { Metadata } from "next";
-import Image from "next/image";
-
-import { Separator } from "@/components/ui/separator";
-import { SidebarNav } from "@/components/layouts/sidebar-nav";
-
-import NotFound from "@/app/not-found";
 import {
   CircleDollarSign,
   Plus,
@@ -15,7 +9,10 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Кабинет | booking.kz",
+  title: {
+    template: "%s | Кабинет | booking.kz",
+    default: "booking.kz",
+  },
   description: "booking.kz | booking.kz",
 };
 
@@ -93,7 +90,7 @@ export default async function CabinetLayout({ children }: CabinetLayoutProps) {
 
   return (
     <>
-      <div className=" px-24 py-4 bg-slate-100 ">
+      <div className=" px-24 py-4 ">
         <div className="flex flex-col gap-y-4">
           {/* <SidebarNav items={sidebarNavItems} /> */}
 

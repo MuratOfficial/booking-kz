@@ -7,7 +7,10 @@ import Footer from "@/components/layouts/footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "booking.kz",
+  title: {
+    template: "%s | booking.kz",
+    default: "booking.kz",
+  },
   description: " Обьявления аренды и продажи недвижимостей",
 };
 
@@ -19,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} min-h-screen flex justify-between flex-col`}
+        className={`${inter.className} min-h-screen flex justify-between flex-col bg-slate-100`}
       >
         <MainNav />
         {children}

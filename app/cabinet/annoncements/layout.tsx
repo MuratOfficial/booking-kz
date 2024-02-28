@@ -1,5 +1,3 @@
-import { Metadata } from "next";
-import Image from "next/image";
 import {
   Accordion,
   AccordionContent,
@@ -7,18 +5,22 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Link from "next/link";
-import AnnoncementPreviewCard from "@/components/cards/annoncement-preview-card";
 import { annoncements } from "@/lib/externalData";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { MapPin, Pin } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
 import SideMenuItem from "./components/side-menu-item";
+import { Metadata } from "next";
 
 interface AnnoncementsLayoutProps {
   children: React.ReactNode;
 }
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | Обьявления | booking.kz",
+    default: "booking.kz",
+  },
+  description: "booking.kz | booking.kz",
+};
 
 export default async function AnnoncementsLayout({
   children,
@@ -153,7 +155,7 @@ export default async function AnnoncementsLayout({
           style={{ backgroundImage: `url(/svg/svg1.svg)` }}
         ></div>
       </div>
-      <div className="rounded-3xl aspect-square col-span-4   flex flex-col gap-4 w-full">
+      <div className="rounded-3xl  col-span-4   flex flex-col gap-4 w-full">
         {children}
       </div>
     </div>

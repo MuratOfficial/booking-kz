@@ -66,7 +66,7 @@ function MainNav() {
   const [isOpenPopover1, setOpenPopover1] = React.useState(false);
   const [isOpenPopover2, setOpenPopover2] = React.useState(false);
   const [isOpenPopover3, setOpenPopover3] = React.useState(false);
-  const [isOpenPopover4, setOpenPopover4] = React.useState(false);
+  // const [isOpenPopover4, setOpenPopover4] = React.useState(false);
   const [isOpenPopover5, setOpenPopover5] = React.useState(false);
   const [isOpenPopover6, setOpenPopover6] = React.useState(false);
 
@@ -453,7 +453,7 @@ function MainNav() {
           </PopoverContent>
         </Popover>
 
-        <Separator orientation="vertical" className="h-8 bg-slate-700" />
+        {/* <Separator orientation="vertical" className="h-8 bg-slate-700" />
         <Popover open={isOpenPopover4}>
           <PopoverTrigger
             asChild
@@ -494,7 +494,7 @@ function MainNav() {
               <span className="font-bold text-blue-500">Оповещения</span>
             </p>
           </PopoverContent>
-        </Popover>
+        </Popover> */}
 
         <Separator orientation="vertical" className="h-8 bg-slate-700" />
         <Popover open={isOpenPopover5}>

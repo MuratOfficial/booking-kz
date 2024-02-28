@@ -1,6 +1,12 @@
 import React from "react";
 
 import Image from "next/image";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Мои обьявления",
+  description: "booking.kz | booking.kz",
+};
 
 export interface Annoncement {
   city: string;
@@ -44,7 +50,7 @@ export interface Annoncement {
 function AnnoncementsPage() {
   return (
     <div className="w-full justify-center items-center flex flex-col h-fit py-16 gap-y-6">
-      <p className=" text-blue-900 text-3xl uppercase font-bold text-center mx-auto mb-8">
+      <p className=" text-blue-700 text-3xl uppercase font-bold text-center mx-auto mb-8">
         Выберите раздел в меню слева
       </p>
       <Image

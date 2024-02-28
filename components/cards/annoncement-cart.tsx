@@ -10,6 +10,7 @@ import {
 } from "../ui/carousel";
 import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
+import { Loader2 } from "lucide-react";
 
 export interface cardData {
   city: string;
@@ -70,6 +71,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                     width={240}
                     height={320}
                     className=" object-cover rounded-xl  aspect-square"
+                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
                   />
                 </CarouselItem>
               ))}
