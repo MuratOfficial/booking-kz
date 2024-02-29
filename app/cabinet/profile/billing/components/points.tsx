@@ -8,7 +8,7 @@ function Points() {
       <div className="h-fit text-slate-800 flex flex-col gap-4 border border-slate-300 shadow-md rounded-xl p-6 items-start ">
         <div className="w-full flex flex-row justify-between ">
           <p className="text-base font-medium text-slate-700">Общая сумма</p>
-          <WalletCards size={20} className="stroke-slate-500" />
+          <WalletCards size={22} className="stroke-slate-500" />
         </div>
 
         <p className="text-3xl font-bold text-slate-900">988 ед.</p>
@@ -16,7 +16,7 @@ function Points() {
       <div className="h-fit text-slate-800 flex flex-col gap-4 border border-slate-300 shadow-md rounded-xl p-6 items-start ">
         <div className="w-full flex flex-row justify-between ">
           <p className="text-base font-medium text-slate-700">Бонусы</p>
-          <Coins size={20} className="stroke-slate-500" />
+          <Coins size={22} className="stroke-slate-500" />
         </div>
         <div className="w-full flex flex-row justify-between ">
           <p className="text-3xl font-bold text-slate-900">420 б.</p>

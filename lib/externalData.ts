@@ -1,5 +1,37 @@
 import { Annoncement } from "@/app/cabinet/annoncements/page";
 
+export const paymentHistory = [
+  {
+    date: new Date("2024-02-10"),
+    payType: "Продление",
+    link: "/",
+    title: "Example1422",
+    payPrice: 0,
+  },
+  {
+    date: new Date("2024-02-10"),
+    payType: "Модификация",
+    link: "/",
+    title:
+      "Example1422 лллагпшщщ оовооолал ллалллллп щщщщщпллллллвлал 454654654654 ооооп",
+    payPrice: -4455,
+  },
+  {
+    date: new Date("2024-02-10"),
+    payType: "Пополнение",
+    link: "/",
+    title: "Example1422 онгащщ ллллпооггграа 4758",
+    payPrice: 4455,
+  },
+  {
+    date: new Date("2024-02-10"),
+    payType: "Бонус",
+    link: "/",
+    title: "0 онгащщ ллллпооггграа 4758",
+    payPrice: 4455,
+  },
+];
+
 export const chatList = [
   {
     img: "/random/1.jpg",
