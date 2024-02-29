@@ -12,7 +12,6 @@ export const metadata: Metadata = {
 
 function FavoritesPage() {
   const data = annoncements.slice(0, 3);
-  const extData = true;
   return (
     <div className="flex flex-col items-center gap-2 w-full pb-4">
       <div className="flex flex-row justify-between w-full items-center">
@@ -27,7 +26,7 @@ function FavoritesPage() {
           Очистить все
         </button>
       </div>
-      {extData ? (
+      {data.length > 0 ? (
         <div className="w-full flex flex-col gap-2">
           {" "}
           {data.map((item, index) => (

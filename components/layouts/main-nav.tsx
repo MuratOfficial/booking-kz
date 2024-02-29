@@ -7,6 +7,19 @@ import { cn } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
+  Cloud,
+  CreditCard,
+  Keyboard,
+  LifeBuoy,
+  LogOut,
+  Mail,
+  MessageSquare,
+  Plus,
+  PlusCircle,
+  Settings,
+  User,
+  UserPlus,
+  Users,
   Bed,
   BedDouble,
   Building2,
@@ -23,6 +36,20 @@ import {
   Warehouse,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -540,26 +567,83 @@ function MainNav() {
         </Popover>
 
         <Separator orientation="vertical" className="h-8 bg-slate-700" />
-        <Link
-          href="/"
-          className="font-semibold flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            asChild
+            className="data-[state=open]:text-blue-500 data-[state=open]:border-b-blue-500"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-            />
-          </svg>
-          Мой кабинет
-        </Link>
+            <button
+              className={cn(
+                "font-semibold outline-none flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
+                pathname.startsWith("/cabinet/profile") &&
+                  "border-b-blue-500 text-blue-500"
+              )}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                />
+              </svg>
+              Мой кабинет
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 text-slate-900 font-semibold">
+            <DropdownMenuLabel className="text-base">User1</DropdownMenuLabel>
+            <DropdownMenuItem className="font-semibold py-0 pointer-events-none ">
+              ID:{" "}
+              <span className="text-slate-600 ml-1 font-normal">lkkg1122</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                className={cn(
+                  "cursor-pointer",
+                  pathname.startsWith("/cabinet/profile/billing") &&
+                    "text-blue-500"
+                )}
+                onClick={() => router.push("/cabinet/profile/billing")}
+              >
+                <CreditCard className="mr-2 h-4 w-4" />
+                <span>Счет и Платежи</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-slate-600 pointer-events-none">
+                <span className="font-normal">Баланс:</span>
+                <span className="text-yellow-400 font-semibold ml-2">
+                  18556 ₸
+                </span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                className={cn(
+                  "cursor-pointer",
+                  pathname.startsWith("/cabinet/profile/settings") &&
+                    "text-blue-500"
+                )}
+                onClick={() => router.push("/cabinet/profile/settings")}
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Настройки</span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="cursor-pointer">
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Выйти</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </nav>
   );
