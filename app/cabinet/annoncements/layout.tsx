@@ -16,8 +16,8 @@ interface AnnoncementsLayoutProps {
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Обьявления | booking.kz",
-    default: "booking.kz",
+    template: "%s | Мои обьявления | booking.kz",
+    default: "Мои обьявления",
   },
   description: "booking.kz | booking.kz",
 };
@@ -36,11 +36,11 @@ export default async function AnnoncementsLayout({
   );
 
   return (
-    <div className="w-full grid grid-cols-5 gap-4">
+    <div className="w-full grid grid-cols-5 gap-4 py-2">
       <div className="rounded-3xl h-fit bg-gradient-to-r from-blue-500 to-blue-400 col-span-1 p-2">
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1">
-            <AccordionTrigger className="items-center focus:text-blue-500 focus:bg-neutral-100 hover:text-blue-500 transition duration-300 font-semibold rounded-full hover:bg-neutral-100 text-center flex flex-row gap-x-1 justify-center text-neutral-100">
+            <AccordionTrigger className="items-center data-[state=open]:bg-neutral-100 data-[state=open]:text-blue-500  hover:text-blue-500 transition duration-300 font-semibold rounded-full hover:bg-neutral-100 text-center flex flex-row gap-x-1 justify-center text-neutral-100">
               Активные ({annoncementListActive.length})
             </AccordionTrigger>
             <AccordionContent>
@@ -70,7 +70,7 @@ export default async function AnnoncementsLayout({
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
-            <AccordionTrigger className="items-center focus:text-blue-500 focus:bg-neutral-100 hover:text-blue-500 transition duration-300 font-semibold rounded-full hover:bg-neutral-100 text-center flex flex-row gap-x-1 justify-center text-neutral-100">
+            <AccordionTrigger className="items-center data-[state=open]:bg-neutral-100 data-[state=open]:text-blue-500 hover:text-blue-500 transition duration-300 font-semibold rounded-full hover:bg-neutral-100 text-center flex flex-row gap-x-1 justify-center text-neutral-100">
               Архив ({annoncementListArchived.length})
             </AccordionTrigger>
             <AccordionContent>
@@ -100,7 +100,7 @@ export default async function AnnoncementsLayout({
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
-            <AccordionTrigger className="items-center focus:text-blue-500 focus:bg-neutral-100 hover:text-blue-500 transition duration-300 font-semibold rounded-full hover:bg-neutral-100 text-center flex flex-row gap-x-1 justify-center text-neutral-100">
+            <AccordionTrigger className="items-center data-[state=open]:bg-neutral-100 data-[state=open]:text-blue-500 hover:text-blue-500 transition duration-300 font-semibold rounded-full hover:bg-neutral-100 text-center flex flex-row gap-x-1 justify-center text-neutral-100">
               У модератора ({annoncementListModeration.length})
             </AccordionTrigger>
             <AccordionContent>

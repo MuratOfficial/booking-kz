@@ -5,7 +5,7 @@ import ChatList from "./components/chat-list";
 import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "Чаты",
+  title: "Сообщения",
   description: "booking.kz | booking.kz",
 };
 

@@ -50,7 +50,7 @@ export interface Annoncement {
 function AnnoncementsPage() {
   return (
     <div className="w-full justify-center items-center flex flex-col h-fit py-16 gap-y-6">
-      <p className=" text-blue-700 text-3xl uppercase font-bold text-center mx-auto mb-8">
+      <p className=" text-slate-700 text-xl uppercase font-bold text-center mx-auto mb-8">
         Выберите раздел в меню слева
       </p>
       <Image
@@ -58,7 +58,7 @@ function AnnoncementsPage() {
         height={600}
         src="/svg/svg2.svg"
         alt="empty"
-        className="max-w-[480px]"
+        className="max-w-[420px]"
       />
     </div>
   );

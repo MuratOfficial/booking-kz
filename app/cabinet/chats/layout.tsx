@@ -4,7 +4,7 @@ import ChatList from "./components/chat-list";
 export const metadata: Metadata = {
   title: {
     template: "%s | Сообщения | booking.kz",
-    default: "booking.kz",
+    default: "Сообщения",
   },
   description: "booking.kz | booking.kz",
 };
