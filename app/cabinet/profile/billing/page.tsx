@@ -3,6 +3,11 @@ import Points from "./components/points";
 import PaymentHistory from "./components/history";
 import { paymentHistory } from "@/lib/externalData";
 import PaymentBar from "./components/payment-bar";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Счет и Платежи",
+};
 
 function BillingPage() {
   return (

@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
 
 export interface cardData {
   city: string;
@@ -60,7 +61,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
         {data.city ? (
           <Carousel
             setApi={setApi}
-            className="w-full group aspect-square relative rounded-xl items-center flex justify-center"
+            className="w-full group aspect-square relative rounded-xl items-center flex justify-center  "
           >
             <CarouselContent>
               {data?.images.map((img, index) => (
@@ -76,6 +77,26 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                 </CarouselItem>
               ))}
             </CarouselContent>
+            <Link
+              href="/"
+              className="absolute z-20 flex flex-row gap-x-0.5  font-semibold left-2 bottom-2 text-xs items-center rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  py-0.5 px-1.5 items-center flex text-transparent"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-3 h-3"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                />
+              </svg>
+              Перейти
+            </Link>
             <button
               className="absolute left-2 rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent"
               onClick={scrollPrev}
@@ -86,7 +107,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                 viewBox="0 0 24 24"
                 strokeWidth={2}
                 stroke="currentColor"
-                className="w-5 h-5"
+                className="w-3 h-3"
               >
                 <path
                   strokeLinecap="round"
@@ -105,7 +126,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                 viewBox="0 0 24 24"
                 strokeWidth={2}
                 stroke="currentColor"
-                className="w-5 h-5"
+                className="w-3 h-3"
               >
                 <path
                   strokeLinecap="round"
@@ -121,7 +142,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-6 h-6 hover:fill-red-600 stroke-red-600 "
+                className="w-5 h-5 hover:fill-red-600 stroke-red-600 "
               >
                 <path
                   strokeLinecap="round"
@@ -130,14 +151,14 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                 />
               </svg>
             </button>
-            <span className="py-0.5 px-2  flex flex-row items-center gap-x-1 rounded-full bg-slate-200  bg-opacity-50 absolute top-2 left-2 transition delay-100 duration-300 hover:bg-opacity-80">
+            <span className="py-0.5 px-2 group-hover:text-transparent  group-hover:bg-transparent flex flex-row items-center gap-x-1 rounded-full bg-slate-200  bg-opacity-50 absolute top-2 left-2 transition delay-100 duration-300 hover:bg-opacity-80">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-5 h-5 stroke-yellow-500 fill-yellow-500"
+                className="w-4 h-4 stroke-yellow-500 fill-yellow-500 group-hover:fill-transparent group-hover:stroke-transparent transition delay-100 duration-300"
               >
                 <path
                   strokeLinecap="round"
@@ -145,17 +166,19 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                   d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
                 />
               </svg>
-              <span className="font-bold text-slate-900">{data.rating}</span>
+              <span className="font-bold text-slate-900 group-hover:text-transparent   text-sm transition delay-100 duration-300">
+                {data.rating}
+              </span>
             </span>
             {data.isChecked && (
-              <span className=" py-0.5 px-1.5  flex flex-row items-center gap-x-1 rounded-r-full bg-blue-500  absolute top-10 left-0 transition delay-100 duration-300 hover:bg-opacity-80">
+              <span className=" py-0.5 px-1.5 group-hover:text-transparent  group-hover:bg-transparent flex flex-row items-center gap-x-1 rounded-r-full bg-blue-500  absolute top-10 left-0 transition delay-100 duration-300 hover:bg-opacity-80">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth={3}
                   stroke="currentColor"
-                  className="w-4 h-4 stroke-neutral-100"
+                  className="w-3 h-3 stroke-neutral-100 group-hover:stroke-transparent transition delay-100 duration-300"
                 >
                   <path
                     strokeLinecap="round"
@@ -164,21 +187,21 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                   />
                 </svg>
 
-                <span className="font-bold text-neutral-100 text-[10px]">
+                <span className="font-semibold text-neutral-100 text-[8px] group-hover:text-transparent transition delay-100 duration-300">
                   Проверено
                 </span>
               </span>
             )}
 
-            <span className="absolute bottom-2 right-2 py-1 px-2 rounded-lg group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent">
+            <span className="absolute text-xs bottom-2 right-2 py-0.5 px-1.5 rounded-lg group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent">
               {current}/{count}
             </span>
             <div className="absolute flex flex-col justify-between bottom-0 w-full py-1 px-2 text-slate-900 group-hover:text-transparent  group-hover:bg-transparent transition delay-150 duration-500 h-2/5 bg-slate-200 bg-opacity-90 rounded-b-xl">
               <div className="text-slate-600 group-hover:text-transparent transition delay-150 duration-500">
-                <p className=" text-sm line-clamp-1 font-medium">
+                <p className=" text-xs line-clamp-1 font-medium">
                   {data.roomNumber}
                 </p>
-                <p className="relative  text-sm font-medium">
+                <p className="relative line-clamp-1 text-xs font-medium">
                   этаж {data.floor} из {data.floorFrom},{" "}
                   <span>
                     {data.areaSq} м
@@ -187,7 +210,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                 </p>
               </div>
               <div className="flex flex-row justify-between ">
-                <p className=" font-extrabold text-lg ">
+                <p className=" font-extrabold text-base ">
                   {parseInt(data.price).toLocaleString().replace(/,/g, " ")} ₸
                 </p>
               </div>

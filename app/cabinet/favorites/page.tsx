@@ -18,9 +18,9 @@ function FavoritesPage() {
         <h2 className="text-2xl text-slate-900 uppercase font-bold">
           Избранные ({data.length})
         </h2>
-        <button className="flex flex-row items-center group font-semibold gap-x-2 py-2 px-3 hover:bg-slate-900 border-2 border-slate-900 hover:text-white rounded-xl transition-all delay-100 duration-300 bg-white">
+        <button className="flex text-sm flex-row items-center group font-semibold gap-x-2 py-2 px-3 hover:bg-slate-900  border-slate-900 hover:text-white rounded-xl transition-all delay-100 duration-300 bg-white">
           <HeartOff
-            size={24}
+            size={20}
             className="group-hover:stroke-red-500 transition-all delay-100 duration-300 stroke-slate-900"
           />{" "}
           Очистить все

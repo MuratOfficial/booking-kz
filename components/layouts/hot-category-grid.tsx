@@ -103,15 +103,15 @@ function HotCategoryGrid({ title, data }: HotCategoryGridProps) {
       </div>
       <CarouselContent>
         <CarouselItem key={1}>
-          <div className="w-full grid grid-cols-6 gap-3">
-            {data?.slice(0, 12)?.map((item, ind) => (
+          <div className="w-full grid grid-cols-8 gap-3">
+            {data?.slice(0, 16)?.map((item, ind) => (
               <AnnoncementCard key={ind} data={item} />
             ))}
           </div>
         </CarouselItem>
         <CarouselItem key={2}>
-          <div className="w-full grid grid-cols-6 gap-3">
-            {data?.slice(0, 12)?.map((item, ind) => (
+          <div className="w-full grid grid-cols-8 gap-3">
+            {data?.slice(0, 16)?.map((item, ind) => (
               <AnnoncementCard key={ind} data={item} />
             ))}
           </div>
