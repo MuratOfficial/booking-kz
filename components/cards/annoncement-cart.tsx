@@ -61,7 +61,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
         {data.city ? (
           <Carousel
             setApi={setApi}
-            className="w-full group aspect-square relative rounded-xl items-center flex justify-center  "
+            className="w-full group aspect-[5/4] relative rounded-xl items-center flex justify-center  "
           >
             <CarouselContent>
               {data?.images.map((img, index) => (
@@ -71,7 +71,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                     alt={`img+${index}`}
                     width={240}
                     height={320}
-                    className=" object-cover rounded-xl  aspect-square"
+                    className=" object-cover rounded-xl  aspect-[5/4]"
                     blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
                   />
                 </CarouselItem>
@@ -196,21 +196,18 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
             <span className="absolute text-xs bottom-2 right-2 py-0.5 px-1.5 rounded-lg group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent">
               {current}/{count}
             </span>
-            <div className="absolute flex flex-col justify-between bottom-0 w-full py-1 px-2 text-slate-900 group-hover:text-transparent  group-hover:bg-transparent transition delay-150 duration-500 h-2/5 bg-slate-200 bg-opacity-90 rounded-b-xl">
-              <div className="text-slate-600 group-hover:text-transparent transition delay-150 duration-500">
-                <p className=" text-xs line-clamp-1 font-medium">
+            <div className="absolute flex flex-col justify-between bottom-0 w-full py-1 px-2 text-slate-900 group-hover:text-transparent  group-hover:bg-transparent transition delay-150 duration-500 h-[45%] bg-slate-200 bg-opacity-90 rounded-b-xl">
+              <div className="text-slate-600 leading-tight group-hover:text-transparent transition delay-150 duration-500">
+                <p className=" text-[11px] line-clamp-1 font-medium ">
                   {data.roomNumber}
                 </p>
-                <p className="relative line-clamp-1 text-xs font-medium">
+                <p className="relative line-clamp-1 text-[11px] font-medium">
                   этаж {data.floor} из {data.floorFrom},{" "}
-                  <span>
-                    {data.areaSq} м
-                    <span className="text-xs absolute top-0">2</span>
-                  </span>
+                  <span>{data.areaSq} м²</span>
                 </p>
               </div>
               <div className="flex flex-row justify-between ">
-                <p className=" font-extrabold text-base ">
+                <p className=" font-extrabold text-base leading-4">
                   {parseInt(data.price).toLocaleString().replace(/,/g, " ")} ₸
                 </p>
               </div>

@@ -34,6 +34,7 @@ import {
   Store,
   TentTree,
   Warehouse,
+  Bell,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -290,6 +291,7 @@ function MainNav() {
                 "font-bold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
                 isOpenPopover1 && "text-blue-500 border-b-blue-500"
               )}
+              onClick={() => router.push("/filter?categoryType=sell")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -334,6 +336,7 @@ function MainNav() {
                 "font-bold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
                 isOpenPopover2 && "text-blue-500 border-b-blue-500"
               )}
+              onClick={() => router.push("/filter?categoryType=rent")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -624,6 +627,17 @@ function MainNav() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <DropdownMenuItem
+                className={cn(
+                  "cursor-pointer",
+                  pathname.startsWith("/cabinet/profile/notifications") &&
+                    "text-blue-500"
+                )}
+                onClick={() => router.push("/cabinet/profile/notifications")}
+              >
+                <Bell className="mr-2 h-4 w-4" />
+                <span>Оповещения</span>
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className={cn(
                   "cursor-pointer",

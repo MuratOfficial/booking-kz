@@ -79,7 +79,7 @@ export function SettingsForm() {
             </FormItem>
           )}
         />
-        <div className="h-full text-sm text-slate-800 w-full flex flex-row items-center justify-center gap-2">
+        <div className=" text-sm p-2 rounded-xl bg-slate-100 text-slate-800  flex flex-row items-center justify-center gap-2">
           <p className="font-bold">ID:</p>
           <p className="font-semibold text-slate-500">ikkg1122</p>
         </div>
@@ -101,7 +101,7 @@ export function SettingsForm() {
                 <FormControl>
                   <Input
                     placeholder="(777) 7777777"
-                    className="rounded-lg placeholder:text-slate-300 w-28 p-0.5 h-7"
+                    className="rounded-lg placeholder:text-slate-300 w-28 px-1.5 placeholder:text-sm h-8 "
                     {...field}
                   />
                 </FormControl>
@@ -130,7 +130,10 @@ export function SettingsForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+
+        <Button type="submit" className="rounded-2xl">
+          Сохранить изменения
+        </Button>
       </form>
     </Form>
   );

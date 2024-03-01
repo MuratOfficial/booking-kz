@@ -30,7 +30,7 @@ export default function Home() {
     }));
 
   return (
-    <main className="flex min-h-screen bg-slate-100 flex-col px-4">
+    <main className="flex min-h-screen bg-slate-100 flex-col px-4 pb-4">
       <HotCategoryGrid title="Продажа" data={forSell} />
       <HotCategoryGrid title="Аренда" data={forRent} />
     </main>
