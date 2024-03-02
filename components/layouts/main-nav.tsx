@@ -36,7 +36,7 @@ import {
   Warehouse,
   Bell,
 } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -100,6 +100,9 @@ function MainNav() {
 
   const pathname = usePathname();
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+
   const menuList1 = [
     {
       name: "Квартиры",
@@ -289,7 +292,9 @@ function MainNav() {
             <span
               className={cn(
                 "font-bold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
-                isOpenPopover1 && "text-blue-500 border-b-blue-500"
+                isOpenPopover1 && "text-blue-500 border-b-blue-500",
+                searchParams.get("categoryType") === "sell" &&
+                  "text-blue-500 border-b-blue-500"
               )}
               onClick={() => router.push("/filter?categoryType=sell")}
             >
@@ -334,7 +339,10 @@ function MainNav() {
             <span
               className={cn(
                 "font-bold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
-                isOpenPopover2 && "text-blue-500 border-b-blue-500"
+                isOpenPopover2 && "text-blue-500 border-b-blue-500",
+
+                searchParams.get("categoryType") === "rent" &&
+                  "text-blue-500 border-b-blue-500"
               )}
               onClick={() => router.push("/filter?categoryType=rent")}
             >

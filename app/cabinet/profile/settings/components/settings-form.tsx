@@ -57,7 +57,7 @@ export function SettingsForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full grid grid-cols-2 gap-4"
+        className="w-full grid grid-cols-2 gap-6"
       >
         <FormField
           control={form.control}

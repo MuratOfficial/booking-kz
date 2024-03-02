@@ -45,7 +45,7 @@ export function PasswordForm() {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     toast({
-      title: "Паоль изменен",
+      title: "Пароль изменен",
     });
   }
 
@@ -53,7 +53,7 @@ export function PasswordForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full grid grid-cols-2 gap-4"
+        className="w-full grid grid-cols-2 gap-6"
       >
         <FormField
           control={form.control}
