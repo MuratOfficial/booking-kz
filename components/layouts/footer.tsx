@@ -7,7 +7,7 @@ function Footer() {
   const currentYear: number = currentDate.getFullYear();
   return (
     <footer className=" text-center bg-slate-900 flex flex-col items-center justify-center">
-      <div className="w-full flex flex-col items-start gap-4 py-10  text-neutral-100 px-24">
+      <div className="w-full flex flex-col items-start gap-4 py-10  text-neutral-100 px-4">
         <p className="text-neutral-400 font-semibold text-lg">
           Подписывайтесь на нас
         </p>
@@ -57,7 +57,7 @@ function Footer() {
           </Link>
         </div>
       </div>
-      <div className="bg-slate-950 w-full  flex flex-row justify-between items-center py-4 px-24">
+      <div className="bg-slate-950 w-full  flex flex-row justify-between items-center py-4 px-4">
         <p className="lg:text-left xs:text-center xxs:text-center text-xs text-neutral-400 ">
           &copy; {currentYear} &ldquo;Booking KZ&rdquo;. Все права защищены.
         </p>
