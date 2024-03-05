@@ -17,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface ComboboxFilterProps {
   buttonName: string;
@@ -25,15 +26,35 @@ interface ComboboxFilterProps {
     value: string;
     label: string;
   }[];
+  filter: string;
 }
 
 export function ComboboxFilter({
   buttonName,
   commandInputTitle,
   data,
+  filter,
 }: ComboboxFilterProps) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState<string[]>([]);
+  const pathname = usePathname();
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+
+  function handleFilter(term: string, filter: string) {
+    const params = new URLSearchParams(searchParams);
+    if (filter === filter) {
+      if (term) {
+        if (params.has(filter, term)) {
+          params.delete(filter, term);
+        } else {
+          params.append(filter, term);
+        }
+      } else {
+        params.delete(filter);
+      }
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -45,9 +66,11 @@ export function ComboboxFilter({
           className="w-[300px] justify-between rounded-xl "
         >
           <span className="line-clamp-1 w-[240px]">
-            {value.length > 0
+            {searchParams.getAll(filter).length > 0
               ? data
-                  .filter((item) => value.includes(item.value))
+                  .filter((item) =>
+                    searchParams.getAll(filter).includes(item.value)
+                  )
                   .map((el, ind) => el.label)
                   .join(", ")
               : buttonName}
@@ -66,18 +89,16 @@ export function ComboboxFilter({
                 key={item.value}
                 value={item.value}
                 onSelect={(currentValue) => {
-                  setValue(
-                    value.includes(currentValue)
-                      ? value.filter((el) => el !== currentValue)
-                      : [...value, currentValue]
-                  );
+                  handleFilter(currentValue, filter);
                   setOpen(false);
                 }}
               >
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value.includes(item.value) ? "opacity-100" : "opacity-0"
+                    searchParams.getAll(filter).includes(item.value)
+                      ? "opacity-100"
+                      : "opacity-0"
                   )}
                 />
                 {item.label}

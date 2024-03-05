@@ -255,10 +255,10 @@ function MainNav() {
               className={cn(
                 "font-bold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
                 isOpenPopover1 && "text-blue-500 border-b-blue-500",
-                searchParams.get("categoryType") === "sell" &&
+                searchParams.get("serviceType") === "sell" &&
                   "text-blue-500 border-b-blue-500"
               )}
-              onClick={() => router.push("/filter?categoryType=sell")}
+              onClick={() => router.push("/filter?serviceType=sell")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -303,10 +303,10 @@ function MainNav() {
                 "font-bold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
                 isOpenPopover2 && "text-blue-500 border-b-blue-500",
 
-                searchParams.get("categoryType") === "rent" &&
+                searchParams.get("serviceType") === "rent" &&
                   "text-blue-500 border-b-blue-500"
               )}
-              onClick={() => router.push("/filter?categoryType=rent")}
+              onClick={() => router.push("/filter?serviceType=rent")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
