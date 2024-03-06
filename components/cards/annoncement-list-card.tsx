@@ -32,6 +32,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
+import { useRouter } from "next/navigation";
 
 interface AnnoncementListCardProps {
   data: Annoncement;
@@ -66,8 +67,10 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
     if (api) api.scrollNext();
   }, [api]);
 
+  const router = useRouter();
+
   return (
-    <div className="w-full rounded-xl hover:shadow-xl transition delay-100 duration-300 cursor-pointer">
+    <div className="w-full rounded-xl hover:shadow-xl transition delay-100 duration-300 ">
       <div className="w-full   bg-white rounded-xl grid grid-cols-12">
         <div className="  h-full flex items-center justify-center  col-span-4">
           <Carousel
@@ -152,7 +155,10 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
             </span>
           </Carousel>
         </div>
-        <div className="w-full  col-span-8  flex flex-row items-center max-h-[240px] p-2">
+        <div
+          className="w-full  col-span-8  flex flex-row items-center max-h-[240px] p-2 cursor-pointer"
+          onClick={() => router.push(`/annoncements/${data.id}`)}
+        >
           <div className="flex flex-col gap-2 w-[70%] h-full py-2 px-3 justify-between">
             <div className="col-span-3 flex flex-col gap-1 w-full">
               <div className="w-full flex flex-row justify-between items-center">
@@ -269,7 +275,7 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
             </span>
             <div className="flex flex-col self-end gap-2">
               {data.isChecked && (
-                <div className="px-2 py-1 self-end text-blue-500 border-2  border-blue-500 text-xs font-semibold rounded-full  text-center w-fit flex flex-row gap-x-1">
+                <div className="px-2 py-1 self-end text-blue-500  text-xs font-semibold rounded-full  text-center w-fit flex flex-row gap-x-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"

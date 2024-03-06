@@ -14,6 +14,8 @@ export default function Home() {
       areaSq: item.areaSq,
       price: item.price,
       images: item.images,
+      serviceType: item.serviceType,
+      id: item.id,
     }));
   const forRent = annoncements
     .filter((el) => el.serviceType === "аренда")
@@ -27,6 +29,8 @@ export default function Home() {
       areaSq: item.areaSq,
       price: item.price,
       images: item.images,
+      serviceType: item.serviceType,
+      id: item.id,
     }));
 
   return (

@@ -12,6 +12,7 @@ import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export interface cardData {
   city: string;
@@ -23,6 +24,8 @@ export interface cardData {
   areaSq: string;
   price: string;
   images: string[];
+  id: string;
+  serviceType: string;
 }
 
 interface AnnoncementCardProps {
@@ -55,6 +58,9 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
   const scrollNext = React.useCallback(() => {
     if (api) api.scrollNext();
   }, [api]);
+
+  const router = useRouter();
+
   return (
     <div>
       <div>
@@ -71,13 +77,14 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                     alt={`img+${index}`}
                     width={240}
                     height={320}
-                    className=" object-cover rounded-xl  aspect-[5/4]"
+                    className=" object-cover rounded-xl  aspect-[5/4] cursor-pointer "
+                    onClick={() => router.push(`/annoncements/${data.id}`)}
                     blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
                   />
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <Link
+            {/* <Link
               href="/"
               className="absolute z-20 flex flex-row gap-x-0.5  font-semibold left-2 bottom-2 text-xs items-center rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  py-0.5 px-1.5 items-center flex text-transparent"
             >
@@ -96,9 +103,9 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                 />
               </svg>
               Перейти
-            </Link>
+            </Link> */}
             <button
-              className="absolute left-2 rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent"
+              className="absolute left-2 opacity-70 hover:opacity-100 hover:bg-opacity-100 rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent"
               onClick={scrollPrev}
             >
               <svg
@@ -117,7 +124,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
               </svg>
             </button>
             <button
-              className="absolute right-2 rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent"
+              className="absolute right-2 opacity-70 hover:opacity-100 hover:bg-opacity-100 rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent"
               onClick={scrollNext}
             >
               <svg
@@ -151,26 +158,29 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                 />
               </svg>
             </button>
-            <span className="py-0.5 px-2 group-hover:text-transparent  group-hover:bg-transparent flex flex-row items-center gap-x-1 rounded-full bg-slate-200  bg-opacity-50 absolute top-2 left-2 transition delay-100 duration-300 hover:bg-opacity-80">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-4 h-4 stroke-yellow-500 fill-yellow-500 group-hover:fill-transparent group-hover:stroke-transparent transition delay-100 duration-300"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-                />
-              </svg>
-              <span className="font-bold text-slate-900 group-hover:text-transparent   text-sm transition delay-100 duration-300">
-                {data.rating}
+            {data.serviceType === "аренда" && (
+              <span className="py-0.5 px-1 group-hover:text-transparent  group-hover:bg-transparent flex flex-row items-center gap-x-0.5 rounded-full bg-slate-200  bg-opacity-50 absolute top-2 left-2 transition delay-100 duration-300 hover:bg-opacity-80">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-4 h-4 stroke-yellow-500 fill-yellow-500 group-hover:fill-transparent group-hover:stroke-transparent transition delay-100 duration-300"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+                  />
+                </svg>
+                <span className="font-bold text-slate-900 group-hover:text-transparent   text-xs transition delay-100 duration-300">
+                  {data.rating}
+                </span>
               </span>
-            </span>
-            {data.isChecked && (
+            )}
+
+            {data.isChecked && data.serviceType === "аренда" && (
               <span className=" py-0.5 px-1.5 group-hover:text-transparent  group-hover:bg-transparent flex flex-row items-center gap-x-1 rounded-r-full bg-blue-500  absolute top-10 left-0 transition delay-100 duration-300 hover:bg-opacity-80">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

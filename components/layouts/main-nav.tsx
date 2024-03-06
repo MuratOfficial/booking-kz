@@ -287,7 +287,14 @@ function MainNav() {
               {menuList1.map((el, ind) => (
                 <li
                   key={ind}
-                  className="p-2 text-left cursor-pointer text-sm font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
+                  className={cn(
+                    "p-2 text-left cursor-pointer text-sm font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
+                  )}
+                  onClick={() =>
+                    router.push(
+                      `/filter?serviceType=sell&categoryType=${el.name}`
+                    )
+                  }
                 >
                   {el.icon} {el.name}
                 </li>
@@ -334,6 +341,11 @@ function MainNav() {
             <ul className="w-full text-neutral-100">
               {menuList2.map((el, ind) => (
                 <li
+                  onClick={() =>
+                    router.push(
+                      `/filter?serviceType=rent&categoryType=${el.name}`
+                    )
+                  }
                   key={ind}
                   className="p-2 text-left cursor-pointer text-sm font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
                 >
