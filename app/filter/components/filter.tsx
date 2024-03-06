@@ -138,7 +138,11 @@ function Filter() {
     }
     if (filter === "serviceTypeExt") {
       if (term) {
-        params.set("serviceTypeExt", term);
+        if (params.has("serviceTypeExt", term)) {
+          params.delete("serviceTypeExt", term);
+        } else {
+          params.append("serviceTypeExt", term);
+        }
       } else {
         params.delete("serviceTypeExt");
       }
@@ -313,7 +317,7 @@ function Filter() {
               key={index}
               className={cn(
                 "px-3 py-2 rounded-xl bg-neutral-50 text-slate-900 transition delay-100  duration-300 hover:bg-slate-900 hover:text-neutral-50 text-sm font-semibold",
-                searchParams.get("serviceTypeExt") === item &&
+                searchParams.has("serviceTypeExt", item) &&
                   "text-neutral-50 bg-slate-900"
               )}
             >

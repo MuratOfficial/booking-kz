@@ -215,12 +215,12 @@ function FavoriteCard({ data }: FavoriteCardProps) {
                     )}
                     {data.modificators.hotModifier > 0 && (
                       <p className="text-sm font-semibold bg-rose-500 text-neutral-100 px-2 py-1 rounded-full flex flex-row gap-x-1 items-center">
-                        <Flame size={16} /> {data.modificators.hotModifier} раз
+                        <Flame size={16} />
                       </p>
                     )}
                     {data.modificators.hurryModifier > 0 && (
                       <p className="text-sm font-semibold bg-cyan-500 text-neutral-100 px-2 py-1 rounded-full flex flex-row gap-x-1 items-center">
-                        <Zap size={16} /> {data.modificators.hurryModifier} раз
+                        <Zap size={16} />
                       </p>
                     )}
                   </div>
