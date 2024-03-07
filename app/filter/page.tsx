@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Filter from "./components/filter";
 import { annoncements } from "@/lib/externalData";
 import AnnoncementListCard from "@/components/cards/annoncement-list-card";
@@ -19,7 +19,10 @@ function FilterPage({
 
   return (
     <div className="w-full flex flex-col min-h-screen p-4 gap-4">
-      <Filter />
+      <Suspense>
+        <Filter />
+      </Suspense>
+
       <div className="w-full grid grid-cols-7 gap-4">
         <div className="col-span-5 flex flex-col gap-4">
           <div className="flex flex-row justify-end items-center px-8 font-medium text-xs gap-x-2">
