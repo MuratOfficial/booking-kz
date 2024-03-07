@@ -90,6 +90,7 @@ function CarouselWithThumbs() {
                 alt={`img+${index}`}
                 width={1400}
                 height={1000}
+                priority
                 className=" object-cover rounded-xl aspect-[8/5] w-full  cursor-pointer "
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
               />
@@ -113,7 +114,7 @@ function CarouselWithThumbs() {
             />
           </svg>
           <TooltipProvider>
-            <Tooltip>
+            <Tooltip delayDuration={100}>
               <TooltipTrigger asChild>
                 <p className="cursor-help">Проверено</p>
               </TooltipTrigger>
@@ -180,6 +181,7 @@ function CarouselWithThumbs() {
                 onClick={() => onThumbClick(index)}
                 className={cn(
                   " object-cover rounded-md aspect-[8/5] w-full  cursor-pointer border-2 border-transparent",
+
                   current === index + 1 && "border-blue-500"
                 )}
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="

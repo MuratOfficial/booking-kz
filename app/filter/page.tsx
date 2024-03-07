@@ -35,7 +35,7 @@ function FilterPage({
             <AnnoncementListCard data={el} key={index} />
           ))}
         </div>
-        <div className="col-span-2 bg-white rounded-xl h-full w-full flex flex-col gap-4 items-center py-2 px-3">
+        <div className="col-span-2 bg-white rounded-xl h-fit w-full flex flex-col gap-4 items-center py-2 px-3">
           <h1 className="font-semibold">Горячие предложения</h1>
           <HotSuggestCard />
           <HotSuggestCard />
