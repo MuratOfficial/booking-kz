@@ -40,6 +40,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollBar } from "@/components/ui/scroll-area";
+import { Map } from "@pbe/react-yandex-maps";
 
 const FormSchema = z.object({
   serviceType: z.string({ required_error: "Выберите вид обьявления" }),
@@ -1958,6 +1959,14 @@ function NewAnnoncementForm() {
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">
             <p className="text-base font-semibold">Расположение на карте</p>
+            <div>
+              <Map
+                className="w-full h-full"
+                width={640}
+                height={480}
+                defaultState={{ center: [55.75, 37.57], zoom: 9 }}
+              />
+            </div>
           </div>
 
           <Button type="submit">Submit</Button>

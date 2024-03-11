@@ -5,6 +5,7 @@ import MainNav from "@/components/layouts/main-nav";
 import Footer from "@/components/layouts/footer";
 import { Toaster } from "@/components/ui/toaster";
 import { Suspense } from "react";
+import YandexMapProvider from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,8 +30,8 @@ export default function RootLayout({
         <Suspense>
           <MainNav />
         </Suspense>
+        <YandexMapProvider>{children}</YandexMapProvider>
 
-        {children}
         <Toaster />
 
         <Footer />
