@@ -1,5 +1,10 @@
 import HotCategoryGrid from "@/components/layouts/hot-category-grid";
 import { annoncements } from "@/lib/externalData";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Горячие предложения | booking.kz",
+};
 
 export default function Home() {
   const forSell = annoncements
