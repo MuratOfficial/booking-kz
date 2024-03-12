@@ -39,8 +39,8 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { ScrollBar } from "@/components/ui/scroll-area";
-import { Map } from "@pbe/react-yandex-maps";
+import YandexMap from "./yandex-map";
+import ImageUpload from "@/components/uploaders/image-upload";
 
 const FormSchema = z.object({
   serviceType: z.string({ required_error: "Выберите вид обьявления" }),
@@ -75,6 +75,7 @@ const FormSchema = z.object({
   additionalFilter: z
     .array(z.object({ value: z.string().optional() }))
     .optional(),
+  images: z.object({ url: z.string() }).array(),
 });
 
 function NewAnnoncementForm() {
@@ -97,6 +98,7 @@ function NewAnnoncementForm() {
 
       comeIn: "После 14:00",
       comeOut: "До 12:00",
+      images: [],
     },
   });
 
@@ -634,9 +636,30 @@ function NewAnnoncementForm() {
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 pt-4 pb-4">
             <div className="flex flex-row items-center">
-              <button className="rounded-xl aspect-square  h-36 bg-blue-400 flex flex-col justify-center items-center">
-                <ImagePlus className="w-6 stroke-white" />
-              </button>
+              <FormField
+                control={form.control}
+                name="images"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value.map((image) => image.url)}
+                        onChange={(url) =>
+                          field.onChange([...field.value, { url }])
+                        }
+                        onRemove={(url) =>
+                          field.onChange([
+                            ...field.value.filter(
+                              (current) => current.url !== url
+                            ),
+                          ])
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <p className="text-slate-400 text-xs font-medium flex flex-row gap-x-1 items-center ">
               <Info className="w-3" />
@@ -1959,17 +1982,12 @@ function NewAnnoncementForm() {
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">
             <p className="text-base font-semibold">Расположение на карте</p>
-            <div>
-              <Map
-                className="w-full h-full"
-                width={640}
-                height={480}
-                defaultState={{ center: [55.75, 37.57], zoom: 9 }}
-              />
-            </div>
+            <YandexMap />
           </div>
 
-          <Button type="submit">Submit</Button>
+          <Button type="submit" className="bg-blue-500 rounded-xl">
+            Разместить обьявление
+          </Button>
         </form>
       </Form>
     </div>

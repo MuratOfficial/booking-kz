@@ -10,6 +10,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { CldImage } from "next-cloudinary";
 import {
   Tooltip,
   TooltipContent,
@@ -50,6 +51,8 @@ function CarouselWithThumbs() {
     [api, emblaThumbsApi]
   );
 
+  const [fetched, setFetched] = React.useState(false);
+
   const onSelect = React.useCallback(() => {
     if (!api || !emblaThumbsApi) return;
     setCurrent(api.selectedScrollSnap());
@@ -85,15 +88,48 @@ function CarouselWithThumbs() {
         <CarouselContent>
           {images.map((img, index) => (
             <CarouselItem key={index}>
-              <Image
-                src={img}
-                alt={`img+${index}`}
-                width={1400}
-                height={1000}
-                priority
-                className=" object-cover rounded-xl aspect-[8/5] w-full  cursor-pointer "
-                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
-              />
+              {fetched ? (
+                <CldImage
+                  width={1400}
+                  height={1000}
+                  priority
+                  className=" object-cover rounded-xl aspect-[8/5] w-full  cursor-pointer "
+                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
+                  src="https://res.cloudinary.com/dhof3tglo/image/upload/v1710220609/vckqkhnl4s6ol8otyq4b.jpg"
+                  sizes="100vw"
+                  overlays={[
+                    {
+                      position: {
+                        x: "80%",
+                        y: "80%",
+                      },
+                      text: {
+                        color: "slate",
+                        fontFamily: "Source Sans Pro",
+                        fontSize: 80,
+                        fontWeight: "black",
+                        text: "booking.kz",
+                      },
+                    },
+                  ]}
+                  alt={`img+${index}`}
+                />
+              ) : (
+                <div className="relative">
+                  <Image
+                    src={img}
+                    alt={`img+${index}`}
+                    width={1400}
+                    height={1000}
+                    priority
+                    className=" object-cover rounded-xl aspect-[8/5] w-full  cursor-pointer "
+                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
+                  />
+                  <p className="font-bold text-3xl opacity-60 right-2 bottom-2 absolute">
+                    booking.kz
+                  </p>
+                </div>
+              )}
             </CarouselItem>
           ))}
         </CarouselContent>
