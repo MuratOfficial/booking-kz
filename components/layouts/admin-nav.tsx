@@ -30,7 +30,7 @@ function AdminNav() {
     <nav className="w-full bg-slate-200 px-4 flex flex-row justify-between items-center sticky top-0 z-40">
       <div className="flex flex-row items-center gap-x-4 ">
         <Link
-          href="/"
+          href="/admin"
           className="flex flex-row items-center gap-2 text-blue-500"
         >
           <svg
@@ -117,45 +117,13 @@ function AdminNav() {
               </Avatar>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 text-slate-900 font-semibold">
+          <DropdownMenuContent className="w-56 text-slate-700 font-semibold bg-slate-200">
             <DropdownMenuLabel className="text-base">User1</DropdownMenuLabel>
-            <DropdownMenuItem className="font-semibold py-0 pointer-events-none ">
-              ID:{" "}
-              <span className="text-slate-600 ml-1 font-normal">lkkg1122</span>
+            <DropdownMenuItem className="font-normal text-slate-600 py-0 pointer-events-none ">
+              Администратор
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem
-                className={cn(
-                  "cursor-pointer",
-                  pathname.startsWith("/cabinet/profile/billing") &&
-                    "text-blue-500"
-                )}
-                onClick={() => router.push("/cabinet/profile/billing")}
-              >
-                <CreditCard className="mr-2 h-4 w-4" />
-                <span>Счет и Платежи</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-slate-600 pointer-events-none">
-                <span className="font-normal">Баланс:</span>
-                <span className="text-yellow-400 font-semibold ml-2">
-                  18556 ₸
-                </span>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                className={cn(
-                  "cursor-pointer",
-                  pathname.startsWith("/cabinet/profile/notifications") &&
-                    "text-blue-500"
-                )}
-                onClick={() => router.push("/cabinet/profile/notifications")}
-              >
-                <Bell className="mr-2 h-4 w-4" />
-                <span>Оповещения</span>
-              </DropdownMenuItem>
               <DropdownMenuItem
                 className={cn(
                   "cursor-pointer",
