@@ -26,7 +26,7 @@ import {
   CarouselItem,
 } from "../ui/carousel";
 import { Graphics } from "../layouts/graphics";
-import { Annoncement } from "@/app/cabinet/annoncements/page";
+import { Annoncement } from "@/app/(router)/cabinet/annoncements/page";
 import { Skeleton } from "../ui/skeleton";
 
 interface AnnoncementPreviewCardProps {

@@ -1,4 +1,4 @@
-import { Annoncement } from "@/app/cabinet/annoncements/page";
+import { Annoncement } from "@/app/(router)/cabinet/annoncements/page";
 
 export const paymentHistory = [
   {

@@ -9,29 +9,8 @@ import {
   CarouselItem,
 } from "../ui/carousel";
 import { Separator } from "../ui/separator";
-import { Annoncement } from "@/app/cabinet/annoncements/page";
-import {
-  ArrowUpFromDot,
-  ClipboardList,
-  ClipboardPen,
-  Copy,
-  ExternalLink,
-  Eye,
-  Flame,
-  HeartCrack,
-  MapPin,
-  MessageCircle,
-  Share2,
-  Trash2,
-  UserRoundCheck,
-  Zap,
-} from "lucide-react";
-import Link from "next/link";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../ui/hover-card";
+import { Annoncement } from "@/app/(router)/cabinet/annoncements/page";
+import { Eye, MapPin, UserRoundCheck, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface AnnoncementListCardProps {

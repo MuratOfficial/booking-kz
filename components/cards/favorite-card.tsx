@@ -8,8 +8,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "../ui/carousel";
-import { Separator } from "../ui/separator";
-import { Annoncement } from "@/app/cabinet/annoncements/page";
+import { Annoncement } from "@/app/(router)/cabinet/annoncements/page";
 import {
   ArrowUpFromDot,
   ClipboardList,
