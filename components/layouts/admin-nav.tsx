@@ -4,39 +4,8 @@ import React from "react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-import { Separator } from "../ui/separator";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import {
-  Cloud,
-  CreditCard,
-  Keyboard,
-  LifeBuoy,
-  LogOut,
-  Mail,
-  MessageSquare,
-  Plus,
-  PlusCircle,
-  Settings,
-  User,
-  UserPlus,
-  Users,
-  Bed,
-  BedDouble,
-  Building2,
-  Cuboid,
-  DoorOpen,
-  Factory,
-  Fence,
-  Home,
-  Hotel,
-  LandPlot,
-  ParkingSquare,
-  Store,
-  TentTree,
-  Warehouse,
-  Bell,
-} from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { CreditCard, LogOut, Settings, Bell } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,17 +23,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 function AdminNav() {
-  const [isOpenPopover1, setOpenPopover1] = React.useState(false);
-  const [isOpenPopover2, setOpenPopover2] = React.useState(false);
-  const [isOpenPopover3, setOpenPopover3] = React.useState(false);
-  // const [isOpenPopover4, setOpenPopover4] = React.useState(false);
-  const [isOpenPopover5, setOpenPopover5] = React.useState(false);
-  const [isOpenPopover6, setOpenPopover6] = React.useState(false);
-
   const pathname = usePathname();
   const router = useRouter();
-
-  const searchParams = useSearchParams();
 
   return (
     <nav className="w-full bg-slate-200 px-4 flex flex-row justify-between items-center sticky top-0 z-40">
