@@ -1,12 +1,12 @@
 "use client";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
 interface SideNavAdminProps {
   links: {
-    path: string;
+    path?: string;
     title: string;
     icon: React.JSX.Element | string;
     color?: string;
@@ -17,6 +17,16 @@ interface SideNavAdminProps {
 
 function SideNavAdmin({ links }: SideNavAdminProps) {
   const pathname = usePathname();
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  function resetFilter(param: string) {
+    const params = new URLSearchParams(searchParams);
+    params.set("filter", param);
+
+    replace(`${pathname}?${params.toString()}`);
+  }
 
   return (
     <div className=" py-2 w-[200px] h-screen ">
@@ -24,70 +34,73 @@ function SideNavAdmin({ links }: SideNavAdminProps) {
         {links
           .filter((el) => !el.color && !el?.isButton)
           .map((link, ind) => (
-            <Link
-              href={link.path}
+            <span
               key={ind}
+              onClick={() => resetFilter(link.title)}
               className={cn(
-                "hover:text-blue-500 flex flex-row group items-center justify-between transition delay-100 duration-200",
-                pathname.startsWith(link.path) && "text-blue-500"
+                "hover:text-blue-500 flex cursor-pointer flex-row group items-center justify-between transition delay-100 duration-200",
+                (searchParams.has("filter", link.title) && "text-blue-500") ||
+                  (link.title === "Все" && "text-blue-500")
               )}
             >
               {link.title}{" "}
               <span
                 className={cn(
-                  "w-4 text-[10px] text-transparent group-hover:text-blue-500 transition delay-100 duration-200 uppercase",
-                  pathname.startsWith(link.path) && "text-blue-500   "
+                  "w-4 text-[10px] cursor-pointer text-transparent group-hover:text-blue-500 transition delay-100 duration-200 uppercase",
+                  (searchParams.has("filter", link.title) && "text-blue-500") ||
+                    (link.title === "Все" && "text-blue-500")
                 )}
               >
                 {link.icon}
               </span>
-            </Link>
+            </span>
           ))}
         {links
           .filter((el) => el.color && !el?.isButton)
           .map((link, ind) => (
-            <Link
-              href={link.path}
+            <span
+              onClick={() => resetFilter(link.title)}
               key={ind}
               className={cn(
                 link.colorHover,
-                " flex flex-row group items-center justify-between transition delay-100 duration-200",
-                pathname.startsWith(link.path) && link.color
+                " flex flex-row group cursor-pointer items-center justify-between transition delay-100 duration-200",
+                searchParams.has("filter", link.title) && link.color
               )}
             >
               {link.title}{" "}
               <span
                 className={cn(
                   link.colorHover,
-                  "w-4 text-[10px] text-transparent transition delay-100 duration-200 uppercase",
-                  pathname.startsWith(link.path) && link.color
+                  "w-4 text-[10px] cursor-pointer text-transparent transition delay-100 duration-200 uppercase",
+                  searchParams.has("filter", link.title) && link.color
                 )}
               >
                 {link.icon}
               </span>
-            </Link>
+            </span>
           ))}
         {links
           .filter((el) => el?.isButton)
           .map((link, ind) => (
-            <Link
-              href={link.path}
+            <button
+              onClick={() => router.push(link?.path || pathname)}
               key={ind}
               className={cn(
-                "hover:text-blue-500 text-blue-400 flex flex-row group items-center justify-between transition delay-100 duration-200",
-                pathname.startsWith(link.path) && "text-blue-500"
+                "hover:text-blue-500  text-blue-400 flex flex-row group items-center justify-between transition delay-100 duration-200",
+                pathname.startsWith(link?.path || pathname) && "text-blue-500"
               )}
             >
               {link.title}{" "}
               <span
                 className={cn(
-                  "w-4 text-[10px] text-transparent group-hover:text-blue-400 transition delay-100 duration-200 uppercase",
-                  pathname.startsWith(link.path) && "text-blue-500   "
+                  "w-4 text-[10px]  text-transparent group-hover:text-blue-400 transition delay-100 duration-200 uppercase",
+                  pathname.startsWith(link?.path || pathname) &&
+                    "text-blue-500   "
                 )}
               >
                 {link.icon}
               </span>
-            </Link>
+            </button>
           ))}
       </div>
     </div>

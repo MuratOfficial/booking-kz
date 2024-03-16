@@ -82,9 +82,9 @@ function AdminNav() {
           className={cn(
             "font-medium flex mt-1 cursor-pointer flex-row text-[15px] items-center gap-1 text-slate-500  transition delay-150 duration-500 py-2 px-2 hover:text-blue-500 hover: border-b-2 border-transparent",
 
-            pathname.startsWith("/admin/chats") && "text-blue-500 "
+            pathname.startsWith("/admin/users") && "text-blue-500 "
           )}
-          href="/admin/chats"
+          href="/admin/users"
         >
           Пользователи
         </Link>

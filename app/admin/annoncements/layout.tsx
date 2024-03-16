@@ -74,7 +74,7 @@ export default function AnnoncementsAdminLayout({
       colorHover: "hover:text-sky-500 group-hover:text-sky-500",
     },
     {
-      path: "/admin/annoncements/",
+      path: "/admin/annoncements/new",
       title: "Добавить",
       icon: <Plus size={17} />,
       isButton: true,
