@@ -1,4 +1,4 @@
-import { Coins, Database, Image, TableProperties } from "lucide-react";
+import { Coins, Database, Image, Images, TableProperties } from "lucide-react";
 import React from "react";
 
 function SystemStats() {
@@ -98,7 +98,7 @@ function SystemStats() {
             Cloudinary
           </p>
           <div className="w-full grid grid-cols-8 items-center gap-x-2">
-            <Image className="w-5" />
+            <Images className="w-5" />
             <div className="col-span-4 h-2 rounded-full bg-slate-300 ">
               <div
                 style={{ width: `90%` }}

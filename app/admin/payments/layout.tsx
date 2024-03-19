@@ -11,6 +11,7 @@ import {
   WalletCards,
   Zap,
 } from "lucide-react";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: {
@@ -50,7 +51,9 @@ export default function PaymentsAdminLayout({
 
   return (
     <div className="flex flex-row w-full h-full gap-2">
-      <SideNavAdmin links={annoncementAdminRoutes} />
+      <Suspense>
+        <SideNavAdmin links={annoncementAdminRoutes} />
+      </Suspense>
 
       {children}
     </div>

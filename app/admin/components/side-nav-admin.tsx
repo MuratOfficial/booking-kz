@@ -29,7 +29,7 @@ function SideNavAdmin({ links }: SideNavAdminProps) {
   }
 
   return (
-    <div className=" py-2 w-[200px] h-screen ">
+    <div className=" py-2 w-1/5 h-screen ">
       <div className="w-full flex flex-col gap-2 sticky top-[11%] bg-slate-200 rounded-r-xl px-4 py-3 text-base font-medium text-slate-600">
         {links
           .filter((el) => !el.color && !el?.isButton)

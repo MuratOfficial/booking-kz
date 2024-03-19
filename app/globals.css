@@ -6,3 +6,16 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   display: none;
 }
+
+:root,
+body,
+html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body {
+  overflow-y: hidden;
+}
