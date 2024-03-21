@@ -90,7 +90,7 @@ export default async function CabinetLayout({ children }: CabinetLayoutProps) {
 
   return (
     <>
-      <div className=" px-24 py-4 ">
+      <div className=" px-8 py-4 ">
         <div className="flex flex-col gap-y-4">
           {/* <SidebarNav items={sidebarNavItems} /> */}
 

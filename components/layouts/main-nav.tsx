@@ -17,7 +17,6 @@ import {
   Plus,
   PlusCircle,
   Settings,
-  User,
   UserPlus,
   Users,
   Bed,
@@ -35,6 +34,9 @@ import {
   TentTree,
   Warehouse,
   Bell,
+  Dot,
+  Circle,
+  BellDot,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
@@ -52,12 +54,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import { signOut } from "next-auth/react";
+import { User } from "@prisma/client";
 
-function MainNav() {
+interface MainNavProps {
+  userData: User | null;
+}
+
+function MainNav({ userData }: MainNavProps) {
   const [isOpenPopover1, setOpenPopover1] = React.useState(false);
   const [isOpenPopover2, setOpenPopover2] = React.useState(false);
   const [isOpenPopover3, setOpenPopover3] = React.useState(false);
-  // const [isOpenPopover4, setOpenPopover4] = React.useState(false);
+  const [isOpenPopover4, setOpenPopover4] = React.useState(false);
   const [isOpenPopover5, setOpenPopover5] = React.useState(false);
   const [isOpenPopover6, setOpenPopover6] = React.useState(false);
 
@@ -165,8 +173,8 @@ function MainNav() {
   ];
 
   return (
-    <nav className="w-full bg-slate-900 px-4 flex flex-row justify-between items-center sticky top-0 z-40">
-      <div className="flex flex-row items-center gap-x-4 ">
+    <nav className="w-full bg-slate-900 px-4 grid grid-cols-8 items-center sticky top-0 z-40">
+      <div className="flex col-span-3 flex-row items-center gap-x-4 ">
         <Link href="/" className=" -mt-1">
           <Image
             src="/etazhi.png"
@@ -283,7 +291,7 @@ function MainNav() {
           </PopoverContent>
         </Popover>
       </div>
-      <div className="flex flex-row items-center gap-x-4 ">
+      <div className="flex col-span-2 flex-row items-center gap-x-4 justify-center ">
         <Link
           href="/cabinet/annoncements/new"
           className="font-semibold flex flex-row items-center gap-x-1 h-full bg-blue-500 rounded-xl text-neutral-50 text-sm transition delay-150 duration-500 py-3 px-4 hover:text-blue-500 hover:bg-neutral-50"
@@ -305,8 +313,23 @@ function MainNav() {
           Разместить обьявление
         </Link>
       </div>
-      <div className="flex flex-row items-center  gap-x-3">
-        <Popover open={isOpenPopover6}>
+      <div className="flex col-span-3 flex-row items-center  gap-x-2 justify-end">
+        {userData && (
+          <>
+            <Link
+              href="/cabinet/profile/billing"
+              className="text-slate-500 text-sm"
+            >
+              <span className="font-medium">Баланс:</span>
+              <span className="text-yellow-400 font-semibold ml-2">
+                {userData?.totalBalance || "0"} ед.
+              </span>
+            </Link>
+            <Separator orientation="vertical" className="h-8 bg-slate-700" />
+          </>
+        )}
+
+        <Popover open={isOpenPopover6 && !userData}>
           <PopoverTrigger
             asChild
             onMouseOver={() => setOpenPopover6(true)}
@@ -350,7 +373,8 @@ function MainNav() {
           </PopoverContent>
         </Popover>
         <Separator orientation="vertical" className="h-8 bg-slate-700" />
-        <Popover open={isOpenPopover3}>
+
+        <Popover open={isOpenPopover3 && !userData}>
           <PopoverTrigger
             asChild
             onMouseOver={() => setOpenPopover3(true)}
@@ -392,34 +416,51 @@ function MainNav() {
           </PopoverContent>
         </Popover>
 
-        {/* <Separator orientation="vertical" className="h-8 bg-slate-700" />
-        <Popover open={isOpenPopover4}>
+        <Separator orientation="vertical" className="h-8 bg-slate-700" />
+        <Popover open={isOpenPopover4 && !userData}>
           <PopoverTrigger
             asChild
             onMouseOver={() => setOpenPopover4(true)}
-            onClick={() => router.push("/cabinet/notifications")}
+            onClick={() => router.push("/cabinet/profile/notifications")}
           >
             <span
               className={cn(
-                "font-semibold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
-                pathname.startsWith("/cabinet/notifications") &&
+                "font-semibold relative flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
+                pathname.startsWith("/cabinet/profile/notifications") &&
                   "border-b-blue-500 text-blue-500"
               )}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                />
-              </svg>
+              {userData?.notifications.find((el) => el.isOpened === false) ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-5 h-5 text-blue-500 "
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+                  />
+                </svg>
+              )}
             </span>
           </PopoverTrigger>
           <PopoverContent
@@ -433,10 +474,10 @@ function MainNav() {
               <span className="font-bold text-blue-500">Оповещения</span>
             </p>
           </PopoverContent>
-        </Popover> */}
+        </Popover>
 
         <Separator orientation="vertical" className="h-8 bg-slate-700" />
-        <Popover open={isOpenPopover5}>
+        <Popover open={isOpenPopover5 && !userData}>
           <PopoverTrigger
             asChild
             onMouseOver={() => setOpenPopover5(true)}
@@ -479,94 +520,128 @@ function MainNav() {
         </Popover>
 
         <Separator orientation="vertical" className="h-8 bg-slate-700" />
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            asChild
-            className="data-[state=open]:text-blue-500 data-[state=open]:border-b-blue-500"
-          >
-            <button
-              className={cn(
-                "font-semibold outline-none flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
-                pathname.startsWith("/cabinet/profile") &&
-                  "border-b-blue-500 text-blue-500"
-              )}
+        {userData !== null ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              asChild
+              className="data-[state=open]:text-blue-500 data-[state=open]:border-b-blue-500"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                />
-              </svg>
-              Мой кабинет
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 text-slate-900 font-semibold">
-            <DropdownMenuLabel className="text-base">User1</DropdownMenuLabel>
-            <DropdownMenuItem className="font-semibold py-0 pointer-events-none ">
-              ID:{" "}
-              <span className="text-slate-600 ml-1 font-normal">lkkg1122</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem
+              <button
                 className={cn(
-                  "cursor-pointer",
-                  pathname.startsWith("/cabinet/profile/billing") &&
-                    "text-blue-500"
+                  "font-semibold outline-none flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
+                  pathname.startsWith("/cabinet/profile") &&
+                    "border-b-blue-500 text-blue-500"
                 )}
-                onClick={() => router.push("/cabinet/profile/billing")}
               >
-                <CreditCard className="mr-2 h-4 w-4" />
-                <span>Счет и Платежи</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-slate-600 pointer-events-none">
-                <span className="font-normal">Баланс:</span>
-                <span className="text-yellow-400 font-semibold ml-2">
-                  18556 ₸
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                  />
+                </svg>
+                Мой кабинет
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="min-w-56 text-slate-900 font-semibold mr-2">
+              <DropdownMenuLabel className="text-base">
+                {userData?.name || userData?.username}
+              </DropdownMenuLabel>
+              <DropdownMenuItem className="font-semibold py-0 pointer-events-none ">
+                ID:{" "}
+                <span className="text-slate-600 ml-1 font-normal">
+                  {userData.id}
                 </span>
               </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                className={cn(
-                  "cursor-pointer",
-                  pathname.startsWith("/cabinet/profile/notifications") &&
-                    "text-blue-500"
-                )}
-                onClick={() => router.push("/cabinet/profile/notifications")}
-              >
-                <Bell className="mr-2 h-4 w-4" />
-                <span>Оповещения</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className={cn(
-                  "cursor-pointer",
-                  pathname.startsWith("/cabinet/profile/settings") &&
-                    "text-blue-500"
-                )}
-                onClick={() => router.push("/cabinet/profile/settings")}
-              >
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Настройки</span>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  className={cn(
+                    "cursor-pointer",
+                    pathname.startsWith("/cabinet/profile/billing") &&
+                      "text-blue-500"
+                  )}
+                  onClick={() => router.push("/cabinet/profile/billing")}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  <span>Счет и Платежи</span>
+                </DropdownMenuItem>
+                {/* <DropdownMenuItem className="text-slate-600 pointer-events-none">
+                  <span className="font-normal">Баланс:</span>
+                  <span className="text-yellow-400 font-semibold ml-2">
+                    {userData?.totalBalance || "0"} ед.
+                  </span>
+                </DropdownMenuItem> */}
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                {/* <DropdownMenuItem
+                  className={cn(
+                    "cursor-pointer",
+                    pathname.startsWith("/cabinet/profile/notifications") &&
+                      "text-blue-500"
+                  )}
+                  onClick={() => router.push("/cabinet/profile/notifications")}
+                >
+                  <Bell className="mr-2 h-4 w-4" />
+                  <span>Оповещения</span>
+                </DropdownMenuItem> */}
+                <DropdownMenuItem
+                  className={cn(
+                    "cursor-pointer",
+                    pathname.startsWith("/cabinet/profile/settings") &&
+                      "text-blue-500"
+                  )}
+                  onClick={() => router.push("/cabinet/profile/settings")}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Настройки</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
 
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Выйти</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => signOut()}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Выйти</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Link
+            href="/auth"
+            className={cn(
+              "font-semibold outline-none flex flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
+              pathname.startsWith("/cabinet/profile") &&
+                "border-b-blue-500 text-blue-500"
+            )}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+              />
+            </svg>
+            Мой кабинет
+          </Link>
+        )}
       </div>
     </nav>
   );

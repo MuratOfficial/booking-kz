@@ -17,19 +17,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
+import { User } from "@prisma/client";
+import { useParams, useRouter } from "next/navigation";
+import React from "react";
+import axios from "axios";
+import { Loader2 } from "lucide-react";
 
-const FormSchema = z.object({
+const settingsFormSchema = z.object({
   username: z.string().min(2, {
     message: "Логин должен быть не меньше 2 значении",
   }),
-  phone: z
-    .number()
-    .min(10, {
-      message: "Номер должен быть 10 значении",
-    })
-    .max(10, {
-      message: "Номер должен быть 10 значении",
-    }),
+  name: z.string().optional(),
+  phone: z.string().min(10, {
+    message: "Номер должен быть 10 значении",
+  }),
   email: z
     .string()
     .min(2, {
@@ -38,26 +39,51 @@ const FormSchema = z.object({
     .email("Эта почта не валидна"),
 });
 
-export function SettingsForm() {
+type SettingsFormValues = z.infer<typeof settingsFormSchema>;
+
+interface SettingsFormProps {
+  initialData: User | null;
+}
+
+export function SettingsForm({ initialData }: SettingsFormProps) {
   const { toast } = useToast();
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<SettingsFormValues>({
+    resolver: zodResolver(settingsFormSchema),
     defaultValues: {
-      username: "",
+      username: initialData?.username,
+      name: initialData?.name || "",
+      phone: initialData?.phone || "",
+      email: initialData?.email,
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "Данные сохранены",
-    });
+  const router = useRouter();
+  const params = useParams();
+  const [loading, setLoading] = React.useState(false);
+
+  async function onSubmit(formData: SettingsFormValues) {
+    try {
+      setLoading(true);
+      await axios.patch(`/api/cabinet/profile/settings`, formData);
+      setTimeout(() => {
+        router.refresh();
+        toast({
+          title: "Данные успешно изменены",
+        });
+      }, 1000);
+    } catch (error: any) {
+      toast({ description: "Что-то пошло не так...", variant: "destructive" });
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full grid grid-cols-2 gap-6"
+        className="w-full grid grid-cols-3 gap-6"
       >
         <FormField
           control={form.control}
@@ -75,6 +101,23 @@ export function SettingsForm() {
               <FormDescription>
                 Это значение будет отображаться для других пользователей
               </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="text-slate-800">
+              <FormLabel>Ваше имя</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Шоқан Уалиханов"
+                  className="rounded-xl placeholder:text-slate-300"
+                  {...field}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -97,11 +140,10 @@ export function SettingsForm() {
                   alt="kz"
                   className="w-8 rounded-sm mr-1"
                 />
-                +7
                 <FormControl>
                   <Input
-                    placeholder="(777) 7777777"
-                    className="rounded-lg placeholder:text-slate-300 w-28 px-1.5 placeholder:text-sm h-8 "
+                    placeholder="+7 (777) 7777777"
+                    className="rounded-lg placeholder:text-slate-300 w-36 px-1.5 placeholder:text-sm h-8 "
                     {...field}
                   />
                 </FormControl>
@@ -131,7 +173,12 @@ export function SettingsForm() {
           )}
         />
 
-        <Button type="submit" className="rounded-2xl">
+        <Button
+          className="rounded-xl bg-slate-800  mt-2 col-span-2"
+          type="submit"
+          disabled={loading}
+        >
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Сохранить изменения
         </Button>
       </form>

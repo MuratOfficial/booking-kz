@@ -2,7 +2,12 @@ import { Coins, ExternalLink, Info, WalletCards } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-function Points() {
+interface PointsProps {
+  total: string;
+  bonus: string;
+}
+
+function Points({ total, bonus }: PointsProps) {
   return (
     <div className="w-full rounded-2xl  bg-white gap-4  p-4 grid grid-cols-2">
       <div className="h-fit text-slate-800 flex flex-col gap-4 border border-slate-300 shadow-md rounded-xl p-6 items-start ">
@@ -11,7 +16,7 @@ function Points() {
           <WalletCards size={22} className="stroke-slate-500" />
         </div>
 
-        <p className="text-3xl font-bold text-slate-900">988 ед.</p>
+        <p className="text-3xl font-bold text-slate-900">{total} ед.</p>
       </div>
       <div className="h-fit text-slate-800 flex flex-col gap-4 border border-slate-300 shadow-md rounded-xl p-6 items-start ">
         <div className="w-full flex flex-row justify-between ">
@@ -19,10 +24,10 @@ function Points() {
           <Coins size={22} className="stroke-slate-500" />
         </div>
         <div className="w-full flex flex-row justify-between ">
-          <p className="text-3xl font-bold text-slate-900">420 б.</p>
-          <p className="text-xs text-red-400 w-32 text-right font-semibold">
+          <p className="text-3xl font-bold text-slate-900">{bonus} б.</p>
+          {/* <p className="text-xs text-red-400 w-32 text-right font-semibold">
             Истечение бонусов через 24 дн.
-          </p>
+          </p> */}
         </div>
       </div>
       <div className="flex flex-row gap-x-1 items-center group">

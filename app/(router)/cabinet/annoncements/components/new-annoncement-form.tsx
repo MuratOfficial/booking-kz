@@ -3,6 +3,8 @@ import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+import { format } from "date-fns";
+import { ru } from "date-fns/locale";
 
 import {
   Form,
@@ -10,15 +12,20 @@ import {
   FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import {
+  CalendarFold,
+  CalendarIcon,
   Check,
   ChevronsUpDown,
   ImagePlus,
   Info,
+  Loader2,
+  Puzzle,
   Timer,
   TimerReset,
 } from "lucide-react";
@@ -39,10 +46,21 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import YandexMap from "./yandex-map";
+import YandexMap from "@/app/(router)/cabinet/annoncements/components/yandex-map";
 import ImageUpload from "@/components/uploaders/image-upload";
+import { Annoncement, Building, User } from "@prisma/client";
+import { Switch } from "@/components/ui/switch";
+import { Calendar } from "@/components/ui/calendar";
+import axios from "axios";
+import { useParams, useRouter } from "next/navigation";
 
-const FormSchema = z.object({
+const annoncementFormSchema = z.object({
+  phone: z
+    .string()
+    .refine((data) => /^\+?\d+$/.test(data), {
+      message: "Укажите правильный номер телефона",
+    })
+    .optional(),
   serviceType: z.string({ required_error: "Выберите вид обьявления" }),
   categoryType: z.string({ required_error: "Выберите тип недвижимости" }),
   serviceTypeExt: z
@@ -64,7 +82,7 @@ const FormSchema = z.object({
       message: "Год Должен быть меньше текущего",
     })
     .optional(),
-  price: z.coerce.number({ required_error: "Укажите цену" }),
+  price: z.string({ required_error: "Укажите цену" }),
   priceNego: z.boolean().default(false),
   description: z
     .string()
@@ -72,33 +90,69 @@ const FormSchema = z.object({
     .max(2000, "Не Должно превышать 2000 знаков"),
   comeIn: z.string().optional(),
   comeOut: z.string().optional(),
-  additionalFilter: z
-    .array(z.object({ value: z.string().optional() }))
+  additionalFilters: z
+    .array(z.object({ value: z.string().nullable().optional() }).optional())
+    .nullable()
     .optional(),
   images: z.object({ url: z.string() }).array(),
+  cityOrDistrict: z.string({ required_error: "Укажите город" }),
+  cityOrTown: z.string().optional(),
+  townOrStreet: z.string().optional(),
+  buildingId: z.string().nullable().optional(),
+  userId: z
+    .string({ required_error: "Пользователь не выбран" })
+    .nullable()
+    .optional(),
 });
 
-function NewAnnoncementForm() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+type AnnoncementFormValues = z.infer<typeof annoncementFormSchema>;
+
+interface AnnoncementFormProps {
+  initialData: Annoncement | null;
+  user: User | null;
+  buildings: Building[];
+}
+
+function AnnoncementForm({
+  initialData,
+  user,
+  buildings,
+}: AnnoncementFormProps) {
+  const currentDataAndTime = new Date();
+  let add30days: Date = new Date();
+  add30days.setDate(add30days.getDate() + 30);
+
+  const form = useForm<AnnoncementFormValues>({
+    resolver: zodResolver(annoncementFormSchema),
     defaultValues: {
-      serviceType: "",
-      categoryType: "",
-      serviceTypeExt: "",
-      roomNumber: 1,
-      floor: 1,
-      floorFrom: 1,
-      areaSq: 0,
-      repairType: "",
-      roofHeight: "",
+      userId: initialData?.userId || user?.id,
+      serviceType: initialData?.serviceType || "",
+      categoryType: initialData?.categoryType || "",
+      serviceTypeExt: initialData?.serviceTypeExt || "",
+      cityOrTown: initialData?.cityOrTown || "",
+      phone: initialData?.phone || user?.phone || "",
+      roomNumber: initialData?.roomNumber || 1,
+      floor: initialData?.floor || 1,
+      floorFrom: initialData?.floorFrom || 1,
+      areaSq: initialData?.areaSq || 0,
+      repairType: initialData?.repairType || "",
+      roofHeight: initialData?.roofHeight || "",
+      cityOrDistrict: initialData?.cityOrDistrict || "",
+      buildingId: initialData?.buildingId || null,
+      additionalFilters:
+        initialData?.additionalFilters?.map((filter, index) => ({
+          value: filter?.value || "",
+        })) || null,
 
-      yearBuild: 2013,
-      price: 0,
-      priceNego: false,
+      yearBuild: initialData?.yearBuild || 2013,
+      price: initialData?.price || "0",
+      priceNego: initialData?.priceNego || false,
 
-      comeIn: "После 14:00",
-      comeOut: "До 12:00",
-      images: [],
+      comeIn: initialData?.comeIn || "После 14:00",
+      comeOut: initialData?.comeOut || "До 12:00",
+      images: initialData?.images || [],
+      townOrStreet: initialData?.townOrStreet || "",
+      description: initialData?.description || "",
     },
   });
 
@@ -106,22 +160,31 @@ function NewAnnoncementForm() {
   //   name: "additionalFilter",
   //   control: form.control,
   // });
+  const router = useRouter();
+  const params = useParams();
+  const [loading, setLoading] = React.useState(false);
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(formData: AnnoncementFormValues) {
     try {
-      toast({ description: "Успешно создан/обновлен" });
+      setLoading(true);
+      if (initialData) {
+        await axios.patch(
+          `/api/admin/annoncements/${params.annoncementId}`,
+          formData
+        );
+      } else {
+        await axios.post(`/api/admin/annoncements`, formData);
+      }
+      router.refresh();
+      router.push(`/admin/annoncements`);
       toast({
-        title: "You submitted the following values:",
-        description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4 ">
-            <code className="text-white ">{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        ),
+        title: "Данные отправлены успешно",
       });
-      console.log("uspeshno");
     } catch (error: any) {
       toast({ description: "Что-то пошло не так...", variant: "destructive" });
+      console.log(error);
     } finally {
+      setLoading(false);
     }
   }
 
@@ -136,6 +199,89 @@ function NewAnnoncementForm() {
     {
       value: "Аренда",
       label: "Аренда",
+    },
+  ];
+
+  const cities = [
+    {
+      value: "Астана",
+      label: "Астана",
+    },
+    {
+      value: "Алматы",
+      label: "Алматы",
+    },
+    {
+      value: "Шымкент",
+      label: "Шымкент",
+    },
+    {
+      value: "Актюбинская обл.",
+      label: "Актюбинская обл.",
+    },
+    {
+      value: "Алматинская обл.",
+      label: "Алматинская обл.",
+    },
+    {
+      value: "Атырауская обл.",
+      label: "Атырауская обл.",
+    },
+    {
+      value: "Жамбылская обл.",
+      label: "Жамбылская обл.",
+    },
+    {
+      value: "Акмолинская обл.",
+      label: "Акмолинская обл.",
+    },
+    {
+      value: "Восточно-Казахстанская обл.",
+      label: "Восточно-Казахстанская обл.",
+    },
+    {
+      value: "Западно-Казахстанская обл.",
+      label: "Западно-Казахстанская обл.",
+    },
+    {
+      value: "Карагандинская обл.",
+      label: "Карагандинская обл.",
+    },
+    {
+      value: "Костанайская обл.",
+      label: "Костанайская обл.",
+    },
+    {
+      value: "Кызылординская обл.",
+      label: "Кызылординская обл.",
+    },
+    {
+      value: "Мангистауская обл.",
+      label: "Мангистауская обл.",
+    },
+    {
+      value: "Павлодарская обл.",
+      label: "Павлодарская обл.",
+    },
+    {
+      value: "Северо-Казахстанская обл.",
+      label: "Северо-Казахстанская обл.",
+    },
+    {
+      value: "Туркестанская обл.",
+      label: "Туркестанская обл.",
+    },
+    {
+      value: "Абайская обл.",
+      label: "Абайская обл.",
+    },
+    {
+      value: "Жетысуйская обл.",
+      label: "Жетысуйская обл.",
+    },
+    {
+      value: "Улытауская обл.",
+      label: "Улытауская обл.",
     },
   ];
 
@@ -356,9 +502,26 @@ function NewAnnoncementForm() {
     },
   ];
 
+  const phases = [
+    {
+      value: "активно",
+      label: "активно",
+    },
+    {
+      value: "проверка",
+      label: "проверка",
+    },
+    {
+      value: "блокировано",
+      label: "блокировано",
+    },
+  ];
+
   return (
-    <div className="w-full flex flex-col gap-2 text-slate-900">
-      <h1 className="text-2xl font-semibold ml-4">Новое обьявление</h1>
+    <div className="w-full flex flex-col gap-2 text-slate-900 py-4 pl-4 pr-6">
+      <h1 className="text-2xl font-semibold ml-4">
+        {initialData ? `Обьявление ID ${initialData.id}` : "Новое обьявление"}
+      </h1>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -633,8 +796,13 @@ function NewAnnoncementForm() {
                 </>
               )}
             </div>
+            <p className="flex flex-row gap-x-1 items-center text-xs text-slate-400">
+              <Info className="w-3" />
+              Выберите вид и категорию обьявления
+            </p>
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 pt-4 pb-4">
+            <p className="text-base font-semibold">Фотографии</p>
             <div className="flex flex-row items-center">
               <FormField
                 control={form.control}
@@ -661,9 +829,9 @@ function NewAnnoncementForm() {
                 )}
               />
             </div>
-            <p className="text-slate-400 text-xs font-medium flex flex-row gap-x-1 items-center ">
+            <p className="flex flex-row gap-x-1 items-center text-xs text-slate-400">
               <Info className="w-3" />
-              Загрузите изображения для получения большого количества просмотров
+              Загрузите фотографии чтобы получить больше просмотров
             </p>
           </div>
           <div className="w-full flex flex-row items-center justify-between gap-8">
@@ -986,7 +1154,7 @@ function NewAnnoncementForm() {
                   <p className="text-base font-semibold">Описание</p>
                   <FormControl>
                     <Textarea
-                      placeholder="Опишите максимально подробно, это позволит пользователям задавать вам меньше вопросов"
+                      placeholder="Напишите максимально подробно, это позволит пользователям задавать вам меньше вопросов при переговорах"
                       className="resize-none"
                       {...field}
                     />
@@ -997,6 +1165,10 @@ function NewAnnoncementForm() {
             />
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">
+            <p className="flex flex-row gap-x-1 items-center text-xs text-slate-400">
+              <Info className="w-3" />
+              Укажите правила заселения, если таковы имеются
+            </p>
             <p className="text-base font-semibold">Правила заселения</p>
             <div className="flex flex-row gap-2 items-center">
               <p className="text-sm text-slate-600">Время заселения</p>
@@ -1105,15 +1277,16 @@ function NewAnnoncementForm() {
             <div className="grid grid-cols-3 gap-4">
               <FormField
                 control={form.control}
-                name={`additionalFilter.${0}.value`}
+                name={`additionalFilters.${0}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Курение запрещено")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1127,15 +1300,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${1}.value`}
+                name={`additionalFilters.${1}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Курение разрешено")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1149,15 +1323,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${2}.value`}
+                name={`additionalFilters.${2}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Можно с детьми")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1171,15 +1346,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${3}.value`}
+                name={`additionalFilters.${3}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Можно с животными")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1193,15 +1369,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${4}.value`}
+                name={`additionalFilters.${4}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Вечеринки разрешены")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1215,15 +1392,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${3}.value`}
+                name={`additionalFilters.${5}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Взимается залог")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1238,19 +1416,24 @@ function NewAnnoncementForm() {
             </div>
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">
+            <p className="flex flex-row gap-x-1 items-center text-xs text-slate-400">
+              <Info className="w-3" />
+              Отметьте имеющиеся удобства, чтобы привлечь больше просмотров
+            </p>
             <p className="text-base font-semibold">Удобства</p>
             <div className="grid grid-cols-3 gap-4">
               <FormField
                 control={form.control}
-                name={`additionalFilter.${6}.value`}
+                name={`additionalFilters.${6}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Интернет wi-fi")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1264,15 +1447,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${7}.value`}
+                name={`additionalFilters.${7}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Кондиционер")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1286,15 +1470,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${8}.value`}
+                name={`additionalFilters.${8}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Телевизор")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1308,15 +1493,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${9}.value`}
+                name={`additionalFilters.${9}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("SMART ТВ")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1330,15 +1516,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${10}.value`}
+                name={`additionalFilters.${10}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Стиральная машина")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1352,15 +1539,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${11}.value`}
+                name={`additionalFilters.${11}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Микроволновка")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1374,15 +1562,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${12}.value`}
+                name={`additionalFilters.${12}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Электрочайник")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1396,15 +1585,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${13}.value`}
+                name={`additionalFilters.${13}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Посуда и принадлежности")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1418,15 +1608,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${14}.value`}
+                name={`additionalFilters.${14}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Посудомоечная машина")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1440,15 +1631,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${15}.value`}
+                name={`additionalFilters.${15}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Утюг с гладильной доской")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1462,13 +1654,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${16}.value`}
+                name={`additionalFilters.${16}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Халаты") : field.onChange("")
+                          state
+                            ? field.onChange("Халаты")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1482,15 +1677,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${17}.value`}
+                name={`additionalFilters.${17}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Полотенца")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1504,13 +1700,14 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${18}.value`}
+                name={`additionalFilters.${18}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Фен") : field.onChange("")
+                          state ? field.onChange("Фен") : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1522,15 +1719,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${19}.value`}
+                name={`additionalFilters.${19}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Сушилка для белья")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1544,15 +1742,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${20}.value`}
+                name={`additionalFilters.${20}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Балкон, лоджия")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1569,15 +1768,16 @@ function NewAnnoncementForm() {
             <div className="grid grid-cols-3 gap-4">
               <FormField
                 control={form.control}
-                name={`additionalFilter.${21}.value`}
+                name={`additionalFilters.${21}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Парковка")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1591,15 +1791,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${22}.value`}
+                name={`additionalFilters.${22}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Детская площадка")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1613,13 +1814,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${23}.value`}
+                name={`additionalFilters.${23}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Беседка") : field.onChange("")
+                          state
+                            ? field.onChange("Беседка")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1633,15 +1837,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${24}.value`}
+                name={`additionalFilters.${24}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Видеонаблюдение")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1655,15 +1860,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${25}.value`}
+                name={`additionalFilters.${25}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Охранная территория")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1680,13 +1886,16 @@ function NewAnnoncementForm() {
             <div className="grid grid-cols-4 gap-4">
               <FormField
                 control={form.control}
-                name={`additionalFilter.${26}.value`}
+                name={`additionalFilters.${26}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("На море") : field.onChange("")
+                          state
+                            ? field.onChange("На море")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1700,15 +1909,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${27}.value`}
+                name={`additionalFilters.${27}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Частично на море")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1722,15 +1932,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${28}.value`}
+                name={`additionalFilters.${28}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Вид во двор")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1744,15 +1955,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${29}.value`}
+                name={`additionalFilters.${29}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("На город")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1769,15 +1981,16 @@ function NewAnnoncementForm() {
             <div className="grid grid-cols-4 gap-4">
               <FormField
                 control={form.control}
-                name={`additionalFilter.${30}.value`}
+                name={`additionalFilters.${30}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Раздельный")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1791,15 +2004,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${31}.value`}
+                name={`additionalFilters.${31}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Совмещеный")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1813,15 +2027,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${32}.value`}
+                name={`additionalFilters.${32}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("2 санузла и более")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1835,13 +2050,14 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${33}.value`}
+                name={`additionalFilters.${33}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Ванна") : field.onChange("")
+                          state ? field.onChange("Ванна") : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1853,15 +2069,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${34}.value`}
+                name={`additionalFilters.${34}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Душевая перегородка")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1875,13 +2092,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${35}.value`}
+                name={`additionalFilters.${35}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Джакузи") : field.onChange("")
+                          state
+                            ? field.onChange("Джакузи")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1895,13 +2115,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${36}.value`}
+                name={`additionalFilters.${36}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Бойлер") : field.onChange("")
+                          state
+                            ? field.onChange("Бойлер")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1915,15 +2138,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${37}.value`}
+                name={`additionalFilters.${37}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Гигиенический душ")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1940,13 +2164,14 @@ function NewAnnoncementForm() {
             <div className="grid grid-cols-4 gap-4">
               <FormField
                 control={form.control}
-                name={`additionalFilter.${38}.value`}
+                name={`additionalFilters.${38}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Лифт") : field.onChange("")
+                          state ? field.onChange("Лифт") : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1958,15 +2183,16 @@ function NewAnnoncementForm() {
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${39}.value`}
+                name={`additionalFilters.${39}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Доступ для инвалидов")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1980,13 +2206,241 @@ function NewAnnoncementForm() {
               />
             </div>
           </div>
+          <div className="w-full grid grid-cols-3 gap-6 ">
+            <div className="col-span-2 gap-4 grid-cols-2 grid bg-white rounded-xl py-4 px-6">
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-semibold">
+                      Номер телефона*
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className=" placeholder:opacity-50"
+                        placeholder="+ 7 777 777 77 77"
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormDescription className="flex flex-row gap-x-1 items-center text-xs text-slate-400">
+                      <Info className="w-3" />
+                      Номер телефона в формате +7 ХХХ ХХХ ХХ ХХ
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex flex-col gap-2">
+                <p className="text-base font-semibold">Имя пользователя</p>
+                <p className=" font-medium text-slate-600">{user?.username}</p>
+              </div>
+            </div>
+            <div className="w-full flex text-slate-50 flex-col items-center justify-between py-4 px-6 rounded-xl bg-slate-800">
+              <div className="flex flex-col  items-center text-sm">
+                <p className="font-semibold">Дата и время создания</p>
+                <p suppressHydrationWarning>
+                  {initialData?.createdAt.toLocaleDateString() ||
+                    currentDataAndTime.toLocaleDateString()}{" "}
+                  {initialData?.createdAt.toLocaleTimeString() ||
+                    currentDataAndTime.toLocaleTimeString()}
+                </p>
+              </div>
+              <div className="flex flex-col  items-center text-sm">
+                <p className="font-semibold">
+                  Дата и время последнего изменения
+                </p>
+                <p>
+                  {initialData?.updatedAt.toLocaleDateString() || "-"}{" "}
+                  {initialData?.updatedAt.toLocaleTimeString() || "-"}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">
+            <div className="grid grid-cols-4 gap-4">
+              <FormField
+                control={form.control}
+                name="cityOrDistrict"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <p className="text-base font-semibold">Город (Область)</p>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-[220px] justify-between  flex flex-row gap-x-1 items-center",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            cities.find((city) => city.value === field.value)
+                              ?.label
+                          ) : (
+                            <p className="line-clamp-1 text-slate-500">
+                              Выберите город (область)
+                            </p>
+                          )}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-fit p-0 max-h-40">
+                        <Command>
+                          <CommandInput placeholder="Найти..." />
+                          <CommandEmpty>Не найдено.</CommandEmpty>
+                          <CommandGroup>
+                            {cities.map((city) => (
+                              <CommandItem
+                                value={city.label}
+                                key={city.value}
+                                onSelect={() => {
+                                  form.setValue("cityOrDistrict", city.value);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    city.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {city.label}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="cityOrTown"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-semibold">
+                      Город (Район)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className=" placeholder:opacity-50"
+                        placeholder="г. Костанай"
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormDescription className="flex flex-row gap-x-1 items-center text-xs text-slate-400">
+                      <Info className="w-3" />
+                      Укажите обл. центр или же район города
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="townOrStreet"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-semibold">
+                      Улица, мкр., номер дома
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className=" placeholder:opacity-50"
+                        placeholder="16 мкр., 5 дом"
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormDescription className="flex flex-row gap-x-1 items-center text-xs text-slate-400">
+                      <Info className="w-3" />
+                      Укажите улицу или микрорайон, номер дома
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="buildingId"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <p className="text-base font-semibold">Пользователь</p>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            buildings.find(
+                              (building) => building.id === field.value
+                            )?.name
+                          ) : (
+                            <p className="line-clamp-1 text-slate-500">
+                              Выберите ЖК
+                            </p>
+                          )}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[280px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Искать ЖК..." />
+                          <CommandEmpty>Не найдено.</CommandEmpty>
+                          <CommandGroup>
+                            {buildings?.map((building) => (
+                              <CommandItem
+                                value={building.id}
+                                key={building.id}
+                                onSelect={() => {
+                                  form.setValue("buildingId", building.id);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    building.id === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {building.name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">
             <p className="text-base font-semibold">Расположение на карте</p>
             <YandexMap />
           </div>
 
-          <Button type="submit" className="bg-blue-500 rounded-xl">
-            Разместить обьявление
+          <Button
+            className="rounded-xl bg-slate-900  mt-2"
+            type="submit"
+            disabled={loading}
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {initialData ? "Обновить обьявление" : "Создать обьявление"}
           </Button>
         </form>
       </Form>
@@ -1994,4 +2448,4 @@ function NewAnnoncementForm() {
   );
 }
 
-export default NewAnnoncementForm;
+export default AnnoncementForm;

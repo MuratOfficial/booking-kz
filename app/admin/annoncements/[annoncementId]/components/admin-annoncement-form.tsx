@@ -2614,7 +2614,7 @@ function AdminAnnoncementForm({
                 name="buildingId"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <p className="text-base font-semibold">Пользователь</p>
+                    <p className="text-base font-semibold">ЖК</p>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button

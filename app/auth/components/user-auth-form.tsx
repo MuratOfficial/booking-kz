@@ -152,7 +152,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   return (
     <>
       {isRegister ? (
-        <div className=" mx-auto flex max-w-md flex-col justify-center py-6 rounded-xl bg-opacity-80 backdrop-blur-sm   px-6 bg-white">
+        <div className=" mx-auto flex max-w-md flex-col justify-center py-6 rounded-xl bg-opacity-70 backdrop-blur-sm   px-6 bg-white">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
               Регистрация
@@ -297,7 +297,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </div>
         </div>
       ) : (
-        <div className=" mx-auto flex max-w-sm flex-col justify-center space-y-6 py-6 rounded-xl bg-opacity-80 backdrop-blur-sm   px-6 bg-white">
+        <div className=" mx-auto flex max-w-sm flex-col justify-center space-y-6 py-6 rounded-xl bg-opacity-70 backdrop-blur-sm   px-6 bg-white">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
               Войти в систему
@@ -308,7 +308,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </div>
           <div className={cn("grid gap-6", className)} {...props}>
             <form onSubmit={onSubmit}>
-              <div className="grid gap-2">
+              <div className="grid gap-4">
                 <div className="grid gap-1">
                   <Label className="sr-only" htmlFor="email">
                     Email
@@ -323,7 +323,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                     disabled={isLoading}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="rounded-xl"
+                    className="rounded-md h-10"
                   />
                 </div>
                 <div className="grid gap-1">
@@ -340,7 +340,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                       disabled={isLoading}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="rounded-xl w-full"
+                      className="rounded-md w-full h-10"
                     />
                     <button
                       className="focus:outline-none absolute right-3 text-slate-600"

@@ -17,6 +17,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { Loader2 } from "lucide-react";
 
 const FormSchema = z
   .object({
@@ -43,10 +47,25 @@ export function PasswordForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "Пароль изменен",
-    });
+  const router = useRouter();
+  const [loading, setLoading] = React.useState(false);
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      setLoading(true);
+      await axios.patch(`/api/cabinet/profile/settings/password`, data);
+      setTimeout(() => {
+        router.refresh();
+        toast({
+          title: "Пароль изменен успешно",
+        });
+      }, 1000);
+    } catch (error: any) {
+      toast({ description: "Что-то пошло не так...", variant: "destructive" });
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -92,7 +111,8 @@ export function PasswordForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="rounded-2xl">
+        <Button className="rounded-xl " type="submit" disabled={loading}>
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Изменить пароль
         </Button>
       </form>
