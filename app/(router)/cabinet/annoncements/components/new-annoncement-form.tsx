@@ -109,15 +109,10 @@ type AnnoncementFormValues = z.infer<typeof annoncementFormSchema>;
 
 interface AnnoncementFormProps {
   initialData: Annoncement | null;
-  user: User | null;
   buildings: Building[];
 }
 
-function AnnoncementForm({
-  initialData,
-  user,
-  buildings,
-}: AnnoncementFormProps) {
+function AnnoncementForm({ initialData, buildings }: AnnoncementFormProps) {
   const currentDataAndTime = new Date();
   let add30days: Date = new Date();
   add30days.setDate(add30days.getDate() + 30);
@@ -125,12 +120,11 @@ function AnnoncementForm({
   const form = useForm<AnnoncementFormValues>({
     resolver: zodResolver(annoncementFormSchema),
     defaultValues: {
-      userId: initialData?.userId || user?.id,
       serviceType: initialData?.serviceType || "",
       categoryType: initialData?.categoryType || "",
       serviceTypeExt: initialData?.serviceTypeExt || "",
       cityOrTown: initialData?.cityOrTown || "",
-      phone: initialData?.phone || user?.phone || "",
+      phone: initialData?.phone || "",
       roomNumber: initialData?.roomNumber || 1,
       floor: initialData?.floor || 1,
       floorFrom: initialData?.floorFrom || 1,
@@ -169,16 +163,16 @@ function AnnoncementForm({
       setLoading(true);
       if (initialData) {
         await axios.patch(
-          `/api/admin/annoncements/${params.annoncementId}`,
+          `/api/cabinet/profile/annoncements/${params.annoncementId}`,
           formData
         );
       } else {
-        await axios.post(`/api/admin/annoncements`, formData);
+        await axios.post(`/api/cabinet/profile/annoncements`, formData);
       }
       router.refresh();
-      router.push(`/admin/annoncements`);
+      router.push(`/cabinet/annoncements`);
       toast({
-        title: "Данные отправлены успешно",
+        title: "Обьявление опубликовано",
       });
     } catch (error: any) {
       toast({ description: "Что-то пошло не так...", variant: "destructive" });
@@ -2232,10 +2226,6 @@ function AnnoncementForm({
                   </FormItem>
                 )}
               />
-              <div className="flex flex-col gap-2">
-                <p className="text-base font-semibold">Имя пользователя</p>
-                <p className=" font-medium text-slate-600">{user?.username}</p>
-              </div>
             </div>
             <div className="w-full flex text-slate-50 flex-col items-center justify-between py-4 px-6 rounded-xl bg-slate-800">
               <div className="flex flex-col  items-center text-sm">

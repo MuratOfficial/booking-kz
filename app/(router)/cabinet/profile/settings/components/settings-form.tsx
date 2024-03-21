@@ -124,7 +124,7 @@ export function SettingsForm({ initialData }: SettingsFormProps) {
         />
         <div className=" text-sm p-2 rounded-xl bg-slate-100 text-slate-800  flex flex-row items-center justify-center gap-2">
           <p className="font-bold">ID:</p>
-          <p className="font-semibold text-slate-500">ikkg1122</p>
+          <p className="font-semibold text-slate-500">{initialData?.id}</p>
         </div>
         <FormField
           control={form.control}
