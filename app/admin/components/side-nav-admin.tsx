@@ -32,7 +32,33 @@ function SideNavAdmin({ links }: SideNavAdminProps) {
     <div className=" py-2 w-1/5 min-h-screen ">
       <div className="w-full flex flex-col gap-2 sticky top-[11%] bg-slate-200 rounded-r-xl px-4 py-3 text-base font-medium text-slate-600">
         {links
-          .filter((el) => !el.color && !el?.isButton)
+          .filter((el) => !el.color && !el?.isButton && el.title === "Все")
+          .map((link, ind) => (
+            <span
+              key={ind}
+              onClick={() => router.push(link?.path || "/")}
+              className={cn(
+                "hover:text-blue-500 flex cursor-pointer flex-row group items-center justify-between transition delay-100 duration-200",
+                !searchParams.has("filter") &&
+                  link?.path === pathname &&
+                  "text-blue-500"
+              )}
+            >
+              {link.title}{" "}
+              <span
+                className={cn(
+                  "w-4 text-[10px] cursor-pointer text-transparent group-hover:text-blue-500 transition delay-100 duration-200 uppercase",
+                  !searchParams.has("filter") &&
+                    link?.path === pathname &&
+                    "text-blue-500"
+                )}
+              >
+                {link.icon}
+              </span>
+            </span>
+          ))}
+        {links
+          .filter((el) => !el.color && !el?.isButton && el.title !== "Все")
           .map((link, ind) => (
             <span
               key={ind}

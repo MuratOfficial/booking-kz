@@ -9,7 +9,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "@/components/ui/use-toast";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import axios from "axios";
 import {
   ArrowUpDown,
   Circle,
@@ -23,6 +25,7 @@ import {
   Wrench,
   Zap,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export type UserColumn = {
   id: string;
@@ -30,12 +33,10 @@ export type UserColumn = {
   phone: string;
   email: string;
   annoncements: number;
-  status: "active" | "blocked";
-  role: "moderator" | "admin" | "user";
+  status: string;
+  role: string;
   totalBalance: number;
 };
-
-const columnHelper = createColumnHelper<UserColumn>();
 
 export const columns: ColumnDef<UserColumn>[] = [
   {
@@ -171,6 +172,20 @@ export const columns: ColumnDef<UserColumn>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const UserColumn = row.original;
+      const router = useRouter();
+
+      const onDelete = async (id: string) => {
+        try {
+          await axios.delete(`/api/admin/users/${id}`);
+          router.refresh();
+          toast({ description: "Пользователь удален", variant: "default" });
+        } catch (error) {
+          toast({
+            description: "Убедитесь что вы удалили все обьекты пользователя",
+            variant: "destructive",
+          });
+        }
+      };
 
       return (
         <DropdownMenu>
@@ -188,8 +203,14 @@ export const columns: ColumnDef<UserColumn>[] = [
               Скопировать ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Редактировать</DropdownMenuItem>
-            <DropdownMenuItem>Удалить</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push(`/admin/users/${UserColumn.id}`)}
+            >
+              Редактировать
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(UserColumn.id)}>
+              Удалить
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

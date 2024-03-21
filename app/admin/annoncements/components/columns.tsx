@@ -9,7 +9,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "@/components/ui/use-toast";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import axios from "axios";
 import {
   ArrowUpDown,
   Circle,
@@ -19,11 +21,12 @@ import {
   User,
   Zap,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export type AnnoncementColumn = {
   id: string;
   city: string;
-  isChecked: string;
+  isChecked: boolean;
   roomNumber: number;
   categoryType: string;
   serviceType: string;
@@ -74,13 +77,13 @@ export const columns: ColumnDef<AnnoncementColumn>[] = [
     header: "Проверено?",
     cell: ({ row }) => (
       <div className="capitalize text-xs">
-        {row.getValue("isChecked") === "Проверено" ? (
+        {row.getValue("isChecked") ? (
           <span className=" py-0.5 px-2 rounded-full bg-green-600 text-neutral-50">
-            {row.getValue("isChecked")}
+            Проверено
           </span>
         ) : (
           <span className=" py-0.5 px-2 rounded-full bg-slate-600 text-neutral-50">
-            {row.getValue("isChecked")}
+            Непроверено
           </span>
         )}
       </div>
@@ -186,6 +189,20 @@ export const columns: ColumnDef<AnnoncementColumn>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const AnnoncementColumn = row.original;
+      const router = useRouter();
+
+      const onDelete = async (id: string) => {
+        try {
+          await axios.delete(`/api/admin/annoncements/${id}`);
+          toast({ description: "Обьявление удалено", variant: "default" });
+          router.refresh();
+        } catch (error) {
+          toast({
+            description: "Убедитесь что вы удалили все обьекты обьявление",
+            variant: "destructive",
+          });
+        }
+      };
 
       return (
         <DropdownMenu>
@@ -205,8 +222,16 @@ export const columns: ColumnDef<AnnoncementColumn>[] = [
               Скопировать ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Редактировать</DropdownMenuItem>
-            <DropdownMenuItem>Удалить</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                router.push(`/admin/annoncements/${AnnoncementColumn.id}`)
+              }
+            >
+              Редактировать
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(AnnoncementColumn.id)}>
+              Удалить
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

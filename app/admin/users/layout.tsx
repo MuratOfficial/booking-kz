@@ -55,7 +55,7 @@ export default function UsersAdminLayout({
       colorHover: "hover:text-sky-500 group-hover:text-sky-500",
     },
     {
-      path: "/admin/annoncements/",
+      path: "/admin/users/new",
       title: "Добавить",
       icon: <UserPlus size={17} />,
       isButton: true,

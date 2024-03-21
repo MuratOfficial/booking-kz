@@ -24,6 +24,7 @@ import {
   ChevronsUpDown,
   ImagePlus,
   Info,
+  Loader2,
   Puzzle,
   Timer,
   TimerReset,
@@ -50,9 +51,14 @@ import ImageUpload from "@/components/uploaders/image-upload";
 import { Annoncement, Building, User } from "@prisma/client";
 import { Switch } from "@/components/ui/switch";
 import { Calendar } from "@/components/ui/calendar";
+import axios from "axios";
+import { useParams, useRouter } from "next/navigation";
 
-const FormSchema = z.object({
-  userId: z.string({ required_error: "Пользователь не выбран" }).optional(),
+const annoncementFormSchema = z.object({
+  userId: z
+    .string({ required_error: "Пользователь не выбран" })
+    .nullable()
+    .optional(),
   phone: z
     .string()
     .refine((data) => /^\+?\d+$/.test(data), {
@@ -88,14 +94,15 @@ const FormSchema = z.object({
     .max(2000, "Не Должно превышать 2000 знаков"),
   comeIn: z.string().optional(),
   comeOut: z.string().optional(),
-  additionalFilter: z
+  additionalFilters: z
     .array(z.object({ value: z.string().nullable().optional() }).optional())
+    .nullable()
     .optional(),
   images: z.object({ url: z.string() }).array(),
   cityOrDistrict: z.string({ required_error: "Укажите город" }),
   cityOrTown: z.string().optional(),
   townOrStreet: z.string().optional(),
-  buildingId: z.string().optional(),
+  buildingId: z.string().nullable().optional(),
   isChecked: z.boolean().default(false),
   subscriptionDate: z.date({ required_error: "Выберите дату" }).optional(),
   phase: z.string({ required_error: "Необходимо указать фазу" }),
@@ -107,6 +114,8 @@ const FormSchema = z.object({
     })
     .optional(),
 });
+
+type AnnoncementFormValues = z.infer<typeof annoncementFormSchema>;
 
 interface AdminAnnoncementFormProps {
   initialData: Annoncement | null;
@@ -123,15 +132,15 @@ function AdminAnnoncementForm({
   let add30days: Date = new Date();
   add30days.setDate(add30days.getDate() + 30);
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<AnnoncementFormValues>({
+    resolver: zodResolver(annoncementFormSchema),
     defaultValues: {
       modificators: {
         topModifier: initialData?.modificators?.topModifier || 0,
         hotModifier: initialData?.modificators?.hotModifier || 0,
         hurryModifier: initialData?.modificators?.hurryModifier || 0,
       },
-      userId: initialData?.userId || "",
+      userId: initialData?.userId || null,
       serviceType: initialData?.serviceType || "",
       categoryType: initialData?.categoryType || "",
       serviceTypeExt: initialData?.serviceTypeExt || "",
@@ -144,10 +153,11 @@ function AdminAnnoncementForm({
       repairType: initialData?.repairType || "",
       roofHeight: initialData?.roofHeight || "",
       cityOrDistrict: initialData?.cityOrDistrict || "",
-      buildingId: initialData?.buildingId || "",
-      additionalFilter:
-        initialData?.additionalFilters ||
-        Array.from({ length: 28 }, () => ({ value: "" })),
+      buildingId: initialData?.buildingId || null,
+      additionalFilters:
+        initialData?.additionalFilters?.map((filter, index) => ({
+          value: filter?.value || "",
+        })) || null,
 
       yearBuild: initialData?.yearBuild || 2013,
       price: initialData?.price || "0",
@@ -160,6 +170,7 @@ function AdminAnnoncementForm({
       isChecked: initialData?.isChecked || false,
       subscriptionDate: initialData?.subscriptionDate || add30days,
       phase: initialData?.phase || "проверка",
+      description: initialData?.description || "",
     },
   });
 
@@ -167,22 +178,31 @@ function AdminAnnoncementForm({
   //   name: "additionalFilter",
   //   control: form.control,
   // });
+  const router = useRouter();
+  const params = useParams();
+  const [loading, setLoading] = React.useState(false);
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(formData: AnnoncementFormValues) {
     try {
-      toast({ description: "Успешно создан/обновлен" });
+      setLoading(true);
+      if (initialData) {
+        await axios.patch(
+          `/api/admin/annoncements/${params.annoncementId}`,
+          formData
+        );
+      } else {
+        await axios.post(`/api/admin/annoncements`, formData);
+      }
+      router.refresh();
+      router.push(`/admin/annoncements`);
       toast({
-        title: "You submitted the following values:",
-        description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4 ">
-            <code className="text-white ">{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        ),
+        title: "Данные отправлены успешно",
       });
-      console.log("uspeshno");
     } catch (error: any) {
       toast({ description: "Что-то пошло не так...", variant: "destructive" });
+      console.log(error);
     } finally {
+      setLoading(false);
     }
   }
 
@@ -1555,15 +1575,16 @@ function AdminAnnoncementForm({
             <div className="grid grid-cols-3 gap-4">
               <FormField
                 control={form.control}
-                name={`additionalFilter.${0}.value`}
+                name={`additionalFilters.${0}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Курение запрещено")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1577,15 +1598,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${1}.value`}
+                name={`additionalFilters.${1}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Курение разрешено")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1599,15 +1621,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${2}.value`}
+                name={`additionalFilters.${2}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Можно с детьми")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1621,15 +1644,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${3}.value`}
+                name={`additionalFilters.${3}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Можно с животными")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1643,15 +1667,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${4}.value`}
+                name={`additionalFilters.${4}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Вечеринки разрешены")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1665,15 +1690,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${3}.value`}
+                name={`additionalFilters.${5}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Взимается залог")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1692,15 +1718,16 @@ function AdminAnnoncementForm({
             <div className="grid grid-cols-3 gap-4">
               <FormField
                 control={form.control}
-                name={`additionalFilter.${6}.value`}
+                name={`additionalFilters.${6}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Интернет wi-fi")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1714,15 +1741,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${7}.value`}
+                name={`additionalFilters.${7}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Кондиционер")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1736,15 +1764,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${8}.value`}
+                name={`additionalFilters.${8}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Телевизор")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1758,15 +1787,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${9}.value`}
+                name={`additionalFilters.${9}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("SMART ТВ")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1780,15 +1810,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${10}.value`}
+                name={`additionalFilters.${10}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Стиральная машина")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1802,15 +1833,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${11}.value`}
+                name={`additionalFilters.${11}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Микроволновка")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1824,15 +1856,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${12}.value`}
+                name={`additionalFilters.${12}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Электрочайник")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1846,15 +1879,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${13}.value`}
+                name={`additionalFilters.${13}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Посуда и принадлежности")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1868,15 +1902,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${14}.value`}
+                name={`additionalFilters.${14}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Посудомоечная машина")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1890,15 +1925,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${15}.value`}
+                name={`additionalFilters.${15}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Утюг с гладильной доской")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1912,13 +1948,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${16}.value`}
+                name={`additionalFilters.${16}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Халаты") : field.onChange("")
+                          state
+                            ? field.onChange("Халаты")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1932,15 +1971,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${17}.value`}
+                name={`additionalFilters.${17}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Полотенца")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1954,13 +1994,14 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${18}.value`}
+                name={`additionalFilters.${18}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Фен") : field.onChange("")
+                          state ? field.onChange("Фен") : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1972,15 +2013,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${19}.value`}
+                name={`additionalFilters.${19}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Сушилка для белья")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -1994,15 +2036,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${20}.value`}
+                name={`additionalFilters.${20}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Балкон, лоджия")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2019,15 +2062,16 @@ function AdminAnnoncementForm({
             <div className="grid grid-cols-3 gap-4">
               <FormField
                 control={form.control}
-                name={`additionalFilter.${21}.value`}
+                name={`additionalFilters.${21}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Парковка")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2041,15 +2085,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${22}.value`}
+                name={`additionalFilters.${22}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Детская площадка")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2063,13 +2108,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${23}.value`}
+                name={`additionalFilters.${23}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Беседка") : field.onChange("")
+                          state
+                            ? field.onChange("Беседка")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2083,15 +2131,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${24}.value`}
+                name={`additionalFilters.${24}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Видеонаблюдение")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2105,15 +2154,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${25}.value`}
+                name={`additionalFilters.${25}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Охранная территория")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2130,13 +2180,16 @@ function AdminAnnoncementForm({
             <div className="grid grid-cols-4 gap-4">
               <FormField
                 control={form.control}
-                name={`additionalFilter.${26}.value`}
+                name={`additionalFilters.${26}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("На море") : field.onChange("")
+                          state
+                            ? field.onChange("На море")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2150,15 +2203,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${27}.value`}
+                name={`additionalFilters.${27}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Частично на море")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2172,15 +2226,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${28}.value`}
+                name={`additionalFilters.${28}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Вид во двор")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2194,15 +2249,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${29}.value`}
+                name={`additionalFilters.${29}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("На город")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2219,15 +2275,16 @@ function AdminAnnoncementForm({
             <div className="grid grid-cols-4 gap-4">
               <FormField
                 control={form.control}
-                name={`additionalFilter.${30}.value`}
+                name={`additionalFilters.${30}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Раздельный")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2241,15 +2298,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${31}.value`}
+                name={`additionalFilters.${31}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Совмещеный")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2263,15 +2321,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${32}.value`}
+                name={`additionalFilters.${32}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("2 санузла и более")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2285,13 +2344,14 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${33}.value`}
+                name={`additionalFilters.${33}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Ванна") : field.onChange("")
+                          state ? field.onChange("Ванна") : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2303,15 +2363,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${34}.value`}
+                name={`additionalFilters.${34}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Душевая перегородка")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2325,13 +2386,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${35}.value`}
+                name={`additionalFilters.${35}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Джакузи") : field.onChange("")
+                          state
+                            ? field.onChange("Джакузи")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2345,13 +2409,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${36}.value`}
+                name={`additionalFilters.${36}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Бойлер") : field.onChange("")
+                          state
+                            ? field.onChange("Бойлер")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2365,15 +2432,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${37}.value`}
+                name={`additionalFilters.${37}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Гигиенический душ")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2390,13 +2458,14 @@ function AdminAnnoncementForm({
             <div className="grid grid-cols-4 gap-4">
               <FormField
                 control={form.control}
-                name={`additionalFilter.${38}.value`}
+                name={`additionalFilters.${38}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
-                          state ? field.onChange("Лифт") : field.onChange("")
+                          state ? field.onChange("Лифт") : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2408,15 +2477,16 @@ function AdminAnnoncementForm({
               />
               <FormField
                 control={form.control}
-                name={`additionalFilter.${39}.value`}
+                name={`additionalFilters.${39}.value`}
                 render={({ field }) => (
                   <FormItem className="flex flex-row gap-x-2 items-center ">
                     <FormControl>
                       <Checkbox
+                        checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
                             ? field.onChange("Доступ для инвалидов")
-                            : field.onChange("")
+                            : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
@@ -2607,11 +2677,12 @@ function AdminAnnoncementForm({
           </div>
 
           <Button
+            className="rounded-xl bg-slate-900  mt-2"
             type="submit"
-            className="bg-blue-500 rounded-xl"
-            onClick={() => console.log(form.formState.errors)}
+            disabled={loading}
           >
-            {initialData ? "Сохранить изменения" : "Создать обьявление"}
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {initialData ? "Обновить обьявление" : "Создать обьявление"}
           </Button>
         </form>
       </Form>
