@@ -12,16 +12,27 @@ import { Separator } from "@/components/ui/separator";
 import {
   ArrowBigUp,
   CheckCircle2,
+  Copy,
   Crown,
   Eye,
   Flame,
+  Loader2,
   MapPin,
+  RefreshCcw,
   UserRoundCheck,
   Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Annoncement, Testimonial } from "@prisma/client";
 import { Graphics } from "@/components/layouts/graphics";
+import { PhotoChangingForm } from "./photo-changing-form";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import axios from "axios";
+import { zodResolver } from "@hookform/resolvers/zod";
+import PhaseChangeButton from "./phase-change-button";
 
 interface MyAnnoncementCardProps {
   data: Annoncement & { testimonials: Testimonial[] };
@@ -29,7 +40,6 @@ interface MyAnnoncementCardProps {
 
 function MyAnnoncementCard({ data }: MyAnnoncementCardProps) {
   const [api, setApi] = React.useState<CarouselApi>();
-  const currentDate = new Date();
 
   const [current, setCurrent] = React.useState(0);
   const [count, setCount] = React.useState(0);
@@ -81,7 +91,32 @@ function MyAnnoncementCard({ data }: MyAnnoncementCardProps) {
   const overallRanking = calculateOverallRanking(data.testimonials);
 
   return (
-    <div className="flex flex-col w-full bg-white bg-opacity-70 backdrop-blur-sm rounded-xl ">
+    <div className="flex flex-col w-full bg-white bg-opacity-40 backdrop-blur-sm rounded-xl ">
+      <div className="flex flex-row items-center justify-between px-4 pt-2 pb-1">
+        <div className="flex flex-row gap-x-4 items-center ">
+          <p className="text-slate-400 text-xs uppercase">
+            {data.serviceType} {data?.serviceTypeExt} {data.categoryType}
+          </p>
+          <div className="flex text-slate-400 flex-row items-center gap-x-2">
+            <p className=" text-xs uppercase">ID: {data.id}</p>
+            <button onClick={() => navigator.clipboard.writeText(data.id)}>
+              <Copy className="w-4 hover:text-blue-500" />
+            </button>
+          </div>
+        </div>
+        <div className="flex text-slate-400 flex-row gap-x-4 items-center text-xs">
+          <p>
+            На сайте до:{" "}
+            <span className=" underline underline-offset-2">
+              {data?.subscriptionDate?.toLocaleDateString()}
+            </span>
+          </p>
+          <button className="flex flex-row items-center group transition delay-75 duration-200 gap-x-1 items-center hover:text-blue-500">
+            <RefreshCcw className="w-3 group-hover:rotate-180 transition delay-75 duration-200" />{" "}
+            Продлить
+          </button>
+        </div>
+      </div>
       <div className="w-full rounded-xl hover:shadow-xl shadow-md transition delay-100 duration-300 ">
         <div className="w-full   bg-white rounded-xl grid grid-cols-12">
           <div className="  h-full flex items-center justify-center  col-span-3">
@@ -232,8 +267,22 @@ function MyAnnoncementCard({ data }: MyAnnoncementCardProps) {
                     </span>
                   </p>
                   <div className="flex flex-row gap-0.5 items-center text-slate-400 px-4 text-xs">
-                    <Eye size={16} /> {data?.stats?.allCount}
+                    <Eye size={16} /> {data?.stats?.allCount || 0}
                   </div>
+                </div>
+                <div className="flex flex-row gap-x-1 items-center justify-center">
+                  {data?.modificators?.hotModifier !== 0 &&
+                    data?.modificators?.hotModifier && (
+                      <Flame className="w-4 text-red-500" />
+                    )}
+                  {data?.modificators?.topModifier !== 0 &&
+                    data?.modificators?.topModifier && (
+                      <ArrowBigUp className="w-5 text-amber-500" />
+                    )}
+                  {data?.modificators?.hurryModifier !== 0 &&
+                    data?.modificators?.hurryModifier && (
+                      <Zap className="w-4 text-sky-500" />
+                    )}
                 </div>
                 <div className="flex flex-row gap-x-1 items-center justify-end self-end w-fit flex-wrap ">
                   <p className="w-fit  font-bold text-slate-900 text-lg leading-5">
@@ -356,15 +405,41 @@ function MyAnnoncementCard({ data }: MyAnnoncementCardProps) {
           <button className=" rounded-xl px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200">
             Изменить цену
           </button>
-          <button className=" rounded-xl px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200">
+          <button
+            onClick={() => router.push(`/cabinet/annoncements/${data.id}`)}
+            className=" rounded-xl px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200"
+          >
             Редактировать
           </button>
-          <button className=" rounded-xl px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200">
+          <button
+            onClick={() => router.push(`/cabinet/annoncements/${data.id}`)}
+            className=" rounded-xl px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200"
+          >
             Изменить фотографии
           </button>
-          <button className=" rounded-xl px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200">
-            В архив
-          </button>
+          {data?.phase === "блокировано" && (
+            <PhaseChangeButton
+              title="Активировать"
+              id={data.id}
+              phase="активно"
+            />
+          )}{" "}
+          {data?.phase === "активно" && (
+            <PhaseChangeButton
+              title="В архив"
+              id={data.id}
+              phase="блокировано"
+            />
+          )}
+          {data?.phase === "проверка" && (
+            <button
+              type="submit"
+              disabled
+              className="opacity-70 pointer-events-none rounded-xl px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200"
+            >
+              В архив
+            </button>
+          )}
         </div>
       </div>
     </div>

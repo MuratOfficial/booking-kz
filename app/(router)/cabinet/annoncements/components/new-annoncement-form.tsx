@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import {
   CalendarFold,
   CalendarIcon,
@@ -160,6 +160,7 @@ function AnnoncementForm({
   //   name: "additionalFilter",
   //   control: form.control,
   // });
+  const { toast } = useToast();
   const router = useRouter();
   const params = useParams();
   const [loading, setLoading] = React.useState(false);
@@ -172,14 +173,23 @@ function AnnoncementForm({
           `/api/cabinet/profile/annoncements/${params.annoncementId}`,
           formData
         );
+        setTimeout(() => {
+          router.refresh();
+          router.push(`/cabinet/annoncements`);
+          toast({
+            title: "Обьявление изменено успешно",
+          });
+        }, 1000);
       } else {
         await axios.post(`/api/cabinet/profile/annoncements`, formData);
+        setTimeout(() => {
+          router.refresh();
+          router.push(`/cabinet/annoncements`);
+          toast({
+            title: "Обьявление опубликовано",
+          });
+        }, 1000);
       }
-      router.refresh();
-      router.push(`/cabinet/annoncements`);
-      toast({
-        title: "Обьявление опубликовано",
-      });
     } catch (error: any) {
       toast({ description: "Что-то пошло не так...", variant: "destructive" });
       console.log(error);

@@ -25,10 +25,6 @@ function AccordionList({ annoncements }: AccordionListProps) {
     (el) => el.phase === "проверка"
   );
 
-  const forBuy = annoncementListModeration.filter(
-    (el) => el.serviceType === "Продажа"
-  );
-
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1">
@@ -39,8 +35,11 @@ function AccordionList({ annoncements }: AccordionListProps) {
           <ScrollArea className="max-h-72 w-full rounded-xl bg-neutral-100 text-slate-400 mt-2">
             <ul className="p-4">
               {annoncementListActive.length > 0 ? (
-                <>
-                  <Link href="/cabinet/annoncements?serviceType=Продажа">
+                <div className="flex flex-col gap-2 p-2">
+                  <Link
+                    href="/cabinet/annoncements?serviceType=Продажа&phase=активно"
+                    className="hover:text-blue-500"
+                  >
                     Продажа (
                     {
                       annoncementListActive.filter(
@@ -49,7 +48,10 @@ function AccordionList({ annoncements }: AccordionListProps) {
                     }
                     )
                   </Link>
-                  <Link href="/cabinet/annoncements?serviceType=Аренда">
+                  <Link
+                    href="/cabinet/annoncements?serviceType=Аренда&phase=активно"
+                    className="hover:text-blue-500"
+                  >
                     Аренда (
                     {
                       annoncementListActive.filter(
@@ -58,7 +60,7 @@ function AccordionList({ annoncements }: AccordionListProps) {
                     }
                     )
                   </Link>
-                </>
+                </div>
               ) : (
                 <p className="text-slate-600 text-xs">
                   Нету активных обьявлении.
@@ -76,8 +78,11 @@ function AccordionList({ annoncements }: AccordionListProps) {
           <ScrollArea className="max-h-72 w-full rounded-xl bg-neutral-100 text-slate-400 mt-2">
             <ul className="p-4">
               {annoncementListArchived.length > 0 ? (
-                <>
-                  <Link href="/cabinet/annoncements?serviceType=Продажа">
+                <div className="flex flex-col gap-2 p-2">
+                  <Link
+                    href="/cabinet/annoncements?serviceType=Продажа&phase=блокировано"
+                    className="hover:text-blue-500"
+                  >
                     Продажа (
                     {
                       annoncementListArchived.filter(
@@ -86,7 +91,10 @@ function AccordionList({ annoncements }: AccordionListProps) {
                     }
                     )
                   </Link>
-                  <Link href="/cabinet/annoncements?serviceType=Аренда">
+                  <Link
+                    href="/cabinet/annoncements?serviceType=Аренда&phase=блокировано"
+                    className="hover:text-blue-500"
+                  >
                     Аренда (
                     {
                       annoncementListArchived.filter(
@@ -95,7 +103,7 @@ function AccordionList({ annoncements }: AccordionListProps) {
                     }
                     )
                   </Link>
-                </>
+                </div>
               ) : (
                 <p className="text-slate-600 text-xs">
                   В архиве нету обьявлении.
@@ -114,7 +122,7 @@ function AccordionList({ annoncements }: AccordionListProps) {
             {annoncementListModeration.length > 0 ? (
               <div className="flex flex-col gap-2 p-2">
                 <Link
-                  href="/cabinet/annoncements?serviceType=Продажа"
+                  href="/cabinet/annoncements?serviceType=Продажа&phase=проверка"
                   className="hover:text-blue-500"
                 >
                   Продажа (
@@ -126,7 +134,7 @@ function AccordionList({ annoncements }: AccordionListProps) {
                   )
                 </Link>
                 <Link
-                  href="/cabinet/annoncements?serviceType=Аренда"
+                  href="/cabinet/annoncements?serviceType=Аренда&phase=проверка"
                   className="hover:text-blue-500"
                 >
                   Аренда (
