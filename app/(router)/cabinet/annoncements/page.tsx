@@ -67,7 +67,7 @@ const AnnoncementsPage = async () => {
   return (
     <div className="w-full">
       {annoncements ? (
-        <div className=" flex flex-col gap-4">
+        <div className=" flex flex-col gap-8">
           {annoncements.map((el, ind) => (
             <MyAnnoncementCard data={el} key={ind} />
           ))}

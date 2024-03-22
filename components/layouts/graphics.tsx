@@ -16,8 +16,8 @@ import {
 interface GraphicsProps {
   data: {
     name: string;
-    uv: number;
-    pv: number;
+    uv: number | null;
+    pv: number | null;
   }[];
 }
 
@@ -25,12 +25,12 @@ export function Graphics({ data }: GraphicsProps) {
   return (
     <ResponsiveContainer
       width="100%"
-      height={350}
+      height={200}
       className="p-4 rounded-3xl bg-white bg-opacity-75 backdrop-blur-sm "
     >
       <LineChart
         width={500}
-        height={300}
+        height={200}
         data={data}
         margin={{
           top: 5,
@@ -43,7 +43,7 @@ export function Graphics({ data }: GraphicsProps) {
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip />
-        <Legend />
+        {/* <Legend /> */}
         <Line
           type="monotone"
           dataKey="pv"
