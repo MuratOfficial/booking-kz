@@ -109,10 +109,15 @@ type AnnoncementFormValues = z.infer<typeof annoncementFormSchema>;
 
 interface AnnoncementFormProps {
   initialData: Annoncement | null;
+  user: User | null;
   buildings: Building[];
 }
 
-function AnnoncementForm({ initialData, buildings }: AnnoncementFormProps) {
+function AnnoncementForm({
+  initialData,
+  buildings,
+  user,
+}: AnnoncementFormProps) {
   const currentDataAndTime = new Date();
   let add30days: Date = new Date();
   add30days.setDate(add30days.getDate() + 30);
@@ -120,11 +125,12 @@ function AnnoncementForm({ initialData, buildings }: AnnoncementFormProps) {
   const form = useForm<AnnoncementFormValues>({
     resolver: zodResolver(annoncementFormSchema),
     defaultValues: {
+      userId: user?.id,
       serviceType: initialData?.serviceType || "",
       categoryType: initialData?.categoryType || "",
       serviceTypeExt: initialData?.serviceTypeExt || "",
       cityOrTown: initialData?.cityOrTown || "",
-      phone: initialData?.phone || "",
+      phone: initialData?.phone || user?.phone || "",
       roomNumber: initialData?.roomNumber || 1,
       floor: initialData?.floor || 1,
       floorFrom: initialData?.floorFrom || 1,
@@ -512,7 +518,7 @@ function AnnoncementForm({ initialData, buildings }: AnnoncementFormProps) {
   ];
 
   return (
-    <div className="w-full flex flex-col gap-2 text-slate-900 py-4 pl-4 pr-6">
+    <div className="w-full flex flex-col gap-2 text-slate-900  pl-4 pr-6">
       <h1 className="text-2xl font-semibold ml-4">
         {initialData ? `Обьявление ID ${initialData.id}` : "Новое обьявление"}
       </h1>
@@ -2201,7 +2207,7 @@ function AnnoncementForm({ initialData, buildings }: AnnoncementFormProps) {
             </div>
           </div>
           <div className="w-full grid grid-cols-3 gap-6 ">
-            <div className="col-span-2 gap-4 grid-cols-2 grid bg-white rounded-xl py-4 px-6">
+            <div className="col-span-2 gap-6 grid-cols-2 grid bg-white rounded-xl py-4 px-6">
               <FormField
                 control={form.control}
                 name="phone"
@@ -2226,6 +2232,12 @@ function AnnoncementForm({ initialData, buildings }: AnnoncementFormProps) {
                   </FormItem>
                 )}
               />
+              <div className="flex flex-col gap-2">
+                <p className="text-base font-semibold">Пользователь</p>
+                <p className="text-slate-500 font-medium text-sm">
+                  {user?.name || user?.username}
+                </p>
+              </div>
             </div>
             <div className="w-full flex text-slate-50 flex-col items-center justify-between py-4 px-6 rounded-xl bg-slate-800">
               <div className="flex flex-col  items-center text-sm">

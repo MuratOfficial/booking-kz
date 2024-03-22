@@ -1,14 +1,10 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import Link from "next/link";
-import { annoncements } from "@/lib/externalData";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import SideMenuItem from "./components/side-menu-item";
 import { Metadata } from "next";
+import BreadcrumbLine from "./components/breadcrumb-line";
+import prismadb from "@/lib/prismadb";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
+import AccordionList from "./components/accordion-list";
 
 interface AnnoncementsLayoutProps {
   children: React.ReactNode;
@@ -16,120 +12,38 @@ interface AnnoncementsLayoutProps {
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Мои обьявления | booking.kz",
+    template: "%s | Мои обьявления | etazhi.kz",
     default: "Мои обьявления",
   },
-  description: "booking.kz | booking.kz",
+  description: "etazhi.kz | etazhi.kz",
 };
 
 export default async function AnnoncementsLayout({
   children,
 }: AnnoncementsLayoutProps) {
-  const annoncementListActive = annoncements.filter(
-    (item) => item.phase === "active"
-  );
-  const annoncementListArchived = annoncements.filter(
-    (item) => item.phase === "archived"
-  );
-  const annoncementListModeration = annoncements.filter(
-    (item) => item.phase === "moderation"
-  );
+  // const annoncementListActive = annoncements.filter(
+  //   (item) => item.phase === "active"
+  // );
+  // const annoncementListArchived = annoncements.filter(
+  //   (item) => item.phase === "archived"
+  // );
+  // const annoncementListModeration = annoncements.filter(
+  //   (item) => item.phase === "moderation"
+  // );
+
+  const session = await getServerSession(authOptions);
+  const userIdData = JSON.parse(JSON.stringify(session))?.user;
+
+  const annoncements = await prismadb.annoncement.findMany({
+    where: {
+      userId: userIdData?.id,
+    },
+  });
 
   return (
     <div className="w-full grid grid-cols-5 gap-4 py-2">
-      <div className="rounded-3xl h-fit bg-gradient-to-r from-blue-500 to-blue-400 col-span-1 p-2">
-        <Accordion type="single" collapsible>
-          <AccordionItem value="item-1">
-            <AccordionTrigger className="items-center data-[state=open]:bg-neutral-100 data-[state=open]:text-blue-500  hover:text-blue-500 transition duration-300 font-semibold rounded-full hover:bg-neutral-100 text-center flex flex-row gap-x-1 justify-center text-neutral-100">
-              Активные ({annoncementListActive.length})
-            </AccordionTrigger>
-            <AccordionContent>
-              <ScrollArea className="h-72 w-full rounded-xl bg-neutral-100 text-slate-400 mt-2">
-                <ul className="p-4">
-                  {annoncementListActive.length > 0 ? (
-                    annoncementListActive.map((item, index) => (
-                      <SideMenuItem
-                        key={item.id}
-                        id={item.id}
-                        name={`${item.roomNumber}-комнатная ${item.categoryType} - ${item.serviceType} ${item.serviceTypeExt}`}
-                        address={item.city}
-                        isSeparator={
-                          index + 1 < annoncementListActive.length
-                            ? true
-                            : false
-                        }
-                      />
-                    ))
-                  ) : (
-                    <p className="text-slate-600 text-xs">
-                      Нету активных обьявлении.
-                    </p>
-                  )}
-                </ul>
-              </ScrollArea>
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="item-2">
-            <AccordionTrigger className="items-center data-[state=open]:bg-neutral-100 data-[state=open]:text-blue-500 hover:text-blue-500 transition duration-300 font-semibold rounded-full hover:bg-neutral-100 text-center flex flex-row gap-x-1 justify-center text-neutral-100">
-              Архив ({annoncementListArchived.length})
-            </AccordionTrigger>
-            <AccordionContent>
-              <ScrollArea className="max-h-72 w-full rounded-xl bg-neutral-100 text-slate-400 mt-2">
-                <ul className="p-4">
-                  {annoncementListArchived.length > 0 ? (
-                    annoncementListArchived.map((item, index) => (
-                      <SideMenuItem
-                        key={item.id}
-                        id={item.id}
-                        name={`${item.roomNumber}-комнатная ${item.categoryType} - ${item.serviceType} ${item.serviceTypeExt}`}
-                        address={item.city}
-                        isSeparator={
-                          index + 1 < annoncementListArchived.length
-                            ? true
-                            : false
-                        }
-                      />
-                    ))
-                  ) : (
-                    <p className="text-slate-600 text-xs">
-                      В архиве нету обьявлении.
-                    </p>
-                  )}
-                </ul>
-              </ScrollArea>
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="item-3">
-            <AccordionTrigger className="items-center data-[state=open]:bg-neutral-100 data-[state=open]:text-blue-500 hover:text-blue-500 transition duration-300 font-semibold rounded-full hover:bg-neutral-100 text-center flex flex-row gap-x-1 justify-center text-neutral-100">
-              У модератора ({annoncementListModeration.length})
-            </AccordionTrigger>
-            <AccordionContent>
-              <ScrollArea className="max-h-72 w-full rounded-xl bg-neutral-100 text-slate-400 mt-2">
-                <ul className="p-4">
-                  {annoncementListModeration.length > 0 ? (
-                    annoncementListModeration.map((item, index) => (
-                      <SideMenuItem
-                        key={item.id}
-                        id={item.id}
-                        name={`${item.roomNumber}-комнатная ${item.categoryType} - ${item.serviceType} ${item.serviceTypeExt}`}
-                        address={item.city}
-                        isSeparator={
-                          index + 1 < annoncementListModeration.length
-                            ? true
-                            : false
-                        }
-                      />
-                    ))
-                  ) : (
-                    <p className="text-slate-600 text-xs">
-                      Нету обьявлении у модератора.
-                    </p>
-                  )}
-                </ul>
-              </ScrollArea>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+      <div className="rounded-3xl h-fit bg-gradient-to-r from-blue-500 to-blue-400 col-span-1 p-2 sticky top-[13%]">
+        <AccordionList annoncements={annoncements} />
         <Link
           href="/"
           className="font-semibold flex flex-row items-center justify-center gap-x-1 h-fit bg-blue-500 rounded-full text-neutral-50  transition delay-150 duration-500 p-2 hover:text-blue-500 hover:bg-neutral-50"
@@ -151,11 +65,12 @@ export default async function AnnoncementsLayout({
           Обьявление
         </Link>
         <div
-          className="w-full py-16 bg-no-repeat bg-center bg-contain my-2"
+          className="w-full py-16 bg-no-repeat bg-center bg-contain mt-12 mb-4"
           style={{ backgroundImage: `url(/svg/svg1.svg)` }}
         ></div>
       </div>
-      <div className="rounded-3xl  col-span-4   flex flex-col gap-4 w-full">
+      <div className="rounded-3xl  col-span-4 gap-3  flex flex-col  w-full">
+        <BreadcrumbLine />
         {children}
       </div>
     </div>

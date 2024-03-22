@@ -28,18 +28,12 @@ const BillingPage = async () => {
     userData = null;
   }
 
-  const user = await prismadb.user.findUnique({
-    where: {
-      id: userData?.id,
-    },
-  });
-
   return (
     <div className="w-full grid grid-cols-4 gap-4 pb-4">
       <div className="w-full col-span-3 flex flex-col gap-2">
         <Points
-          total={user?.totalBalance || "0"}
-          bonus={user?.bonusBalance || "0"}
+          total={userData?.totalBalance || "0"}
+          bonus={userData?.bonusBalance || "0"}
         />
         <PaymentHistory data={paymentHistory} />
       </div>
