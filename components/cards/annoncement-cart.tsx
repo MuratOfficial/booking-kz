@@ -22,7 +22,7 @@ export interface cardData {
   floor: string;
   floorFrom: string;
   areaSq: string;
-  price: string;
+  price: number;
   images: string[];
   id: string;
   serviceType: string;
@@ -218,7 +218,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
               </div>
               <div className="flex flex-row justify-between ">
                 <p className=" font-extrabold text-base leading-4">
-                  {parseInt(data.price).toLocaleString().replace(/,/g, " ")} ₸
+                  {data.price.toLocaleString().replace(/,/g, " ")} ₸
                 </p>
               </div>
             </div>

@@ -26,7 +26,7 @@ const AdminAnnoncementsPage = async () => {
     hotModifier: item?.modificators?.hotModifier || 0,
     hurryModifier: item?.modificators?.hurryModifier || 0,
     areaSq: item?.areaSq,
-    price: parseInt(item?.price),
+    price: item?.price,
     user: item.user.username,
   }));
   return (

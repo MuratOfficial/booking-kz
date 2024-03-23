@@ -286,7 +286,7 @@ function MyAnnoncementCard({ data }: MyAnnoncementCardProps) {
                 </div>
                 <div className="flex flex-row gap-x-1 items-center justify-end self-end w-fit flex-wrap ">
                   <p className="w-fit  font-bold text-slate-900 text-lg leading-5">
-                    {parseInt(data.price).toLocaleString().replace(/,/g, " ")} ₸{" "}
+                    {data.price.toLocaleString().replace(/,/g, " ")} ₸{" "}
                   </p>
                   <p className="font-normal text-sm">{data?.serviceTypeExt}</p>
                 </div>

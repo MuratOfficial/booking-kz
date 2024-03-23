@@ -9,12 +9,12 @@ import {
   CarouselItem,
 } from "../ui/carousel";
 import { Separator } from "../ui/separator";
-import { Annoncement } from "@/app/(router)/cabinet/annoncements/page";
 import { Eye, MapPin, UserRoundCheck, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Annoncement, Testimonial } from "@prisma/client";
 
 interface AnnoncementListCardProps {
-  data: Annoncement;
+  data: Annoncement & { testimonials: Testimonial[] };
 }
 
 function AnnoncementListCard({ data }: AnnoncementListCardProps) {
@@ -48,23 +48,45 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
 
   const router = useRouter();
 
+  function calculateOverallRanking(testimonials: Testimonial[]) {
+    let totalOverall = 0;
+    let totalCount = 0;
+
+    testimonials.forEach((testimonial) => {
+      const ranking = testimonial.ranking;
+      const overall = parseFloat(ranking.overall);
+      if (!isNaN(overall)) {
+        totalOverall += overall;
+        totalCount++;
+      }
+    });
+
+    if (totalCount === 0) {
+      return 0;
+    }
+
+    return totalOverall / totalCount;
+  }
+
+  const overallRanking = calculateOverallRanking(data.testimonials);
+
   return (
     <div className="w-full rounded-xl hover:shadow-xl transition delay-100 duration-300 ">
       <div className="w-full   bg-white rounded-xl grid grid-cols-12">
         <div className="  h-full flex items-center justify-center  col-span-4">
           <Carousel
             setApi={setApi}
-            className="w-full group max-h-screen relative rounded-xl items-center flex justify-center"
+            className="w-full group h-[240px] relative rounded-xl items-center flex justify-center"
           >
             <CarouselContent>
-              {data.images.map((img, index) => (
+              {data?.images?.map((img, index) => (
                 <CarouselItem key={index}>
                   <Image
-                    src={img}
+                    src={img?.url}
                     alt={`img+${index}`}
                     width={900}
                     height={1200}
-                    className=" object-cover  min-h-[200px]  max-h-[240px] rounded-l-xl"
+                    className=" object-cover  h-[240px] rounded-l-xl"
                   />
                 </CarouselItem>
               ))}
@@ -149,20 +171,16 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
                   <div className="flex flex-row gap-x-4">
                     <p className=" text-slate-900/50 flex flex-row items-center gap-x-1 font-medium text-sm rounded-full  text-center w-fit">
                       <MapPin className="stroke-red-500" size={12} />{" "}
-                      {data?.city}
+                      {data?.cityOrDistrict && `${data?.cityOrDistrict}`}
+                      {data?.cityOrTown && `, ${data?.cityOrTown}`}
+                      {data?.townOrStreet && `, ${data?.townOrStreet}`}
                     </p>
                   </div>
                 </div>
               </div>
             </div>
             <p className="line-clamp-2 text-sm text-slate-900/90 mt-2">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis qui
-              minima, iusto natus distinctio magnam labore, possimus maxime sed
-              a vel excepturi nemo laborum, eum consequatur commodi iste vero
-              mollitia? Lorem ipsum, dolor sit amet consectetur adipisicing
-              elit. Debitis doloremque possimus iusto quia, voluptates dolore
-              rem exercitationem a recusandae fuga dolor aliquid, temporibus
-              mollitia incidunt atque natus nostrum, ea itaque?
+              {data?.description}
             </p>
             <div className="flex flex-row gap-x-1 text-green-500 items-center">
               <UserRoundCheck size={14} />
@@ -179,7 +197,7 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
                 </span>
               </p>
               <div className="flex flex-row gap-0.5 items-center text-slate-400 px-4 text-xs">
-                <Eye size={16} /> {data?.stats?.allCount}
+                <Eye size={16} /> {data?.stats?.allCount || 0}
               </div>
             </div>
 
@@ -234,24 +252,29 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
           </div>
           <Separator className="h-[80%] bg-slate-300" orientation="vertical" />
           <div className="flex flex-col gap-2 w-[30%] h-full py-2 px-2 justify-between">
-            <span className=" flex flex-row w-fit items-center gap-x-1  self-end ">
-              <span className=" text-slate-500 text-xs">68 отзывов</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-4 h-4 stroke-yellow-400 fill-yellow-400"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-                />
-              </svg>
-              <span className="font-bold text-slate-900">{data.rating}</span>
-            </span>
+            {data.serviceType === "Аренда" && (
+              <span className=" flex flex-row w-fit items-center gap-x-1  self-end ">
+                <span className=" text-slate-500 text-xs">68 отзывов</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-4 h-4 stroke-yellow-400 fill-yellow-400"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+                  />
+                </svg>
+                <span className="font-bold text-slate-900">
+                  {overallRanking}
+                </span>
+              </span>
+            )}
+
             <div className="flex flex-col self-end gap-2">
               {data.isChecked && (
                 <div className="px-2 py-1 self-end text-blue-500  text-xs font-semibold rounded-full  text-center w-fit flex flex-row gap-x-1">
@@ -291,7 +314,7 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
 
             <div className="flex flex-row gap-x-1 items-center justify-end self-end w-fit flex-wrap ">
               <p className="w-fit  font-bold text-slate-900 text-lg leading-5">
-                {parseInt(data.price).toLocaleString().replace(/,/g, " ")} ₸{" "}
+                {data.price.toLocaleString().replace(/,/g, " ")} ₸{" "}
               </p>
               <p className="font-normal text-sm">{data?.serviceTypeExt}</p>
             </div>

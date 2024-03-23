@@ -200,7 +200,90 @@ function Filter() {
     replace(`${pathname}?${params.toString()}`);
   }
 
-  const rentType = ["Аренда посуточно", "Аренда помесячно", "Аренда по часам"];
+  const citiesList = [
+    {
+      value: "астана",
+      label: "Астана",
+    },
+    {
+      value: "алматы",
+      label: "Алматы",
+    },
+    {
+      value: "шымкент",
+      label: "Шымкент",
+    },
+    {
+      value: "актюбинская обл.",
+      label: "Актюбинская обл.",
+    },
+    {
+      value: "алматинская обл.",
+      label: "Алматинская обл.",
+    },
+    {
+      value: "атырауская обл.",
+      label: "Атырауская обл.",
+    },
+    {
+      value: "жамбылская обл.",
+      label: "Жамбылская обл.",
+    },
+    {
+      value: "акмолинская обл.",
+      label: "Акмолинская обл.",
+    },
+    {
+      value: "восточно-Казахстанская обл.",
+      label: "Восточно-Казахстанская обл.",
+    },
+    {
+      value: "западно-Казахстанская обл.",
+      label: "Западно-Казахстанская обл.",
+    },
+    {
+      value: "карагандинская обл.",
+      label: "Карагандинская обл.",
+    },
+    {
+      value: "костанайская обл.",
+      label: "Костанайская обл.",
+    },
+    {
+      value: "кызылординская обл.",
+      label: "Кызылординская обл.",
+    },
+    {
+      value: "мангистауская обл.",
+      label: "Мангистауская обл.",
+    },
+    {
+      value: "павлодарская обл.",
+      label: "Павлодарская обл.",
+    },
+    {
+      value: "северо-Казахстанская обл.",
+      label: "Северо-Казахстанская обл.",
+    },
+    {
+      value: "туркестанская обл.",
+      label: "Туркестанская обл.",
+    },
+    {
+      value: "абайская обл.",
+      label: "Абайская обл.",
+    },
+    {
+      value: "жетысуйская обл.",
+      label: "Жетысуйская обл.",
+    },
+    {
+      value: "улытауская обл.",
+      label: "Улытауская обл.",
+    },
+  ];
+
+  const rentType = ["Посуточно", "Помесячно", "Почасовая"];
 
   const menuList1 = [
     {
@@ -309,7 +392,7 @@ function Filter() {
 
   return (
     <div className=" bg-gradient-to-br from-blue-500 to-blue-400 px-6 py-4 rounded-3xl w-full flex flex-col gap-4">
-      {searchParams.get("serviceType") === "rent" && (
+      {searchParams.get("serviceType") === "Аренда" && (
         <div className="flex flex-row gap-2 ">
           {rentType.map((item, index) => (
             <button
@@ -328,7 +411,7 @@ function Filter() {
       )}
 
       <div className="flex flex-row gap-2 flex-wrap">
-        {(searchParams.get("serviceType") === "rent"
+        {(searchParams.get("serviceType") === "Аренда"
           ? menuList2
           : menuList1
         ).map((item, index) => (
@@ -470,25 +553,25 @@ function Filter() {
         <ComboboxFilter
           buttonName="Выберите город"
           commandInputTitle="Поиск города"
-          data={cities}
+          data={citiesList}
           filter="city"
         />
         <ComboboxFilter
           buttonName="Выберите район"
           commandInputTitle="Поиск района"
-          data={cities}
+          data={[]}
           filter="area"
         />
         <ComboboxFilter
           buttonName="Укажите ул., мкр."
           commandInputTitle="Поиск ул., мкр."
-          data={cities}
+          data={[]}
           filter="address"
         />
         <ComboboxFilter
           buttonName="Все жилые комплексы"
           commandInputTitle="Поиск ЖК"
-          data={cities}
+          data={[]}
           filter="building"
         />
       </div>

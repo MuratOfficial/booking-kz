@@ -82,7 +82,7 @@ const annoncementFormSchema = z.object({
       message: "Год Должен быть меньше текущего",
     })
     .optional(),
-  price: z.string({ required_error: "Укажите цену" }),
+  price: z.coerce.number({ required_error: "Укажите цену" }).int(),
   priceNego: z.boolean().default(false),
   description: z
     .string()
@@ -145,7 +145,7 @@ function AnnoncementForm({
         })) || null,
 
       yearBuild: initialData?.yearBuild || 2013,
-      price: initialData?.price || "0",
+      price: initialData?.price || 0,
       priceNego: initialData?.priceNego || false,
 
       comeIn: initialData?.comeIn || "После 14:00",

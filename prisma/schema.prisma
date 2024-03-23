@@ -76,7 +76,7 @@ model Annoncement {
   comeOut           String?
   additionalFilters Filter[]
   areaSq            Int
-  price             String
+  price             Int
   images            Image[]
   phase             String   @default("активно")
   phone             String?

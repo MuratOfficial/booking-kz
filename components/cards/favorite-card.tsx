@@ -8,8 +8,8 @@ import {
   CarouselContent,
   CarouselItem,
 } from "../ui/carousel";
-import { Annoncement } from "@/app/(router)/cabinet/annoncements/page";
 import {
+  ArrowBigUp,
   ArrowUpFromDot,
   ClipboardList,
   ClipboardPen,
@@ -30,9 +30,10 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
+import { Annoncement, Testimonial } from "@prisma/client";
 
 interface FavoriteCardProps {
-  data: Annoncement;
+  data: Annoncement & { testimonials: Testimonial[] };
 }
 
 function FavoriteCard({ data }: FavoriteCardProps) {
@@ -41,6 +42,28 @@ function FavoriteCard({ data }: FavoriteCardProps) {
 
   const [current, setCurrent] = React.useState(0);
   const [count, setCount] = React.useState(0);
+
+  function calculateOverallRanking(testimonials: Testimonial[]) {
+    let totalOverall = 0;
+    let totalCount = 0;
+
+    testimonials.forEach((testimonial) => {
+      const ranking = testimonial.ranking;
+      const overall = parseFloat(ranking.overall);
+      if (!isNaN(overall)) {
+        totalOverall += overall;
+        totalCount++;
+      }
+    });
+
+    if (totalCount === 0) {
+      return 0;
+    }
+
+    return totalOverall / totalCount;
+  }
+
+  const overallRanking = calculateOverallRanking(data.testimonials);
 
   React.useEffect(() => {
     if (!api) {
@@ -76,7 +99,7 @@ function FavoriteCard({ data }: FavoriteCardProps) {
               {data.images.map((img, index) => (
                 <CarouselItem key={index}>
                   <Image
-                    src={img}
+                    src={img.url}
                     alt={`img+${index}`}
                     width={900}
                     height={1200}
@@ -159,7 +182,7 @@ function FavoriteCard({ data }: FavoriteCardProps) {
                   d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
                 />
               </svg>
-              <span className="font-bold text-slate-900">{data.rating}</span>
+              <span className="font-bold text-slate-900">{overallRanking}</span>
             </span>
 
             <span className="absolute bottom-2 right-2 py-1 px-2 rounded-lg group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent">
@@ -186,7 +209,7 @@ function FavoriteCard({ data }: FavoriteCardProps) {
                   <div className="flex flex-row gap-x-4">
                     <p className=" text-slate-500 flex flex-row items-center gap-x-1 uppercase text-xs font-semibold rounded-full  text-center w-fit">
                       <MapPin className="stroke-red-500" size={16} />{" "}
-                      {data?.city}
+                      {data?.cityOrDistrict}
                     </p>
                     {data.isChecked && (
                       <div className="px-2 py-1 text-neutral-100  bg-blue-500 text-xs font-semibold rounded-full  text-center w-fit flex flex-row gap-x-1">
@@ -207,17 +230,17 @@ function FavoriteCard({ data }: FavoriteCardProps) {
                         <p>Проверено</p>
                       </div>
                     )}
-                    {data.modificators.topModifier > 0 && (
+                    {data?.modificators?.topModifier && (
                       <p className="text-sm font-semibold bg-amber-500 text-neutral-100 px-2 py-1 rounded-full flex flex-row gap-x-1 items-center">
-                        <ArrowUpFromDot size={16} />{" "}
+                        <ArrowBigUp size={16} />{" "}
                       </p>
                     )}
-                    {data.modificators.hotModifier > 0 && (
+                    {data?.modificators?.hotModifier && (
                       <p className="text-sm font-semibold bg-rose-500 text-neutral-100 px-2 py-1 rounded-full flex flex-row gap-x-1 items-center">
                         <Flame size={16} />
                       </p>
                     )}
-                    {data.modificators.hurryModifier > 0 && (
+                    {data?.modificators?.hurryModifier && (
                       <p className="text-sm font-semibold bg-cyan-500 text-neutral-100 px-2 py-1 rounded-full flex flex-row gap-x-1 items-center">
                         <Zap size={16} />
                       </p>
@@ -232,13 +255,7 @@ function FavoriteCard({ data }: FavoriteCardProps) {
               </div>
             </div>
             <p className="line-clamp-2 text-sm text-slate-700 mt-2">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis qui
-              minima, iusto natus distinctio magnam labore, possimus maxime sed
-              a vel excepturi nemo laborum, eum consequatur commodi iste vero
-              mollitia? Lorem ipsum, dolor sit amet consectetur adipisicing
-              elit. Debitis doloremque possimus iusto quia, voluptates dolore
-              rem exercitationem a recusandae fuga dolor aliquid, temporibus
-              mollitia incidunt atque natus nostrum, ea itaque?
+              {data.description}
             </p>
             <div className="text-sm flex flex-row items-center gap-1">
               {/* <p className="text-sm font-semibold text-slate-800 ">
