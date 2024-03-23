@@ -8,8 +8,8 @@ import prismadb from "@/lib/prismadb";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | booking.kz",
-    default: " booking.kz",
+    template: "%s | etazhi.kz",
+    default: " etazhi.kz",
   },
   description: " Обьявления аренды и продажи недвижимостей",
 };

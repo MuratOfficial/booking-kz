@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Bed,
@@ -20,6 +20,8 @@ import {
   X,
   ChevronDown,
   MapPin,
+  Loader,
+  Loader2,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ComboboxFilter } from "./combobox-filter";
@@ -39,7 +41,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-function Filter() {
+interface FilterProps {
+  allcount: number;
+}
+
+function Filter({ allcount }: FilterProps) {
   const pathname = usePathname();
   const { replace } = useRouter();
   const searchParams = useSearchParams();
@@ -1419,8 +1425,17 @@ function Filter() {
           <button className="flex flex-row gap-x-1 text-sm px-3.5 py-2.5 rounded-xl hover:border-slate-900 border-2 font-semibold text-neutral-50 items-center hover:text-slate-900 transition-all delay-75 duration-200">
             <MapPin size={16} /> Смотреть на карте
           </button>
-          <button className="flex flex-row px-4 py-3 rounded-xl bg-slate-900 text-sm font-semibold text-neutral-50 items-center opacity-100 hover:opacity-80 transition-all delay-75 duration-200">
-            Показать 202 обьявления
+          <button
+            onClick={() => console.log(searchParams.get("count"))}
+            className="flex flex-row  px-4 py-3 rounded-xl bg-slate-900 text-sm font-semibold text-neutral-50 items-center opacity-100 hover:opacity-80 transition-all delay-75 duration-200"
+          >
+            Показать{" "}
+            <span className="mx-1">
+              <Suspense fallback={<Loader2 className="w-4 animate-spin" />}>
+                {allcount}
+              </Suspense>
+            </span>{" "}
+            обьявления
           </button>
         </div>
       </div>
