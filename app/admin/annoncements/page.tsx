@@ -31,7 +31,7 @@ const AdminAnnoncementsPage = async () => {
   }));
   return (
     <div className=" min-h-screen flex flex-col w-4/5 pl-4 pr-6 py-2 text-slate-900">
-      <h1 className="font-semibold text-lg">Обьявления (5454)</h1>
+      <h1 className="font-semibold text-lg">Обьявления ({data.length})</h1>
       <DataTable data={data} columns={columns} search="city" />
     </div>
   );

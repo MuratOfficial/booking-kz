@@ -3,10 +3,10 @@ import ChatList from "./components/chat-list";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Сообщения | booking.kz",
+    template: "%s | Сообщения | etazhi.kz",
     default: "Сообщения",
   },
-  description: "booking.kz | booking.kz",
+  description: "etazhi.kz | etazhi.kz",
 };
 
 interface ChatsLayoutProps {

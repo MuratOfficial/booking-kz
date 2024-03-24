@@ -25,6 +25,7 @@ import {
   Wrench,
   Zap,
 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export type UserColumn = {
@@ -172,12 +173,11 @@ export const columns: ColumnDef<UserColumn>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const UserColumn = row.original;
-      const router = useRouter();
 
       const onDelete = async (id: string) => {
         try {
           await axios.delete(`/api/admin/users/${id}`);
-          router.refresh();
+
           toast({ description: "Пользователь удален", variant: "default" });
         } catch (error) {
           toast({
@@ -203,10 +203,8 @@ export const columns: ColumnDef<UserColumn>[] = [
               Скопировать ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => router.push(`/admin/users/${UserColumn.id}`)}
-            >
-              Редактировать
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/users/${UserColumn.id}`}>Редактировать</Link>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onDelete(UserColumn.id)}>
               Удалить

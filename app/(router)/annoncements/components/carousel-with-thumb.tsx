@@ -34,7 +34,14 @@ const images = [
   "/random/6.jpg",
 ];
 
-function CarouselWithThumbs() {
+interface CarouselWithThumbsProps {
+  images?: {
+    url: string;
+  }[];
+  isChecked: boolean;
+}
+
+function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
   const [api, setApi] = React.useState<CarouselApi>();
   const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel({
     containScroll: "keepSnaps",
@@ -86,7 +93,7 @@ function CarouselWithThumbs() {
         className="w-full group aspect-[8/5] w-full relative rounded-xl items-center flex justify-center  bg-white"
       >
         <CarouselContent>
-          {images.map((img, index) => (
+          {images?.map((img, index) => (
             <CarouselItem key={index}>
               {fetched ? (
                 <CldImage
@@ -108,7 +115,7 @@ function CarouselWithThumbs() {
                         fontFamily: "Source Sans Pro",
                         fontSize: 80,
                         fontWeight: "black",
-                        text: "booking.kz",
+                        text: "etazhi.kz",
                       },
                     },
                   ]}
@@ -117,7 +124,7 @@ function CarouselWithThumbs() {
               ) : (
                 <div className="relative">
                   <Image
-                    src={img}
+                    src={img.url}
                     alt={`img+${index}`}
                     width={1400}
                     height={1000}
@@ -126,7 +133,7 @@ function CarouselWithThumbs() {
                     blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
                   />
                   <p className="font-bold text-3xl opacity-60 right-2 bottom-2 absolute">
-                    booking.kz
+                    etazhi.kz
                   </p>
                 </div>
               )}
@@ -207,10 +214,10 @@ function CarouselWithThumbs() {
       </Carousel>
       <Carousel className="w-full" ref={emblaThumbsRef}>
         <CarouselContent className="w-full -ml-2">
-          {images.map((thumb, index) => (
+          {images?.map((thumb, index) => (
             <CarouselItem key={index} className=" basis-[12%] pl-2">
               <Image
-                src={thumb}
+                src={thumb.url}
                 alt={`img+${index}`}
                 width={200}
                 height={140}

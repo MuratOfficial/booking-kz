@@ -59,7 +59,7 @@ function Footer() {
       </div>
       <div className="bg-slate-950 w-full  flex flex-row justify-between items-center py-4 px-4">
         <p className="lg:text-left xs:text-center xxs:text-center text-xs text-neutral-400 ">
-          &copy; {currentYear} &ldquo;Booking KZ&rdquo;. Все права защищены.
+          &copy; {currentYear} &ldquo;etazhi.kz&rdquo;. Все права защищены.
         </p>
         <div className="flex flex-row gap-x-4 lg:text-left xs:text-center xxs:text-center text-xs text-neutral-400">
           <Link

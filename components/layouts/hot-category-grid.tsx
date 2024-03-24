@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React from "react";
-import AnnoncementCard, { cardData } from "../cards/annoncement-cart";
+import AnnoncementCard from "../cards/annoncement-cart";
 import {
   Carousel,
   CarouselApi,
@@ -9,10 +9,11 @@ import {
   CarouselItem,
 } from "../ui/carousel";
 import { cn } from "@/lib/utils";
+import { Annoncement, Testimonial } from "@prisma/client";
 
 interface HotCategoryGridProps {
   title: string;
-  data: cardData[];
+  data: (Annoncement & { testimonials: Testimonial[] })[];
 }
 
 function HotCategoryGrid({ title, data }: HotCategoryGridProps) {

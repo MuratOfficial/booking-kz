@@ -1,4 +1,3 @@
-import HotSuggestCard from "@/components/cards/hot-suggest-card";
 import { ArrowRightCircle } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -18,9 +17,9 @@ function AnnoncementsBoard() {
       </div>
 
       <div className="w-full h-full  bg-white rounded-xl p-4 flex flex-col gap-2">
-        {annoncementBoardCards.map((el, ind) => (
+        {/* {annoncementBoardCards.map((el, ind) => (
           <AnnoncementBoardCard card={el} key={ind} />
-        ))}
+        ))} */}
       </div>
     </div>
   );

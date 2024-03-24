@@ -5,10 +5,10 @@ import SideMenuProfile from "./components/side-menu";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Профиль | booking.kz",
+    template: "%s | Профиль | etazhi.kz",
     default: "Профиль",
   },
-  description: "booking.kz | booking.kz",
+  description: "etazhi.kz | etazhi.kz",
 };
 
 interface ProfileLayoutProps {

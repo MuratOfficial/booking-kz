@@ -20,3 +20,53 @@ export async function fetchAnnoncement(id: string) {
     throw new Error("Failed to fetch annoncement");
   }
 }
+
+export async function fetchHotModifierAnnoncementsSell() {
+  try {
+    const annoncement = await prismadb.annoncement.findMany({
+      where: {
+        serviceType: "Продажа",
+        modificators: {
+          is: {
+            hotModifier: {
+              gt: 0,
+            },
+          },
+        },
+      },
+      include: {
+        testimonials: true,
+      },
+    });
+
+    return annoncement;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch annoncement");
+  }
+}
+
+export async function fetchHotModifierAnnoncementsRent() {
+  try {
+    const annoncement = await prismadb.annoncement.findMany({
+      where: {
+        serviceType: "Аренда",
+        modificators: {
+          is: {
+            hotModifier: {
+              gt: 0,
+            },
+          },
+        },
+      },
+      include: {
+        testimonials: true,
+      },
+    });
+
+    return annoncement;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch annoncement");
+  }
+}

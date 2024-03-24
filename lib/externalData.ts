@@ -1,5 +1,3 @@
-import { Annoncement } from "@/app/(router)/cabinet/annoncements/page";
-
 export const paymentHistory = [
   {
     date: new Date("2024-02-10"),
@@ -143,7 +141,7 @@ export const chatList = [
   },
 ];
 
-export const annoncements: Annoncement[] = [
+export const annoncements = [
   {
     city: "Актау, 17 мкр., 7/57",
     rating: "9.0",

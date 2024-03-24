@@ -61,6 +61,22 @@ import {
 import { fetchAnnoncement } from "@/lib/fetchAnnoncement";
 import { Testimonial } from "@prisma/client";
 import Link from "next/link";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { annoncementId: string };
+}): Promise<Metadata> {
+  const annoncement = await fetchAnnoncement(params.annoncementId);
+
+  return {
+    title: `${annoncement?.roomNumber}-комнатная
+      ${annoncement?.categoryType.toLowerCase()}, этаж ${
+      annoncement?.floor
+    } из ${annoncement?.floorFrom}, площадь ${annoncement?.areaSq} м²`,
+  };
+}
 
 const AnnoncementPage = async ({
   params,
@@ -242,22 +258,83 @@ const AnnoncementPage = async ({
     },
   ];
 
+  const filteredArray: any[] = [];
+  const filteredArray2: any[] = [];
+  const filteredArray3: any[] = [];
+  const filteredArray4: any[] = [];
+  const filteredArray5: any[] = [];
+
+  additionalFilterWithIcons.forEach((filterItem) => {
+    if (
+      annoncement?.additionalFilters.some(
+        (filteredItem) => filteredItem.value === filterItem.name
+      )
+    ) {
+      filteredArray.push(filterItem);
+    }
+  });
+
+  additionalFilterWithIcons2.forEach((filterItem) => {
+    if (
+      annoncement?.additionalFilters.some(
+        (filteredItem) => filteredItem.value === filterItem.name
+      )
+    ) {
+      filteredArray2.push(filterItem);
+    }
+  });
+
+  additionalFilterWithIcons3.forEach((filterItem) => {
+    if (
+      annoncement?.additionalFilters.some(
+        (filteredItem) => filteredItem.value === filterItem.name
+      )
+    ) {
+      filteredArray3.push(filterItem);
+    }
+  });
+
+  additionalFilterWithIcons4.forEach((filterItem) => {
+    if (
+      annoncement?.additionalFilters.some(
+        (filteredItem) => filteredItem.value === filterItem.name
+      )
+    ) {
+      filteredArray4.push(filterItem);
+    }
+  });
+
+  additionalFilterWithIcons5.forEach((filterItem) => {
+    if (
+      annoncement?.additionalFilters.some(
+        (filteredItem) => filteredItem.value === filterItem.name
+      )
+    ) {
+      filteredArray5.push(filterItem);
+    }
+  });
+
   return (
     <div className="py-4 px-16 min-h-screen flex flex-col gap-2 text-slate-900">
       <HeaderButtons />
       <div className="grid grid-cols-12 gap-4 w-full h-full">
         <div className="col-span-8  w-full h-full gap-4 flex flex-col">
-          <CarouselWithThumbs />
-          <AnnoncementDescription />
-          <AnnoncementRules />
-          <AnnoncementTestimonials />
+          <CarouselWithThumbs
+            images={annoncement?.images}
+            isChecked={annoncement?.isChecked!}
+          />
+          <AnnoncementDescription annoncement={annoncement} />
+          <AnnoncementRules annoncement={annoncement} />
+          <AnnoncementTestimonials
+            testimonials={annoncement?.testimonials || []}
+          />
           <AnnoncementMap />
         </div>
         <div className="col-span-4 w-full h-full ">
           <div className="bg-white rounded-xl w-full h-fit px-4 py-3 flex flex-col gap-2  sticky top-[10%]">
             <div className="grid grid-cols-3 gap-2 items-center">
               <div className="flex flex-col">
-                <span className=" flex flex-row w-fit items-center  gap-x-1 flex-wrap text-xs  ">
+                <span className=" flex flex-row w-fit items-center  gap-x-1 flex-wrap   ">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -272,7 +349,7 @@ const AnnoncementPage = async ({
                       d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
                     />
                   </svg>
-                  <span className="font-bold text-slate-900 text-sm">
+                  <span className="font-bold text-slate-900 text-base">
                     {overallRanking}
                   </span>
                 </span>
@@ -304,7 +381,7 @@ const AnnoncementPage = async ({
             <p className="mt-4 font-medium">
               {annoncement?.roomNumber && (
                 <span>{annoncement?.roomNumber}-комнатная</span>
-              )}
+              )}{" "}
               {annoncement?.categoryType.toLowerCase()}, этаж{" "}
               {annoncement?.floor} из {annoncement?.floorFrom}, площадь{" "}
               {annoncement?.areaSq} м²
@@ -346,6 +423,7 @@ const AnnoncementPage = async ({
                     className="cursor-pointer  text-center hover:bg-neutral-50 rounded-lg focus:bg-neutral-50 focus:text-green-500"
                   >
                     <Link
+                      target="_blank"
                       href={`https://wa.me/${
                         annoncement?.user.phone &&
                         annoncement?.user.phone.replace(/\+/g, "")
@@ -361,7 +439,7 @@ const AnnoncementPage = async ({
             <div className="w-full flex flex-col gap-2">
               <p className="font-bold">Основные удобства</p>
               <div className="w-full grid grid-cols-2 gap-2 ">
-                {additionalFilterWithIcons.slice(0, 8).map((el, ind) => (
+                {filteredArray.slice(0, 8).map((el, ind) => (
                   <span
                     className="flex flex-row items-center gap-x-2 font-semibold text-xs"
                     key={ind}
@@ -371,7 +449,7 @@ const AnnoncementPage = async ({
                 ))}
                 <Collapsible className="col-span-2 ">
                   <CollapsibleContent className="w-full grid grid-cols-2 gap-2 ">
-                    {additionalFilterWithIcons.slice(8).map((el, ind) => (
+                    {filteredArray.slice(8).map((el, ind) => (
                       <span
                         className="flex flex-row items-center gap-x-2 font-semibold text-xs"
                         key={ind}
@@ -382,7 +460,7 @@ const AnnoncementPage = async ({
                     <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
                       На территории
                     </p>
-                    {additionalFilterWithIcons2.map((el, ind) => (
+                    {filteredArray2.map((el, ind) => (
                       <span
                         className="flex flex-row items-center gap-x-2 font-semibold text-xs"
                         key={ind}
@@ -393,7 +471,7 @@ const AnnoncementPage = async ({
                     <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
                       Вид из окна
                     </p>
-                    {additionalFilterWithIcons3.map((el, ind) => (
+                    {filteredArray3.map((el, ind) => (
                       <span
                         className="flex flex-row items-center gap-x-2 font-semibold text-xs"
                         key={ind}
@@ -404,7 +482,7 @@ const AnnoncementPage = async ({
                     <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
                       Санузел
                     </p>
-                    {additionalFilterWithIcons4.map((el, ind) => (
+                    {filteredArray4.map((el, ind) => (
                       <span
                         className="flex flex-row items-center gap-x-2 font-semibold text-xs"
                         key={ind}
@@ -415,7 +493,7 @@ const AnnoncementPage = async ({
                     <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
                       Дополнительно
                     </p>
-                    {additionalFilterWithIcons5.map((el, ind) => (
+                    {filteredArray5.map((el, ind) => (
                       <span
                         className="flex flex-row items-center gap-x-2 font-semibold text-xs"
                         key={ind}

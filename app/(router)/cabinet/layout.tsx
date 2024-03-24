@@ -10,10 +10,10 @@ import {
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Кабинет | booking.kz",
-    default: "booking.kz",
+    template: "%s | Кабинет | etazhi.kz",
+    default: "etazhi.kz",
   },
-  description: "booking.kz | booking.kz",
+  description: "etazhi.kz | etazhi.kz",
 };
 
 // const sidebarNavItems = [

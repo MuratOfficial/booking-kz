@@ -5,8 +5,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Админ-панель | booking.kz",
-    default: "Админ-панель | booking.kz",
+    template: "%s | Админ-панель | etazhi.kz",
+    default: "Админ-панель | etazhi.kz",
   },
   description: " Обьявления аренды и продажи недвижимостей",
 };

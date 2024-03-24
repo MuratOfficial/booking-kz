@@ -1,15 +1,11 @@
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { Testimonial } from "@prisma/client";
 import { UserCircle2 } from "lucide-react";
 import React from "react";
 
 interface TestimonialCardProps {
-  cardData: {
-    name: string;
-    rating: number;
-    text: string;
-    date: string;
-  };
+  cardData: Testimonial;
 }
 
 function TestimonialCard({ cardData }: TestimonialCardProps) {
@@ -28,7 +24,7 @@ function TestimonialCard({ cardData }: TestimonialCardProps) {
       <UserCircle2 className="w-12 h-12 text-slate-400" />
       <div className="flex flex-col gap-2 w-full">
         <div className="flex flex-row justify-between">
-          <p className="font-bold">{cardData.name}</p>
+          <p className="font-bold">{cardData.userId}</p>
           <div className="flex flex-col self-end">
             <p className="flex flex-row  items-center text-sm self-end">
               <svg
@@ -45,13 +41,17 @@ function TestimonialCard({ cardData }: TestimonialCardProps) {
                   d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
                 />
               </svg>
-              <span className="font-bold text-slate-900 ">10.0</span>
+              <span className="font-bold text-slate-900 ">
+                {cardData.ranking.overall}
+              </span>
             </p>
 
-            <span className=" text-slate-500  text-sm">{cardData.date}</span>
+            <span className=" text-slate-500  text-sm">
+              {cardData.createdAt.toLocaleDateString()}
+            </span>
           </div>
         </div>
-        {cardData.text.length > 600 ? (
+        {cardData?.comment && cardData?.comment?.length > 600 ? (
           <div className="w-full relative">
             <p
               className={cn(
@@ -59,7 +59,7 @@ function TestimonialCard({ cardData }: TestimonialCardProps) {
                 openText && "max-h-fit line-clamp-none"
               )}
             >
-              {cardData.text}
+              {cardData?.comment}
             </p>
             <button
               onClick={() => handleClick(openText)}
@@ -72,7 +72,9 @@ function TestimonialCard({ cardData }: TestimonialCardProps) {
             </button>
           </div>
         ) : (
-          <p className="text-justify text-sm font-normal">{cardData.text}</p>
+          <p className="text-justify text-sm font-normal">
+            {cardData?.comment}
+          </p>
         )}
         <Separator />
       </div>

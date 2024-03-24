@@ -21,7 +21,7 @@ import {
   User,
   Zap,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export type AnnoncementColumn = {
   id: string;
@@ -189,13 +189,11 @@ export const columns: ColumnDef<AnnoncementColumn>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const AnnoncementColumn = row.original;
-      const router = useRouter();
 
       const onDelete = async (id: string) => {
         try {
           await axios.delete(`/api/admin/annoncements/${id}`);
           toast({ description: "Обьявление удалено", variant: "default" });
-          router.refresh();
         } catch (error) {
           toast({
             description: "Убедитесь что вы удалили все обьекты обьявление",
@@ -222,12 +220,10 @@ export const columns: ColumnDef<AnnoncementColumn>[] = [
               Скопировать ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() =>
-                router.push(`/admin/annoncements/${AnnoncementColumn.id}`)
-              }
-            >
-              Редактировать
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/annoncements/${AnnoncementColumn.id}`}>
+                Редактировать
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onDelete(AnnoncementColumn.id)}>
               Удалить

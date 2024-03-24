@@ -1,4 +1,4 @@
-import { Annoncement } from "@/app/(router)/cabinet/annoncements/page";
+import { Annoncement } from "@prisma/client";
 import { CalendarDays, Check, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,8 +14,8 @@ function AnnoncementBoardCard({ card }: AnnoncementBoardCardProps) {
   return (
     <div className="grid grid-cols-5 h-fit w-full gap-2  hover:bg-slate-200 rounded-xl p-1">
       <Image
-        src={card?.images[0]}
-        alt={card?.city}
+        src={card?.images[0]?.url}
+        alt={card?.cityOrDistrict}
         width={240}
         height={320}
         className=" object-contain rounded-lg h-[70px] w-full"

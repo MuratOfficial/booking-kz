@@ -15,9 +15,8 @@ interface ShownAnnoncementsProps {
 }
 
 function ShownAnnoncements({ annoncements }: ShownAnnoncementsProps) {
-  const [orderedAnnoncements, setOrderedAnnoncements] = useState<
-    (Annoncement & { testimonials: Testimonial[] })[]
-  >([]);
+  const [orderedAnnoncements, setOrderedAnnoncements] =
+    useState<(Annoncement & { testimonials: Testimonial[] })[]>(annoncements);
   const [sorted, setSorted] = useState("");
 
   const sortByPrice = () => {

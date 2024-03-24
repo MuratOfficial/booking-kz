@@ -23,7 +23,7 @@ function YandexMap() {
           center: [51.128201, 71.430429],
           zoom: 12,
         }}
-        width={840}
+        width={600}
         height={460}
       >
         <Placemark geometry={[55.684758, 37.738521]} />

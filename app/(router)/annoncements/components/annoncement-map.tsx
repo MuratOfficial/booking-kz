@@ -1,4 +1,6 @@
+"use client";
 import React from "react";
+import YandexMap from "../../cabinet/annoncements/components/yandex-map";
 
 function AnnoncementMap() {
   return (
@@ -6,9 +8,7 @@ function AnnoncementMap() {
       <p className="font-semibold text-lg text-left w-fit">
         Расположение на карте
       </p>
-      <div className="border rounded-lg w-full h-60">
-        Карта еще не настроена
-      </div>
+      <YandexMap />
     </div>
   );
 }

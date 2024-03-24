@@ -7,6 +7,11 @@ import { fetchFilteredAnnoncements } from "@/lib/fetchingFilter";
 import { Metadata } from "next";
 import { Skeleton } from "@/components/ui/skeleton";
 import ShownAnnoncements from "./components/shown-annoncements";
+import {
+  fetchHotModifierAnnoncementsRent,
+  fetchHotModifierAnnoncementsSell,
+} from "@/lib/fetchAnnoncement";
+import { Annoncement, Testimonial } from "@prisma/client";
 
 export async function generateMetadata({
   searchParams,
@@ -107,6 +112,24 @@ const FilterPage = async ({
   //   },
   // });
 
+  const hotannoncementsrent = await fetchHotModifierAnnoncementsRent();
+  const hotannoncementssell = await fetchHotModifierAnnoncementsSell();
+
+  const shuffle = (
+    array: (Annoncement & { testimonials: Testimonial[] })[]
+  ) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  };
+
+  const hotAnnoncements = shuffle([
+    ...hotannoncementsrent,
+    ...hotannoncementssell,
+  ]);
+
   const annoncements = await fetchFilteredAnnoncements(
     searchParams?.serviceType,
     searchParams?.phase,
@@ -132,11 +155,9 @@ const FilterPage = async ({
 
         <div className="col-span-2 bg-white rounded-xl h-fit w-full flex flex-col gap-4 items-center py-2 px-3">
           <h1 className="font-semibold">Горячие предложения</h1>
-          <HotSuggestCard />
-          <HotSuggestCard />
-          <HotSuggestCard />
-          <HotSuggestCard />
-          <HotSuggestCard />
+          {hotAnnoncements.slice(0, 16).map((el, keyid) => (
+            <HotSuggestCard data={el} key={keyid} />
+          ))}
         </div>
       </div>
     </>

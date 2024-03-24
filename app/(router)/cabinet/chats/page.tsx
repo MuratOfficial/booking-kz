@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Сообщения",
-  description: "booking.kz | booking.kz",
+  description: "etazhi.kz | etazhi.kz",
 };
 
 function ChatsPage() {

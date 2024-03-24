@@ -1,9 +1,14 @@
 "use client";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { Annoncement } from "@prisma/client";
 import React from "react";
 
-function AnnoncementDescription() {
+interface AnnoncementDescriptionProps {
+  annoncement: Annoncement | null;
+}
+
+function AnnoncementDescription({ annoncement }: AnnoncementDescriptionProps) {
   const [openText, setOpenText] = React.useState(false);
 
   function handleClick(state: boolean) {
@@ -23,23 +28,30 @@ function AnnoncementDescription() {
       <div className="grid grid-cols-7 gap-2 text-sm">
         <p className="font-semibold col-span-2">
           Состояние ремонта:{" "}
-          <span className="font-medium text-slate-900/70">Новое</span>
+          <span className="font-medium text-slate-900/70">
+            {annoncement?.repairType || "Н/у"}
+          </span>
         </p>
         <p className="font-semibold col-span-2">
           Высота потолков:{" "}
-          <span className="font-medium text-slate-900/70">Высокие</span>
+          <span className="font-medium text-slate-900/70">
+            {annoncement?.roofHeight || "Н/у"}
+          </span>
         </p>
         <p className="font-semibold col-span-1">
-          Этаж: <span className="font-medium text-slate-900/70">3 из 5</span>
+          Этаж:{" "}
+          <span className="font-medium text-slate-900/70">{`${annoncement?.floor} из ${annoncement?.floorFrom}`}</span>
         </p>
         <p className="font-semibold col-span-2">
           Год строительства:{" "}
-          <span className="font-medium text-slate-900/70">2013</span>
+          <span className="font-medium text-slate-900/70">
+            {annoncement?.yearBuild || "Н/у"}
+          </span>
         </p>
       </div>
       <Separator />
 
-      {exampleText.length > 1000 ? (
+      {annoncement?.description.length! > 1000 ? (
         <div className="w-full relative">
           <p
             className={cn(
@@ -47,7 +59,7 @@ function AnnoncementDescription() {
               openText && "max-h-fit line-clamp-none"
             )}
           >
-            {exampleText}
+            {annoncement?.description}
           </p>
           <button
             onClick={() => handleClick(openText)}
@@ -60,7 +72,9 @@ function AnnoncementDescription() {
           </button>
         </div>
       ) : (
-        <p className="text-justify text-sm font-normal">{exampleText}</p>
+        <p className="text-justify text-sm font-normal line-clamp-4">
+          {annoncement?.description}
+        </p>
       )}
     </div>
   );

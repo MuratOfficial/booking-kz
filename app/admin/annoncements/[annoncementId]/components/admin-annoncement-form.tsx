@@ -776,7 +776,7 @@ function AdminAnnoncementForm({
                 name="modificators.topModifier"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center gap-4 ">
-                    <p className="text-base font-semibold">Модификатор "ТОП"</p>
+                    <p className="text-base font-semibold">Модификатор ТОП</p>
                     <FormControl>
                       <div className="flex flex-row gap-x-2 items-center relative w-fit">
                         <Input
@@ -797,7 +797,7 @@ function AdminAnnoncementForm({
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center gap-4 ">
                     <p className="text-base font-semibold">
-                      Модификатор "Горячее"
+                      Модификатор Горячее
                     </p>
                     <FormControl>
                       <div className="flex flex-row gap-x-2 items-center relative w-fit">
@@ -819,7 +819,7 @@ function AdminAnnoncementForm({
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center gap-4 ">
                     <p className="text-base font-semibold">
-                      Модификатор "Срочно"
+                      Модификатор Срочно
                     </p>
                     <FormControl>
                       <div className="flex flex-row gap-x-2 items-center relative w-fit">

@@ -13,26 +13,35 @@ import { Skeleton } from "../ui/skeleton";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-export interface cardData {
-  city: string;
-  rating: string;
-  isChecked: boolean;
-  roomNumber: string;
-  floor: string;
-  floorFrom: string;
-  areaSq: string;
-  price: number;
-  images: string[];
-  id: string;
-  serviceType: string;
-}
+import { Annoncement, Testimonial } from "@prisma/client";
 
 interface AnnoncementCardProps {
-  data: cardData;
+  data: Annoncement & { testimonials: Testimonial[] };
 }
 
 function AnnoncementCard({ data }: AnnoncementCardProps) {
+  function calculateOverallRanking(testimonials: Testimonial[]) {
+    let totalOverall = 0;
+    let totalCount = 0;
+
+    testimonials.forEach((testimonial) => {
+      const ranking = testimonial.ranking;
+      const overall = parseFloat(ranking.overall);
+      if (!isNaN(overall)) {
+        totalOverall += overall;
+        totalCount++;
+      }
+    });
+
+    if (totalCount === 0) {
+      return 0;
+    }
+
+    return totalOverall / totalCount;
+  }
+
+  const overallRanking = calculateOverallRanking(data!.testimonials);
+
   const [api, setApi] = React.useState<CarouselApi>();
 
   const [current, setCurrent] = React.useState(0);
@@ -64,7 +73,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
   return (
     <div>
       <div>
-        {data.city ? (
+        {data ? (
           <Carousel
             setApi={setApi}
             className="w-full group aspect-[5/4] relative rounded-xl items-center flex justify-center  "
@@ -73,7 +82,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
               {data?.images.map((img, index) => (
                 <CarouselItem key={index}>
                   <Image
-                    src={img}
+                    src={img.url}
                     alt={`img+${index}`}
                     width={240}
                     height={320}
@@ -158,7 +167,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                 />
               </svg>
             </button>
-            {data.serviceType === "аренда" && (
+            {data.serviceType === "Аренда" && (
               <span className="py-0.5 px-1 group-hover:text-transparent  group-hover:bg-transparent flex flex-row items-center gap-x-0.5 rounded-full bg-slate-200  bg-opacity-50 absolute top-2 left-2 transition delay-100 duration-300 hover:bg-opacity-80">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -175,12 +184,12 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                   />
                 </svg>
                 <span className="font-bold text-slate-900 group-hover:text-transparent   text-xs transition delay-100 duration-300">
-                  {data.rating}
+                  {overallRanking}
                 </span>
               </span>
             )}
 
-            {data.isChecked && data.serviceType === "аренда" && (
+            {data.isChecked && data.serviceType === "Аренда" && (
               <span className=" py-0.5 px-1.5 group-hover:text-transparent  group-hover:bg-transparent flex flex-row items-center gap-x-1 rounded-r-full bg-blue-500  absolute top-10 left-0 transition delay-100 duration-300 hover:bg-opacity-80">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

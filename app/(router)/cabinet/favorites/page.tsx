@@ -7,7 +7,7 @@ import React from "react";
 
 export const metadata: Metadata = {
   title: "Избранные",
-  description: "booking.kz | booking.kz",
+  description: "etazhi.kz | etazhi.kz",
 };
 
 function FavoritesPage() {
@@ -29,9 +29,9 @@ function FavoritesPage() {
       {data.length > 0 ? (
         <div className="w-full flex flex-col gap-2">
           {" "}
-          {data.map((item, index) => (
-            <FavoriteCard key={index} data={item} />
-          ))}
+          {/* {data.map((item, index) => (
+            // <FavoriteCard key={index} data={item} />
+          ))} */}
         </div>
       ) : (
         <div className="w-full items-center justify-center flex flex-col py-4">

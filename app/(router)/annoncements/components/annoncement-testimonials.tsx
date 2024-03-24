@@ -10,15 +10,68 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronsUp } from "lucide-react";
+import { Testimonial } from "@prisma/client";
 
-function AnnoncementTestimonials() {
+interface AnnoncementTestimonials {
+  testimonials: Testimonial[] | [] | null;
+}
+
+function AnnoncementTestimonials({ testimonials }: AnnoncementTestimonials) {
+  type RankingKeys = Exclude<keyof Testimonial["ranking"], "overall">;
+
+  function calculateOverallRanking(testimonials: Testimonial[]) {
+    const overallPoints: Record<string, number> = {
+      overall: 0,
+      ranking1: 0,
+      ranking2: 0,
+      ranking3: 0,
+      ranking4: 0,
+      ranking5: 0,
+      ranking6: 0,
+    };
+    const totalCounts: Record<string, number> = {
+      overall: 0,
+      ranking1: 0,
+      ranking2: 0,
+      ranking3: 0,
+      ranking4: 0,
+      ranking5: 0,
+      ranking6: 0,
+    };
+
+    testimonials.forEach((testimonial) => {
+      const ranking = testimonial.ranking;
+      for (let key in ranking) {
+        const value = parseFloat(ranking[key as keyof typeof ranking]);
+        if (!isNaN(value)) {
+          overallPoints[key] += value;
+          totalCounts[key]++;
+        }
+      }
+    });
+
+    const overallAverages: Record<string, number> = {};
+    for (let key in overallPoints) {
+      const totalCount = totalCounts[key];
+      if (totalCount > 0) {
+        overallAverages[key] = overallPoints[key] / totalCount;
+      } else {
+        overallAverages[key] = 0;
+      }
+    }
+
+    return overallAverages;
+  }
+
+  const overallRanking = calculateOverallRanking(testimonials || []);
+
   const rating = [
-    { name: "Чистота", rating: 9.8 },
-    { name: "Соответствие фото", rating: 2.0 },
-    { name: "Расположение", rating: 9.8 },
-    { name: "Качество обслуживания", rating: 10.0 },
-    { name: "Состояние ремонта", rating: 10.0 },
-    { name: "Инфраструктура", rating: 10.0 },
+    { name: "Чистота", rating: overallRanking.ranking1 },
+    { name: "Соответствие фото", rating: overallRanking.ranking2 },
+    { name: "Расположение", rating: overallRanking.ranking3 },
+    { name: "Качество обслуживания", rating: overallRanking.ranking4 },
+    { name: "Состояние ремонта", rating: overallRanking.ranking5 },
+    { name: "Инфраструктура", rating: overallRanking.ranking6 },
   ];
 
   const exampleTestimonials = [
@@ -55,7 +108,9 @@ function AnnoncementTestimonials() {
           Отзывы и оценка гостей
         </p>
         <span className=" flex flex-row w-fit items-center  gap-x-1 flex-wrap text-sm  pr-4">
-          <span className=" text-slate-500 pr-2">68 отзывов</span>
+          <span className=" text-slate-500 pr-2">
+            {testimonials?.length} отзывов
+          </span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -70,7 +125,9 @@ function AnnoncementTestimonials() {
               d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
             />
           </svg>
-          <span className="font-bold text-slate-900 text-lg">10.0</span>
+          <span className="font-bold text-slate-900 text-lg">
+            {overallRanking.overall.toFixed(1)}
+          </span>
         </span>
       </div>
       <div className="grid grid-cols-2 gap-4 mt-4">
@@ -95,26 +152,34 @@ function AnnoncementTestimonials() {
       </div>
       <Separator className="my-4" />
       <div className="flex flex-col gap-6 w-full">
-        {exampleTestimonials.slice(0, 3).map((el, ind) => (
-          <TestimonialCard key={ind} cardData={el} />
-        ))}
-        <Collapsible className="w-full flex items-center flex-col">
-          <CollapsibleContent className="w-full flex items-center flex-col gap-6">
-            {exampleTestimonials.slice(3).map((el, ind) => (
+        {testimonials && testimonials?.length > 0 ? (
+          <>
+            {testimonials?.slice(0, 3).map((el, ind) => (
               <TestimonialCard key={ind} cardData={el} />
             ))}
-          </CollapsibleContent>
-          <CollapsibleTrigger asChild>
-            <button className=" px-3 py-2 data-[state=open]:hidden rounded-xl hover:opacity-80 transition-all delay-75 duration-200 bg-slate-800 text-white font-semibold">
-              Показать все {exampleTestimonials.length} отзыва
-            </button>
-          </CollapsibleTrigger>
-          <CollapsibleTrigger asChild>
-            <button className=" px-3 mt-2 py-2 rounded-xl data-[state=open]:flex data-[state=closed]:hidden hover:opacity-80 transition-all delay-75 duration-200 ">
-              <ChevronsUp />
-            </button>
-          </CollapsibleTrigger>
-        </Collapsible>
+            <Collapsible className="w-full flex items-center flex-col">
+              <CollapsibleContent className="w-full flex items-center flex-col gap-6">
+                {testimonials?.slice(3).map((el, ind) => (
+                  <TestimonialCard key={ind} cardData={el} />
+                ))}
+              </CollapsibleContent>
+              <CollapsibleTrigger asChild>
+                <button className=" px-3 py-2 data-[state=open]:hidden rounded-xl hover:opacity-80 transition-all delay-75 duration-200 bg-slate-800 text-white font-semibold">
+                  Показать все {testimonials?.length} отзыва
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleTrigger asChild>
+                <button className=" px-3 mt-2 py-2 rounded-xl data-[state=open]:flex data-[state=closed]:hidden hover:opacity-80 transition-all delay-75 duration-200 ">
+                  <ChevronsUp />
+                </button>
+              </CollapsibleTrigger>
+            </Collapsible>
+          </>
+        ) : (
+          <p className="w-full text-center text-sm font-medium text-slate-600">
+            Комментарии нету
+          </p>
+        )}
       </div>
     </div>
   );
