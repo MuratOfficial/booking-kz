@@ -7,6 +7,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import Link from "next/link";
 
 function CarouselAuth() {
   const images = [
@@ -31,9 +32,12 @@ function CarouselAuth() {
       }}
       className="w-full h-screen flex flex-col bg-cover relative "
     >
-      <p className=" text-slate-50 font-semibold uppercase text-xl mt-4 ml-4 absolute z-20">
+      <Link
+        href="/"
+        className=" text-slate-50 hover:text-blue-500 transition delay-75 duration-200 font-semibold uppercase text-xl mt-4 ml-4 absolute z-20"
+      >
         etazhi.kz
-      </p>
+      </Link>
       <CarouselContent>
         {images.map((img, index) => (
           <CarouselItem key={index} className="w-full h-full ml-0 pl-0">

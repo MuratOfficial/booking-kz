@@ -254,7 +254,9 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
           <div className="flex flex-col gap-2 w-[30%] h-full py-2 px-2 justify-between">
             {data.serviceType === "Аренда" && (
               <span className=" flex flex-row w-fit items-center gap-x-1  self-end ">
-                <span className=" text-slate-500 text-xs">68 отзывов</span>
+                <span className=" text-slate-500 text-xs">
+                  {data?.testimonials.length} отзывов
+                </span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"

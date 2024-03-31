@@ -16,7 +16,7 @@ interface ShownAnnoncementsProps {
 
 function ShownAnnoncements({ annoncements }: ShownAnnoncementsProps) {
   const [orderedAnnoncements, setOrderedAnnoncements] =
-    useState<(Annoncement & { testimonials: Testimonial[] })[]>(annoncements);
+    useState<(Annoncement & { testimonials: Testimonial[] })[]>();
   const [sorted, setSorted] = useState("");
 
   const sortByPrice = () => {
@@ -41,7 +41,7 @@ function ShownAnnoncements({ annoncements }: ShownAnnoncementsProps) {
     } else if (sorted === "rate") {
       sortByOverallRanking();
     }
-  }, [sorted, annoncements]);
+  }, [sorted, annoncements, orderedAnnoncements]);
 
   return (
     <div className="col-span-5 flex flex-col gap-4">
@@ -66,27 +66,56 @@ function ShownAnnoncements({ annoncements }: ShownAnnoncementsProps) {
           По цене
         </button>{" "}
       </div>
-      {orderedAnnoncements?.slice(0, 10).map((el, index) => (
-        <AnnoncementListCard data={el} key={index} />
-      ))}
-      {orderedAnnoncements && orderedAnnoncements?.length > 10 && (
-        <Collapsible className="">
-          <CollapsibleContent className="flex flex-col gap-8">
-            {orderedAnnoncements?.slice(3).map((el, ind) => (
-              <AnnoncementListCard data={el} key={ind} />
-            ))}
-          </CollapsibleContent>
-          <CollapsibleTrigger asChild>
-            <button className=" px-3 py-2 data-[state=open]:hidden rounded-xl  transition-all delay-75 duration-200 w-full border text-slate-400 hover:text-slate-800 hover:border-slate-700 font-semibold">
-              Показать все {orderedAnnoncements?.length} обьявления
-            </button>
-          </CollapsibleTrigger>
-          <CollapsibleTrigger asChild>
-            <button className=" px-3 mt-4 py-2 data-[state=closed]:hidden rounded-xl  transition-all delay-75 duration-200 w-full border text-slate-400 hover:text-slate-800 hover:border-slate-700 font-semibold">
-              Скрыть
-            </button>
-          </CollapsibleTrigger>
-        </Collapsible>
+      {sorted === "" ? (
+        <>
+          {annoncements?.slice(0, 10).map((el, index) => (
+            <AnnoncementListCard data={el} key={index} />
+          ))}
+          {annoncements && annoncements?.length > 10 && (
+            <Collapsible className="">
+              <CollapsibleContent className="flex flex-col gap-8">
+                {orderedAnnoncements?.slice(3).map((el, ind) => (
+                  <AnnoncementListCard data={el} key={ind} />
+                ))}
+              </CollapsibleContent>
+              <CollapsibleTrigger asChild>
+                <button className=" px-3 py-2 data-[state=open]:hidden rounded-xl  transition-all delay-75 duration-200 w-full border text-slate-400 hover:text-slate-800 hover:border-slate-700 font-semibold">
+                  Показать все {orderedAnnoncements?.length} обьявления
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleTrigger asChild>
+                <button className=" px-3 mt-4 py-2 data-[state=closed]:hidden rounded-xl  transition-all delay-75 duration-200 w-full border text-slate-400 hover:text-slate-800 hover:border-slate-700 font-semibold">
+                  Скрыть
+                </button>
+              </CollapsibleTrigger>
+            </Collapsible>
+          )}
+        </>
+      ) : (
+        <>
+          {orderedAnnoncements?.slice(0, 10).map((el, index) => (
+            <AnnoncementListCard data={el} key={index} />
+          ))}
+          {orderedAnnoncements && orderedAnnoncements?.length > 10 && (
+            <Collapsible className="">
+              <CollapsibleContent className="flex flex-col gap-8">
+                {orderedAnnoncements?.slice(3).map((el, ind) => (
+                  <AnnoncementListCard data={el} key={ind} />
+                ))}
+              </CollapsibleContent>
+              <CollapsibleTrigger asChild>
+                <button className=" px-3 py-2 data-[state=open]:hidden rounded-xl  transition-all delay-75 duration-200 w-full border text-slate-400 hover:text-slate-800 hover:border-slate-700 font-semibold">
+                  Показать все {orderedAnnoncements?.length} обьявления
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleTrigger asChild>
+                <button className=" px-3 mt-4 py-2 data-[state=closed]:hidden rounded-xl  transition-all delay-75 duration-200 w-full border text-slate-400 hover:text-slate-800 hover:border-slate-700 font-semibold">
+                  Скрыть
+                </button>
+              </CollapsibleTrigger>
+            </Collapsible>
+          )}
+        </>
       )}
     </div>
   );

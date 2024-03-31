@@ -14,9 +14,10 @@ import { Annoncement, Testimonial } from "@prisma/client";
 interface HotCategoryGridProps {
   title: string;
   data: (Annoncement & { testimonials: Testimonial[] })[];
+  link?: string;
 }
 
-function HotCategoryGrid({ title, data }: HotCategoryGridProps) {
+function HotCategoryGrid({ title, data, link }: HotCategoryGridProps) {
   const [api, setApi] = React.useState<CarouselApi>();
 
   const [statePrev, setStatePrev] = React.useState(false);
@@ -50,7 +51,12 @@ function HotCategoryGrid({ title, data }: HotCategoryGridProps) {
       }}
     >
       <div className="w-full flex flex-row justify-between items-center">
-        <h3 className="font-bold text-slate-900 uppercase text-xl">{title}</h3>
+        <Link
+          href={link || ""}
+          className="font-bold text-slate-900 uppercase text-base"
+        >
+          {title}
+        </Link>
         <div className=" w-fit flex flex-row gap-x-2">
           <button
             className={cn(
@@ -110,13 +116,15 @@ function HotCategoryGrid({ title, data }: HotCategoryGridProps) {
             ))}
           </div>
         </CarouselItem>
-        <CarouselItem key={2}>
-          <div className="w-full grid grid-cols-8 gap-3">
-            {data?.slice(0, 16)?.map((item, ind) => (
-              <AnnoncementCard key={ind} data={item} />
-            ))}
-          </div>
-        </CarouselItem>
+        {data?.length > 16 && (
+          <CarouselItem key={2}>
+            <div className="w-full grid grid-cols-8 gap-3">
+              {data?.slice(16, 32)?.map((item, ind) => (
+                <AnnoncementCard key={ind} data={item} />
+              ))}
+            </div>
+          </CarouselItem>
+        )}
       </CarouselContent>
     </Carousel>
   );

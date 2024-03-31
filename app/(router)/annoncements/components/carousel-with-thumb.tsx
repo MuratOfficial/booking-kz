@@ -170,7 +170,7 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
           </TooltipProvider>
         </div>
         <button
-          className="absolute left-2 opacity-60 hover:opacity-100 hover:bg-opacity-100 rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-50 group-hover:bg-opacity-70  p-2 items-center flex text-transparent"
+          className="absolute left-2 opacity-60 hover:opacity-100 hover:bg-opacity-100 rounded-full text-slate-900 transition delay-100 duration-300  bg-slate-50 bg-opacity-70  p-2 items-center flex "
           onClick={scrollPrev}
         >
           <svg
@@ -189,7 +189,7 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
           </svg>
         </button>
         <button
-          className="absolute right-2 opacity-60 hover:opacity-100 hover:bg-opacity-100 rounded-full group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-50 group-hover:bg-opacity-70  p-2 items-center flex text-transparent"
+          className="absolute right-2 opacity-60 hover:opacity-100 hover:bg-opacity-100 rounded-full text-slate-900 transition delay-100 duration-300  bg-slate-50 bg-opacity-70  p-2 items-center flex "
           onClick={scrollNext}
         >
           <svg
@@ -208,7 +208,7 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
           </svg>
         </button>
 
-        <span className="absolute text-sm bottom-2 right-2 py-1 px-2 rounded-lg group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-60  p-1 items-center flex text-transparent">
+        <span className="absolute text-sm bottom-2 right-2 py-1 px-2 rounded-lg text-slate-900 transition delay-100 duration-300  bg-slate-200 bg-opacity-60  p-1 items-center flex ">
           {current === 0 ? 1 : current}/{count}
         </span>
       </Carousel>

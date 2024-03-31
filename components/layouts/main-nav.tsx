@@ -179,9 +179,9 @@ function MainNav({ userData }: MainNavProps) {
           <Image
             src="/etazhi.png"
             alt="logo"
-            width={200}
-            height={50}
-            className="w-24"
+            width={400}
+            height={80}
+            className="w-36"
           />
         </Link>
         <Popover open={isOpenPopover1}>

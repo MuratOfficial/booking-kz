@@ -17,10 +17,18 @@ export default async function Home() {
   return (
     <main className="flex min-h-screen bg-slate-100 flex-col px-4 pb-4">
       <Suspense>
-        <HotCategoryGrid title="Продажа" data={forSell} />
+        <HotCategoryGrid
+          title="Продажа"
+          link="/filter?serviceType=Продажа"
+          data={forSell}
+        />
       </Suspense>
       <Suspense>
-        <HotCategoryGrid title="Аренда" data={forRent} />
+        <HotCategoryGrid
+          title="Аренда"
+          link="/filter?serviceType=Аренда"
+          data={forRent}
+        />
       </Suspense>
     </main>
   );

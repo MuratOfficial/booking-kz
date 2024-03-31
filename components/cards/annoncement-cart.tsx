@@ -218,15 +218,21 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
             <div className="absolute flex flex-col justify-between bottom-0 w-full py-1 px-2 text-slate-900 group-hover:text-transparent  group-hover:bg-transparent transition delay-150 duration-500 h-[45%] bg-slate-200 bg-opacity-90 rounded-b-xl">
               <div className="text-slate-600 leading-tight group-hover:text-transparent transition delay-150 duration-500">
                 <p className=" text-[11px] line-clamp-1 font-medium ">
-                  {data.roomNumber}
+                  {data?.roomNumber > 0 && `${data?.roomNumber}-комнат.`}{" "}
+                  {data?.roomNumber > 0
+                    ? data?.categoryType.toLowerCase()
+                    : data?.categoryType}
                 </p>
                 <p className="relative line-clamp-1 text-[11px] font-medium">
-                  этаж {data.floor} из {data.floorFrom},{" "}
-                  <span>{data.areaSq} м²</span>
+                  {data?.cityOrDistrict}{" "}
+                  {data?.cityOrTown && `, ${data.cityOrTown}`}{" "}
+                  {data?.townOrStreet && `, ${data.townOrStreet}`}
+                  {/* этаж {data.floor} из {data.floorFrom},{" "}
+                  <span>{data.areaSq} м²</span> */}
                 </p>
               </div>
               <div className="flex flex-row justify-between ">
-                <p className=" font-extrabold text-base leading-4">
+                <p className=" font-extrabold text-sm leading-4">
                   {data.price.toLocaleString().replace(/,/g, " ")} ₸
                 </p>
               </div>
