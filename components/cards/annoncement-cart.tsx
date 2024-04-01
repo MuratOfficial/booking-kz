@@ -190,14 +190,14 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
             )}
 
             {data.isChecked && data.serviceType === "Аренда" && (
-              <span className=" py-0.5 px-1.5 group-hover:text-transparent  group-hover:bg-transparent flex flex-row items-center gap-x-1 rounded-r-full bg-blue-500  absolute top-10 left-0 transition delay-100 duration-300 hover:bg-opacity-80">
+              <span className=" py-0.5 px-1 bg-sky-500  group-hover:text-transparent  group-hover:bg-transparent flex flex-row items-center gap-x-1 rounded-b-lg    absolute top-0 transition delay-100 duration-300 hover:bg-opacity-80">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth={3}
                   stroke="currentColor"
-                  className="w-3 h-3 stroke-neutral-100 group-hover:stroke-transparent transition delay-100 duration-300"
+                  className="w-2.5 h-2.5 stroke-neutral-100 transition group-hover:stroke-transparent delay-100 duration-300"
                 >
                   <path
                     strokeLinecap="round"

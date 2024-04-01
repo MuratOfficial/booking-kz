@@ -1,11 +1,11 @@
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { Testimonial } from "@prisma/client";
+import { Testimonial, User } from "@prisma/client";
 import { UserCircle2 } from "lucide-react";
 import React from "react";
 
 interface TestimonialCardProps {
-  cardData: Testimonial;
+  cardData: Testimonial & { user: User };
 }
 
 function TestimonialCard({ cardData }: TestimonialCardProps) {
@@ -24,16 +24,16 @@ function TestimonialCard({ cardData }: TestimonialCardProps) {
       <UserCircle2 className="w-12 h-12 text-slate-400" />
       <div className="flex flex-col gap-2 w-full">
         <div className="flex flex-row justify-between">
-          <p className="font-bold">{cardData.userId}</p>
+          <p className="font-bold">{cardData.user.name}</p>
           <div className="flex flex-col self-end">
-            <p className="flex flex-row  items-center text-sm self-end">
+            <p className="flex flex-row gap-x-1 items-center text-sm self-end">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-3 h-3 stroke-yellow-400 fill-yellow-400"
+                className="w-4 h-4 stroke-yellow-400 fill-yellow-400"
               >
                 <path
                   strokeLinecap="round"

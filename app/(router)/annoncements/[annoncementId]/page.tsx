@@ -62,6 +62,10 @@ import { fetchAnnoncement } from "@/lib/fetchAnnoncement";
 import { Testimonial } from "@prisma/client";
 import Link from "next/link";
 import { Metadata } from "next";
+import MapToScroll from "../components/map-to-scroll";
+import TestimonialsToButton from "../components/testimonials-to-button";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 
 export async function generateMetadata({
   params,
@@ -84,6 +88,9 @@ const AnnoncementPage = async ({
   params: { annoncementId: string };
 }) => {
   const annoncement = await fetchAnnoncement(params.annoncementId);
+
+  const session = await getServerSession(authOptions);
+  const userIdData = JSON.parse(JSON.stringify(session))?.user;
 
   function calculateOverallRanking(testimonials: Testimonial[]) {
     let totalOverall = 0;
@@ -327,37 +334,17 @@ const AnnoncementPage = async ({
           <AnnoncementRules annoncement={annoncement} />
           <AnnoncementTestimonials
             testimonials={annoncement?.testimonials || []}
+            isUserValid={userIdData ? true : false}
           />
           <AnnoncementMap />
         </div>
         <div className="col-span-4 w-full h-full ">
           <div className="bg-white rounded-xl w-full h-fit px-4 py-3 flex flex-col gap-2  sticky top-[10%]">
             <div className="grid grid-cols-3 gap-2 items-center">
-              <div className="flex flex-col">
-                <span className=" flex flex-row w-fit items-center  gap-x-1 flex-wrap   ">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-4 h-4 stroke-yellow-400 fill-yellow-400"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-                    />
-                  </svg>
-                  <span className="font-bold text-slate-900 text-base">
-                    {overallRanking}
-                  </span>
-                </span>
-                <span className=" text-slate-500 text-xs">
-                  {annoncement?.testimonials.length || 0} отзывов
-                </span>
-              </div>
-
+              <TestimonialsToButton
+                detail1={overallRanking}
+                detail2={annoncement?.testimonials.length || 0}
+              />
               <button className=" px-1.5 py-1 overflow-hidden  rounded-full  duration-300 ease-in-out   flex  flex-row gap-x-1 items-center hover:bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
                 <Heart className="stroke-slate-700" size={14} />
                 <span className="text-slate-700 font-medium  text-xs ">
@@ -386,14 +373,11 @@ const AnnoncementPage = async ({
               {annoncement?.floor} из {annoncement?.floorFrom}, площадь{" "}
               {annoncement?.areaSq} м²
             </p>
-            <div className="flex flex-row gap-x-1 items-start mt-2 text-sm font-semibold text-blue-500 mb-2">
-              <MapPin size={16} />
-              <p>
-                {annoncement?.cityOrDistrict}{" "}
-                {annoncement?.cityOrTown && `, ${annoncement.cityOrTown}`}{" "}
-                {annoncement?.townOrStreet && `, ${annoncement.townOrStreet}`}
-              </p>
-            </div>
+            <MapToScroll
+              detail1={annoncement?.cityOrDistrict}
+              detail2={annoncement?.cityOrTown}
+              detail3={annoncement?.townOrStreet}
+            />
             <Separator />
             <div className="flex flex-row gap-x-1.5 items-center justify-center  text-lg font-semibold text-slate-900">
               <UserCheck2 className="w-5" />
@@ -457,9 +441,12 @@ const AnnoncementPage = async ({
                         {el.icon} {el.name}
                       </span>
                     ))}
-                    <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
-                      На территории
-                    </p>
+                    {filteredArray2.length > 0 && (
+                      <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
+                        На территории
+                      </p>
+                    )}
+
                     {filteredArray2.map((el, ind) => (
                       <span
                         className="flex flex-row items-center gap-x-2 font-semibold text-xs"
@@ -468,9 +455,12 @@ const AnnoncementPage = async ({
                         {el.icon} {el.name}
                       </span>
                     ))}
-                    <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
-                      Вид из окна
-                    </p>
+                    {filteredArray3.length > 0 && (
+                      <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
+                        Вид из окна
+                      </p>
+                    )}
+
                     {filteredArray3.map((el, ind) => (
                       <span
                         className="flex flex-row items-center gap-x-2 font-semibold text-xs"
@@ -479,9 +469,12 @@ const AnnoncementPage = async ({
                         {el.icon} {el.name}
                       </span>
                     ))}
-                    <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
-                      Санузел
-                    </p>
+                    {filteredArray4.length > 0 && (
+                      <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
+                        Санузел
+                      </p>
+                    )}
+
                     {filteredArray4.map((el, ind) => (
                       <span
                         className="flex flex-row items-center gap-x-2 font-semibold text-xs"
@@ -490,9 +483,12 @@ const AnnoncementPage = async ({
                         {el.icon} {el.name}
                       </span>
                     ))}
-                    <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
-                      Дополнительно
-                    </p>
+                    {filteredArray5.length > 0 && (
+                      <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
+                        Дополнительно
+                      </p>
+                    )}
+
                     {filteredArray5.map((el, ind) => (
                       <span
                         className="flex flex-row items-center gap-x-2 font-semibold text-xs"

@@ -9,7 +9,11 @@ export async function fetchAnnoncement(id: string) {
         id: id,
       },
       include: {
-        testimonials: true,
+        testimonials: {
+          include: {
+            user: true,
+          },
+        },
         user: true,
       },
     });

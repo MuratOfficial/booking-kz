@@ -141,14 +141,14 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
           ))}
         </CarouselContent>
 
-        <div className="px-2 py-1 absolute left-4 top-4 self-end text-blue-500 border-2  border-blue-500 text-xs font-semibold rounded-full  text-center w-fit flex flex-row gap-x-1">
+        <div className="px-2 py-1 absolute left-4 top-4 self-end text-neutral-50   bg-sky-500 text-xs font-semibold rounded-full  text-center w-fit flex flex-row gap-x-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={3}
             stroke="currentColor"
-            className="w-4 h-4 stroke-blue-500"
+            className="w-4 h-4 stroke-neutral-50"
           >
             <path
               strokeLinecap="round"

@@ -9,14 +9,26 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronsUp } from "lucide-react";
-import { Testimonial } from "@prisma/client";
+import { ChevronsUp, MessageCircle, Star } from "lucide-react";
+import { Testimonial, User } from "@prisma/client";
+import { Element } from "react-scroll";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { NewTestimonialForm } from "./new-testimonial-form";
 
 interface AnnoncementTestimonials {
-  testimonials: Testimonial[] | [] | null;
+  testimonials: (Testimonial & { user: User })[] | [] | null;
+  isUserValid: boolean | null;
 }
 
-function AnnoncementTestimonials({ testimonials }: AnnoncementTestimonials) {
+function AnnoncementTestimonials({
+  testimonials,
+  isUserValid,
+}: AnnoncementTestimonials) {
   type RankingKeys = Exclude<keyof Testimonial["ranking"], "overall">;
 
   function calculateOverallRanking(testimonials: Testimonial[]) {
@@ -104,12 +116,16 @@ function AnnoncementTestimonials({ testimonials }: AnnoncementTestimonials) {
   return (
     <div className="w-full rounded-xl bg-white flex flex-col gap-2 text-slate-900 h-full px-4 pt-3 pb-6">
       <div className="flex flex-row gap-x-2 items-center justify-between">
-        <p className="font-semibold text-lg text-left w-fit">
-          Отзывы и оценка гостей
-        </p>
+        <Element name="testimonials">
+          <p className="font-semibold text-lg text-left w-fit">
+            Отзывы и оценка гостей
+          </p>
+        </Element>
+
         <span className=" flex flex-row w-fit items-center  gap-x-1 flex-wrap text-sm  pr-4">
           <span className=" text-slate-500 pr-2">
-            {testimonials?.length} отзывов
+            {testimonials?.length} {testimonials?.length === 1 && "отзыв"}{" "}
+            {testimonials?.length && testimonials?.length > 1 && "отзыв"}
           </span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -126,7 +142,7 @@ function AnnoncementTestimonials({ testimonials }: AnnoncementTestimonials) {
             />
           </svg>
           <span className="font-bold text-slate-900 text-lg">
-            {overallRanking.overall.toFixed(1)}
+            {overallRanking.overall.toFixed(2)}
           </span>
         </span>
       </div>
@@ -157,28 +173,46 @@ function AnnoncementTestimonials({ testimonials }: AnnoncementTestimonials) {
             {testimonials?.slice(0, 3).map((el, ind) => (
               <TestimonialCard key={ind} cardData={el} />
             ))}
-            <Collapsible className="w-full flex items-center flex-col">
-              <CollapsibleContent className="w-full flex items-center flex-col gap-6">
-                {testimonials?.slice(3).map((el, ind) => (
-                  <TestimonialCard key={ind} cardData={el} />
-                ))}
-              </CollapsibleContent>
-              <CollapsibleTrigger asChild>
-                <button className=" px-3 py-2 data-[state=open]:hidden rounded-xl hover:opacity-80 transition-all delay-75 duration-200 bg-slate-800 text-white font-semibold">
-                  Показать все {testimonials?.length} отзыва
-                </button>
-              </CollapsibleTrigger>
-              <CollapsibleTrigger asChild>
-                <button className=" px-3 mt-2 py-2 rounded-xl data-[state=open]:flex data-[state=closed]:hidden hover:opacity-80 transition-all delay-75 duration-200 ">
-                  <ChevronsUp />
-                </button>
-              </CollapsibleTrigger>
-            </Collapsible>
+            {testimonials?.length > 3 && (
+              <Collapsible className="w-full flex items-center flex-col">
+                <CollapsibleContent className="w-full flex items-center flex-col gap-6">
+                  {testimonials?.slice(3).map((el, ind) => (
+                    <TestimonialCard key={ind} cardData={el} />
+                  ))}
+                </CollapsibleContent>
+                <CollapsibleTrigger asChild>
+                  <button className=" px-3 py-2 data-[state=open]:hidden rounded-xl hover:opacity-80 transition-all delay-75 duration-200 bg-slate-800 text-white font-semibold">
+                    Показать все {testimonials?.length} отзыва
+                  </button>
+                </CollapsibleTrigger>
+                <CollapsibleTrigger asChild>
+                  <button className=" px-3 mt-2 py-2 rounded-xl data-[state=open]:flex data-[state=closed]:hidden hover:opacity-80 transition-all delay-75 duration-200 ">
+                    <ChevronsUp />
+                  </button>
+                </CollapsibleTrigger>
+              </Collapsible>
+            )}
           </>
         ) : (
           <p className="w-full text-center text-sm font-medium text-slate-600">
             Комментарии нету
           </p>
+        )}
+        {isUserValid && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="flex w-fit font-semibold items-center flex-row gap-x-1 hover:bg-slate-500 bg-blue-500 rounded-lg px-2.5 py-1.5 self-center  text-white text-sm ">
+                <Star className="w-4" /> Поставьте оценку и оставьте отзыв{" "}
+                <MessageCircle className="w-4 " />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="rounded-xl py-4">
+              <DialogHeader className="font-bold text-xl text-slate-800">
+                Оценка и отзыв
+              </DialogHeader>
+              <NewTestimonialForm />
+            </DialogContent>
+          </Dialog>
         )}
       </div>
     </div>

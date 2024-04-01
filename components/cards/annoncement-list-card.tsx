@@ -12,6 +12,11 @@ import { Separator } from "../ui/separator";
 import { Eye, MapPin, UserRoundCheck, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Annoncement, Testimonial } from "@prisma/client";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card";
 
 interface AnnoncementListCardProps {
   data: Annoncement & { testimonials: Testimonial[] };
@@ -23,6 +28,61 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
 
   const [current, setCurrent] = React.useState(0);
   const [count, setCount] = React.useState(0);
+
+  function calculateOverallRanking(testimonials: Testimonial[]) {
+    const overallPoints: Record<string, number> = {
+      overall: 0,
+      ranking1: 0,
+      ranking2: 0,
+      ranking3: 0,
+      ranking4: 0,
+      ranking5: 0,
+      ranking6: 0,
+    };
+    const totalCounts: Record<string, number> = {
+      overall: 0,
+      ranking1: 0,
+      ranking2: 0,
+      ranking3: 0,
+      ranking4: 0,
+      ranking5: 0,
+      ranking6: 0,
+    };
+
+    testimonials.forEach((testimonial) => {
+      const ranking = testimonial.ranking;
+      for (let key in ranking) {
+        const value = parseFloat(ranking[key as keyof typeof ranking]);
+        if (!isNaN(value)) {
+          overallPoints[key] += value;
+          totalCounts[key]++;
+        }
+      }
+    });
+
+    const overallAverages: Record<string, number> = {};
+    for (let key in overallPoints) {
+      const totalCount = totalCounts[key];
+      if (totalCount > 0) {
+        overallAverages[key] = overallPoints[key] / totalCount;
+      } else {
+        overallAverages[key] = 0;
+      }
+    }
+
+    return overallAverages;
+  }
+
+  const overallRanking = calculateOverallRanking(data.testimonials || []);
+
+  const rating = [
+    { name: "Чистота", rating: overallRanking.ranking1 },
+    { name: "Соответствие фото", rating: overallRanking.ranking2 },
+    { name: "Расположение", rating: overallRanking.ranking3 },
+    { name: "Качество обслуживания", rating: overallRanking.ranking4 },
+    { name: "Состояние ремонта", rating: overallRanking.ranking5 },
+    { name: "Инфраструктура", rating: overallRanking.ranking6 },
+  ];
 
   React.useEffect(() => {
     if (!api) {
@@ -48,27 +108,27 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
 
   const router = useRouter();
 
-  function calculateOverallRanking(testimonials: Testimonial[]) {
-    let totalOverall = 0;
-    let totalCount = 0;
+  // function calculateOverallRanking(testimonials: Testimonial[]) {
+  //   let totalOverall = 0;
+  //   let totalCount = 0;
 
-    testimonials.forEach((testimonial) => {
-      const ranking = testimonial.ranking;
-      const overall = parseFloat(ranking.overall);
-      if (!isNaN(overall)) {
-        totalOverall += overall;
-        totalCount++;
-      }
-    });
+  //   testimonials.forEach((testimonial) => {
+  //     const ranking = testimonial.ranking;
+  //     const overall = parseFloat(ranking.overall);
+  //     if (!isNaN(overall)) {
+  //       totalOverall += overall;
+  //       totalCount++;
+  //     }
+  //   });
 
-    if (totalCount === 0) {
-      return 0;
-    }
+  //   if (totalCount === 0) {
+  //     return 0;
+  //   }
 
-    return totalOverall / totalCount;
-  }
+  //   return totalOverall / totalCount;
+  // }
 
-  const overallRanking = calculateOverallRanking(data.testimonials);
+  // const overallRanking = calculateOverallRanking(data.testimonials);
 
   return (
     <div className="w-full rounded-xl hover:shadow-xl transition delay-100 duration-300 ">
@@ -253,28 +313,56 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
           <Separator className="h-[80%] bg-slate-300" orientation="vertical" />
           <div className="flex flex-col gap-2 w-[30%] h-full py-2 px-2 justify-between">
             {data.serviceType === "Аренда" && (
-              <span className=" flex flex-row w-fit items-center gap-x-1  self-end ">
-                <span className=" text-slate-500 text-xs">
-                  {data?.testimonials.length} отзывов
-                </span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4 stroke-yellow-400 fill-yellow-400"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-                  />
-                </svg>
-                <span className="font-bold text-slate-900">
-                  {overallRanking}
-                </span>
-              </span>
+              <>
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <span className=" flex flex-row w-fit items-center gap-x-1  self-end ">
+                      <span className=" text-slate-500 text-xs">
+                        {data?.testimonials.length} отзывов
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-4 h-4 stroke-yellow-400 fill-yellow-400"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+                        />
+                      </svg>
+                      <span className="font-bold text-slate-900">
+                        {overallRanking.overall.toFixed(2)}
+                      </span>
+                    </span>
+                  </HoverCardTrigger>
+                  <HoverCardContent className=" max-w-full p-3 bg-slate-100">
+                    <div className="grid grid-cols-1 gap-2">
+                      {rating.map((el, index) => (
+                        <div
+                          className="grid grid-cols-2 gap-1 font-semibold text-xs"
+                          key={index}
+                        >
+                          <p>{el.name}</p>
+                          <div className="flex flex-row justify-between w-full items-center">
+                            <div className="w-[144px]   ">
+                              <div
+                                style={{ width: `${el.rating * 10}%` }}
+                                className="bg-blue-500 h-2 rounded-full"
+                              ></div>
+                            </div>
+
+                            <span>{el.rating}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+              </>
             )}
 
             <div className="flex flex-col self-end gap-2">

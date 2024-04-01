@@ -33,6 +33,7 @@ import { z } from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PhaseChangeButton from "./phase-change-button";
+import Link from "next/link";
 
 interface MyAnnoncementCardProps {
   data: Annoncement & { testimonials: Testimonial[] };
@@ -225,10 +226,7 @@ function MyAnnoncementCard({ data }: MyAnnoncementCardProps) {
               </span>
             </Carousel>
           </div>
-          <div
-            className="w-full  col-span-9  flex flex-row items-center max-h-[240px] p-2 cursor-pointer"
-            onClick={() => router.push(`/annoncements/${data.id}`)}
-          >
+          <div className="w-full  col-span-9  flex flex-row items-center max-h-[240px] p-2 ">
             <div className="flex flex-col gap-2 w-[60%] h-full py-2 px-3 justify-between">
               <div className="col-span-3 flex flex-col gap-1 w-full">
                 <div className="w-full flex flex-row justify-between items-center">
@@ -251,10 +249,19 @@ function MyAnnoncementCard({ data }: MyAnnoncementCardProps) {
               <p className="line-clamp-2 text-sm text-slate-900/90 mt-2">
                 {data?.description}
               </p>
-              <div className="flex flex-row gap-x-1 text-green-500 items-center">
-                <UserRoundCheck size={14} />
-                <p className="text-xs font-semibold">Физическое лицо</p>
+              <div className="flex flex-row justify-between">
+                <div className="flex flex-row gap-x-1 text-green-500 items-center">
+                  <UserRoundCheck size={14} />
+                  <p className="text-xs font-semibold">Физическое лицо</p>
+                </div>
+                <Link
+                  href={`/annoncements/${data.id}`}
+                  className="text-slate-500 hover:text-blue-500 text-xs hover:underline underline-offset-2 font-medium"
+                >
+                  Перейти к обьявлению
+                </Link>
               </div>
+
               <div className="w-full flex flex-row justify-between items-end">
                 <div className="text-sm flex flex-row items-center gap-1">
                   {/* <p className="text-sm font-semibold text-slate-800 ">
