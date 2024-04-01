@@ -3,6 +3,18 @@
 import Image from "next/image";
 import React from "react";
 import {
+  FacebookShare,
+  LinkedinShare,
+  TwitterShare,
+  WhatsappShare,
+} from "react-share-kit";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { usePathname } from "next/navigation";
+import {
   Carousel,
   CarouselApi,
   CarouselContent,
@@ -18,6 +30,7 @@ import {
   Eye,
   Flame,
   HeartCrack,
+  Loader,
   MapPin,
   MessageCircle,
   Share2,
@@ -31,12 +44,45 @@ import {
   HoverCardTrigger,
 } from "../ui/hover-card";
 import { Annoncement, Testimonial } from "@prisma/client";
+import axios from "axios";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "../ui/form";
+import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
+import { useToast } from "../ui/use-toast";
 
 interface FavoriteCardProps {
   data: Annoncement & { testimonials: Testimonial[] };
+  userNotes?: {
+    annoncementId: string;
+    text: string;
+  }[];
 }
 
-function FavoriteCard({ data }: FavoriteCardProps) {
+const FormSchema = z.object({
+  id: z.string().min(2, {
+    message: "id обьязателен",
+  }),
+  note: z.string().optional(),
+});
+
+function FavoriteCard({ data, userNotes }: FavoriteCardProps) {
   const [api, setApi] = React.useState<CarouselApi>();
   const currentDate = new Date();
 
@@ -62,6 +108,63 @@ function FavoriteCard({ data }: FavoriteCardProps) {
 
     return totalOverall / totalCount;
   }
+
+  const router = useRouter();
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      id: data.id,
+    },
+  });
+
+  const onFavourite = async (formData: z.infer<typeof FormSchema>) => {
+    try {
+      await axios.patch(`/api/annoncements/${data.id}/favourite`, formData);
+
+      router.refresh();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const { toast } = useToast();
+  const [loading, setLoading] = React.useState(false);
+
+  const onNoteAdd = async (formData: z.infer<typeof FormSchema>) => {
+    try {
+      setLoading(true);
+      await axios.patch(`/api/annoncements/${data.id}/noteadd`, formData);
+      toast({
+        title: "Запись сохранен",
+      });
+      router.refresh();
+    } catch (error) {
+      toast({ title: "Произошла ошибка", variant: "destructive" });
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onNoteRemove = async (formData: z.infer<typeof FormSchema>) => {
+    try {
+      setLoading(true);
+      await axios.patch(`/api/annoncements/${data.id}/noteRemove`, formData);
+      toast({
+        title: "Запись удалена",
+      });
+      router.refresh();
+    } catch (error) {
+      toast({ title: "Произошла ошибка", variant: "destructive" });
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const pathname = usePathname();
+
+  const title = `Обьявление ${data.id}`;
 
   const overallRanking = calculateOverallRanking(data.testimonials);
 
@@ -89,11 +192,11 @@ function FavoriteCard({ data }: FavoriteCardProps) {
 
   return (
     <div className="w-full rounded-2xl">
-      <div className="w-full   bg-white rounded-xl grid grid-cols-10">
+      <div className="w-full   bg-white rounded-xl grid grid-cols-12">
         <div className="aspect-[4/3] flex items-center justify-center  col-span-3">
           <Carousel
             setApi={setApi}
-            className="w-full group max-h-screen relative rounded-xl items-center flex justify-center"
+            className="w-full group h-full relative rounded-xl items-center flex-col flex justify-center"
           >
             <CarouselContent>
               {data.images.map((img, index) => (
@@ -103,7 +206,7 @@ function FavoriteCard({ data }: FavoriteCardProps) {
                     alt={`img+${index}`}
                     width={900}
                     height={1200}
-                    className=" object-cover aspect-[4/3] max-h-screen rounded-l-2xl"
+                    className=" object-cover aspect-[4/3] max-h-full rounded-l-2xl"
                   />
                 </CarouselItem>
               ))}
@@ -190,7 +293,7 @@ function FavoriteCard({ data }: FavoriteCardProps) {
             </span>
           </Carousel>
         </div>
-        <div className="w-full  col-span-7 gap-2 flex flex-col justify-between">
+        <div className="w-full  col-span-9 gap-2 flex flex-col justify-between">
           <div className="flex flex-col gap-2 py-2 px-3 w-full ">
             <div className="col-span-3 flex flex-col gap-1 w-full">
               <div className="w-full flex flex-row justify-between items-center">
@@ -230,20 +333,26 @@ function FavoriteCard({ data }: FavoriteCardProps) {
                         <p>Проверено</p>
                       </div>
                     )}
-                    {data?.modificators?.topModifier && (
+                    {data?.modificators?.topModifier ? (
                       <p className="text-sm font-semibold bg-amber-500 text-neutral-100 px-2 py-1 rounded-full flex flex-row gap-x-1 items-center">
                         <ArrowBigUp size={16} />{" "}
                       </p>
+                    ) : (
+                      ""
                     )}
-                    {data?.modificators?.hotModifier && (
+                    {data?.modificators?.hotModifier ? (
                       <p className="text-sm font-semibold bg-rose-500 text-neutral-100 px-2 py-1 rounded-full flex flex-row gap-x-1 items-center">
                         <Flame size={16} />
                       </p>
+                    ) : (
+                      ""
                     )}
-                    {data?.modificators?.hurryModifier && (
+                    {data?.modificators?.hurryModifier ? (
                       <p className="text-sm font-semibold bg-cyan-500 text-neutral-100 px-2 py-1 rounded-full flex flex-row gap-x-1 items-center">
                         <Zap size={16} />
                       </p>
+                    ) : (
+                      ""
                     )}
                   </div>
                 </div>
@@ -274,51 +383,129 @@ function FavoriteCard({ data }: FavoriteCardProps) {
           </div>
           <div className="flex flex-row  gap-2 w-full h-fit p-2 items-center">
             <div className="flex flex-row  gap-2 w-full h-fit">
-              <button className="relative p-2 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-52 w-10 flex transition-[width] flex-row gap-x-1 items-center bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
-                <HeartCrack className="stroke-slate-800" />
-                <span className="text-slate-800 font-semibold transition-[width] line-clamp-1 group-hover/1:w-48 opacity-0 group-hover/1:opacity-100 w-0 text-sm absolute left-0 pl-8 overflow-hidden  duration-300 ease-in-out  transform">
-                  Убрать из Избранных
-                </span>
-              </button>
+              <form onSubmit={form.handleSubmit(onFavourite)}>
+                <button className="relative p-2 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-52 w-10 flex transition-[width] flex-row gap-x-1 items-center bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
+                  <HeartCrack className="stroke-slate-800" />
+                  <span className="text-slate-800 font-semibold transition-[width] line-clamp-1 group-hover/1:w-48 opacity-0 group-hover/1:opacity-100 w-0 text-sm absolute left-0 pl-8 overflow-hidden  duration-300 ease-in-out  transform">
+                    Убрать из Избранных
+                  </span>
+                </button>
+              </form>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="relative p-2 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-44 w-10 flex transition-[width] flex-row gap-x-1 items-center bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
+                    <ClipboardPen className="stroke-blue-500" />
+                    <span className="text-blue-500 font-semibold transition-[width] line-clamp-1 group-hover/1:w-40 opacity-0 group-hover/1:opacity-100 w-0 text-sm absolute left-0 pl-8 overflow-hidden  duration-300 ease-in-out  transform">
+                      Сделать заметку
+                    </span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="rounded-xl">
+                  <DialogHeader>
+                    <DialogTitle>Ваша заметка</DialogTitle>
+                  </DialogHeader>
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onNoteAdd)}
+                      className="gap-4 flex-col flex"
+                    >
+                      <FormField
+                        control={form.control}
+                        name="note"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Напишите свою заметку"
+                                className="resize-none"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button type="submit" disabled={loading}>
+                        {loading ? (
+                          <Loader className="w-4 animate-spin" />
+                        ) : (
+                          "OK"
+                        )}
+                      </Button>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
 
-              <button className="relative p-2 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-44 w-10 flex transition-[width] flex-row gap-x-1 items-center bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
-                <ClipboardPen className="stroke-blue-500" />
-                <span className="text-blue-500 font-semibold transition-[width] line-clamp-1 group-hover/1:w-40 opacity-0 group-hover/1:opacity-100 w-0 text-sm absolute left-0 pl-8 overflow-hidden  duration-300 ease-in-out  transform">
-                  Сделать заметку
-                </span>
-              </button>
-              <button className="relative p-2 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-44 w-10 flex transition-[width] flex-row gap-x-1 items-center bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
+              <Link
+                href={`/annoncements/${data.id}`}
+                className="relative p-2 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-44 w-10 flex transition-[width] flex-row gap-x-1 items-center bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80"
+              >
                 <MessageCircle className="stroke-yellow-400" />
                 <span className="text-yellow-400 font-semibold transition-[width] line-clamp-1 group-hover/1:w-40 opacity-0 group-hover/1:opacity-100 w-0 text-sm absolute left-0 pl-8 overflow-hidden  duration-300 ease-in-out  transform">
                   Оставить отзыв
                 </span>
-              </button>
-              <button className="relative p-2 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-44 w-10 flex transition-[width] flex-row gap-x-1 items-center bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
-                <Share2 className="stroke-sky-400" />
-                <span className="text-sky-400 font-semibold transition-[width] line-clamp-1 group-hover/1:w-40 opacity-0 group-hover/1:opacity-100 w-0 text-sm absolute left-0 pl-8 overflow-hidden  duration-300 ease-in-out  transform">
-                  Поделиться
-                </span>
-              </button>
+              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="relative p-2 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-44 w-10 flex transition-[width] flex-row gap-x-1 items-center bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
+                    <Share2 className="stroke-sky-400" />
+                    <span className="text-sky-400 font-semibold transition-[width] line-clamp-1 group-hover/1:w-40 opacity-0 group-hover/1:opacity-100 w-0 text-sm absolute left-0 pl-8 overflow-hidden  duration-300 ease-in-out  transform">
+                      Поделиться
+                    </span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="flex flex-row gap-x-1 items-center">
+                  <FacebookShare
+                    url={`https://etazhi.kz${pathname}`}
+                    quote={title}
+                    hashtag={"#etazhikz #обьявление"}
+                    size={24}
+                    borderRadius={12}
+                  />
+                  <WhatsappShare
+                    url={`https://etazhi.kz${pathname}`}
+                    title={title}
+                    separator=":: "
+                    size={24}
+                    borderRadius={12}
+                  />
+                  <LinkedinShare url={title} size={24} borderRadius={12} />
+                  <TwitterShare
+                    url={`https://etazhi.kz${pathname}`}
+                    title={title}
+                    size={24}
+                    borderRadius={12}
+                  />
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
-            <HoverCard>
-              <HoverCardTrigger className="bg-slate-100 cursor-pointer flex flex-row gap-x-1 items-center text-slate-800 w-fit h-fit rounded-xl px-3 py-1 text-sm font-semibold">
-                <ClipboardList size={19} /> Заметки
-              </HoverCardTrigger>
-              <HoverCardContent className="flex flex-col bg-slate-100 text-slate-800 shadow-xl">
-                <div className="flex flex-row gap-x-1 items-center text-sm">
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  </p>
-                  <button className="p-1 rounded-full ">
-                    <Trash2
-                      size={16}
-                      className="hover:stroke-red-500 transition-all delay-75 duration-300 "
-                    />
-                  </button>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
+            {userNotes?.find((el) => el.annoncementId === data.id)?.text && (
+              <HoverCard>
+                <HoverCardTrigger className="bg-slate-100 cursor-pointer flex flex-row gap-x-1 items-center text-slate-800 w-fit h-fit rounded-xl px-3 py-1 text-sm font-semibold">
+                  <ClipboardList className="w-4" /> Заметки
+                </HoverCardTrigger>
+                <HoverCardContent className="flex flex-col bg-slate-100 text-slate-800 shadow-xl">
+                  <div className="flex flex-row gap-x-1 items-center text-sm">
+                    <p>
+                      {
+                        userNotes?.find((el) => el.annoncementId === data.id)
+                          ?.text
+                      }
+                    </p>
+                    <form onSubmit={form.handleSubmit(onNoteRemove)}>
+                      <button className="p-1 rounded-full ">
+                        <Trash2
+                          size={16}
+                          className="hover:stroke-red-500 transition-all delay-75 duration-300 "
+                        />
+                      </button>
+                    </form>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            )}
           </div>
         </div>
       </div>

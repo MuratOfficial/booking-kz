@@ -12,6 +12,7 @@ import {
   fetchHotModifierAnnoncementsSell,
 } from "@/lib/fetchAnnoncement";
 import { Annoncement, Testimonial } from "@prisma/client";
+import { fetchUserData } from "@/lib/fetchUserData";
 
 export async function generateMetadata({
   searchParams,
@@ -115,8 +116,12 @@ const FilterPage = async ({
   const hotannoncementsrent = await fetchHotModifierAnnoncementsRent();
   const hotannoncementssell = await fetchHotModifierAnnoncementsSell();
 
+  const userData = await fetchUserData();
+
   const shuffle = (
-    array: (Annoncement & { testimonials: Testimonial[] })[]
+    array: (Annoncement & { testimonials: Testimonial[] } & {
+      isFavorite?: boolean;
+    })[]
   ) => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -130,7 +135,7 @@ const FilterPage = async ({
     ...hotannoncementssell,
   ]);
 
-  const annoncements = await fetchFilteredAnnoncements(
+  const nonfilteredannoncements = await fetchFilteredAnnoncements(
     searchParams?.serviceType,
     searchParams?.phase,
     searchParams?.categoryType,
@@ -142,6 +147,15 @@ const FilterPage = async ({
     searchParams?.city,
     searchParams?.more
   );
+
+  const annoncements = nonfilteredannoncements.map((el) => ({
+    ...el,
+    isFavorite: userData?.favourites.find(
+      (item) => item.annoncementId === el.id
+    )
+      ? true
+      : false,
+  }));
 
   return (
     <>

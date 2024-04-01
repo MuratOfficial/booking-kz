@@ -59,13 +59,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { fetchAnnoncement } from "@/lib/fetchAnnoncement";
-import { Testimonial } from "@prisma/client";
+import { Annoncement, Testimonial } from "@prisma/client";
 import Link from "next/link";
 import { Metadata } from "next";
 import MapToScroll from "../components/map-to-scroll";
 import TestimonialsToButton from "../components/testimonials-to-button";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
+import FavoriteButton from "../components/favorite-button";
+import { fetchUserData } from "@/lib/fetchUserData";
+import ShareButton from "../components/share-button";
 
 export async function generateMetadata({
   params,
@@ -76,9 +79,11 @@ export async function generateMetadata({
 
   return {
     title: `${annoncement?.roomNumber}-комнатная
-      ${annoncement?.categoryType.toLowerCase()}, этаж ${
-      annoncement?.floor
-    } из ${annoncement?.floorFrom}, площадь ${annoncement?.areaSq} м²`,
+      ${
+        annoncement?.categoryType && annoncement?.categoryType.toLowerCase()
+      }, этаж ${annoncement?.floor} из ${annoncement?.floorFrom}, площадь ${
+      annoncement?.areaSq
+    } м²`,
   };
 }
 
@@ -91,6 +96,17 @@ const AnnoncementPage = async ({
 
   const session = await getServerSession(authOptions);
   const userIdData = JSON.parse(JSON.stringify(session))?.user;
+
+  const userData = await fetchUserData();
+
+  const nonannoncement = {
+    ...annoncement,
+    isFavorite: userData?.favourites.find(
+      (item) => item.annoncementId === annoncement?.id
+    )
+      ? true
+      : false,
+  };
 
   function calculateOverallRanking(testimonials: Testimonial[]) {
     let totalOverall = 0;
@@ -112,7 +128,7 @@ const AnnoncementPage = async ({
     return totalOverall / totalCount;
   }
 
-  const overallRanking = calculateOverallRanking(annoncement!.testimonials);
+  const overallRanking = calculateOverallRanking(annoncement!.testimonials!);
 
   const additionalFilterWithIcons = [
     {
@@ -345,18 +361,11 @@ const AnnoncementPage = async ({
                 detail1={overallRanking}
                 detail2={annoncement?.testimonials.length || 0}
               />
-              <button className=" px-1.5 py-1 overflow-hidden  rounded-full  duration-300 ease-in-out   flex  flex-row gap-x-1 items-center hover:bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
-                <Heart className="stroke-slate-700" size={14} />
-                <span className="text-slate-700 font-medium  text-xs ">
-                  В Избранные
-                </span>
-              </button>
-              <button className=" px-1.5 py-1 overflow-hidden  rounded-full  duration-300 ease-in-out   flex  flex-row gap-x-1 items-center hover:bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
-                <Share2 className="stroke-slate-700" size={14} />
-                <span className="text-slate-700 font-medium  text-xs ">
-                  Поделиться
-                </span>
-              </button>
+              <FavoriteButton
+                id={annoncement?.id}
+                isFavorite={nonannoncement.isFavorite}
+              />
+              <ShareButton title={`Обьявление ${annoncement?.id}`} />
             </div>
             <Separator />
             <div className="flex flex-row gap-x-2 items-center justify-start w-full flex-wrap mt-2">

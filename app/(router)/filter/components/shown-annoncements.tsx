@@ -11,7 +11,9 @@ import {
 import { cn } from "@/lib/utils";
 
 interface ShownAnnoncementsProps {
-  annoncements: (Annoncement & { testimonials: Testimonial[] })[];
+  annoncements: (Annoncement & { testimonials: Testimonial[] } & {
+    isFavorite?: boolean;
+  })[];
 }
 
 function ShownAnnoncements({ annoncements }: ShownAnnoncementsProps) {

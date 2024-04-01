@@ -13,7 +13,9 @@ import { Annoncement, Testimonial } from "@prisma/client";
 
 interface HotCategoryGridProps {
   title: string;
-  data: (Annoncement & { testimonials: Testimonial[] })[];
+  data: (Annoncement & { testimonials: Testimonial[] } & {
+    isFavorite?: boolean;
+  })[];
   link?: string;
 }
 

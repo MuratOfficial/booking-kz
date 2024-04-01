@@ -17,10 +17,22 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
+import axios from "axios";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface AnnoncementListCardProps {
-  data: Annoncement & { testimonials: Testimonial[] };
+  data: Annoncement & { testimonials: Testimonial[] } & {
+    isFavorite?: boolean;
+  };
 }
+
+const FormSchema = z.object({
+  id: z.string().min(2, {
+    message: "id must be at least 2 characters.",
+  }),
+});
 
 function AnnoncementListCard({ data }: AnnoncementListCardProps) {
   const [api, setApi] = React.useState<CarouselApi>();
@@ -130,6 +142,23 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
 
   // const overallRanking = calculateOverallRanking(data.testimonials);
 
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      id: data?.id,
+    },
+  });
+
+  const onFavourite = async (formData: z.infer<typeof FormSchema>) => {
+    try {
+      await axios.patch(`/api/annoncements/${data.id}/favourite`, formData);
+
+      router.refresh();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="w-full rounded-xl hover:shadow-xl transition delay-100 duration-300 ">
       <div className="w-full   bg-white rounded-xl grid grid-cols-12">
@@ -190,25 +219,49 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
               </svg>
             </button>
             <div className="absolute top-2 right-2">
-              <button className="relative p-1 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-44 w-7 flex transition-[width] flex-row gap-x-1 items-center bg-slate-200  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5   group-hover/1:stroke-red-600 "
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-                  />
-                </svg>
-                <span className="text-slate-700 font-medium transition-[width] line-clamp-1 group-hover/1:w-40 opacity-0 group-hover/1:opacity-100 w-0 text-xs absolute left-2 pl-4 overflow-hidden  duration-300 ease-in-out hover:pl-4 transform">
-                  Добавить в Избранное
-                </span>
-              </button>
+              <form onSubmit={form.handleSubmit(onFavourite)}>
+                {data.isFavorite ? (
+                  <button className="relative p-1 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-44 w-7 flex transition-[width] flex-row gap-x-1 items-center bg-slate-200  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-5 h-5   stroke-red-600 fill-red-600 "
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                      />
+                    </svg>
+                    <span className="text-slate-700 font-medium transition-[width] line-clamp-1 group-hover/1:w-40 opacity-0 group-hover/1:opacity-100 w-0 text-xs absolute left-2 pl-4 overflow-hidden  duration-300 ease-in-out hover:pl-4 transform">
+                      В Избранных
+                    </span>
+                  </button>
+                ) : (
+                  <button className="relative p-1 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-44 w-7 flex transition-[width] flex-row gap-x-1 items-center bg-slate-200  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-5 h-5   group-hover/1:stroke-red-600 "
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                      />
+                    </svg>
+                    <span className="text-slate-700 font-medium transition-[width] line-clamp-1 group-hover/1:w-40 opacity-0 group-hover/1:opacity-100 w-0 text-xs absolute left-2 pl-4 overflow-hidden  duration-300 ease-in-out hover:pl-4 transform">
+                      Добавить в Избранное
+                    </span>
+                  </button>
+                )}
+              </form>
             </div>
 
             <span className="absolute bottom-2 right-2 text-sm py-1 px-2 rounded-lg group-hover:text-slate-900 transition delay-100 duration-300 bg-transparent group-hover:bg-slate-200 group-hover:bg-opacity-70  p-1 items-center flex text-transparent">

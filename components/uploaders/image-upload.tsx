@@ -62,7 +62,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         options={{
           sources: ["local", "url", "camera", "google_drive", "instagram"],
           multiple: true,
-          maxFiles: 12,
+          maxFiles: 30,
+          maxFileSize: 770000,
+          maxImageFileSize: 770000,
+          maxImageWidth: 1920,
+          language: "ru",
         }}
       >
         {({ open }) => {

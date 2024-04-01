@@ -5,10 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import { redirect } from "next/navigation";
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { annoncementId: string } }
-) {
+export async function PATCH(req: Request) {
   try {
     const body = await req.json();
 
@@ -31,46 +28,20 @@ export async function PATCH(
 
     const {} = body;
 
-    if (!params.annoncementId) {
+    if (!userId) {
       return new NextResponse("user id is required", { status: 400 });
     }
 
-    const user = await prismadb.user.findUnique({
+    const userUpdate = await prismadb.user.update({
       where: {
         id: userId,
       },
+      data: {
+        favourites: [],
+      },
     });
-    if (user) {
-      const favorites = user?.favourites;
 
-      const isFavorite = favorites?.find(
-        (el) => el.annoncementId === params.annoncementId
-      )
-        ? true
-        : false;
-
-      const userFavorites = isFavorite
-        ? favorites?.filter((el) => el.annoncementId !== params.annoncementId)
-        : favorites?.concat([
-            {
-              annoncementId: params.annoncementId,
-              text: "",
-            },
-          ]);
-
-      const userUpdate = await prismadb.user.update({
-        where: {
-          id: userId,
-        },
-        data: {
-          favourites: userFavorites,
-        },
-      });
-
-      return NextResponse.json(userUpdate);
-    } else {
-      redirect("/auth");
-    }
+    return NextResponse.json(userUpdate);
   } catch (error) {
     console.log("[USER_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });

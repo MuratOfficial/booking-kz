@@ -29,48 +29,31 @@ export async function PATCH(
     //   return new NextResponse("Access denied", { status: 401 });
     // }
 
-    const {} = body;
+    const { note } = body;
 
     if (!params.annoncementId) {
       return new NextResponse("user id is required", { status: 400 });
     }
 
-    const user = await prismadb.user.findUnique({
+    const userUpdate = await prismadb.user.update({
       where: {
         id: userId,
       },
-    });
-    if (user) {
-      const favorites = user?.favourites;
-
-      const isFavorite = favorites?.find(
-        (el) => el.annoncementId === params.annoncementId
-      )
-        ? true
-        : false;
-
-      const userFavorites = isFavorite
-        ? favorites?.filter((el) => el.annoncementId !== params.annoncementId)
-        : favorites?.concat([
-            {
+      data: {
+        favourites: {
+          updateMany: {
+            where: {
               annoncementId: params.annoncementId,
+            },
+            data: {
               text: "",
             },
-          ]);
-
-      const userUpdate = await prismadb.user.update({
-        where: {
-          id: userId,
+          },
         },
-        data: {
-          favourites: userFavorites,
-        },
-      });
+      },
+    });
 
-      return NextResponse.json(userUpdate);
-    } else {
-      redirect("/auth");
-    }
+    return NextResponse.json(userUpdate);
   } catch (error) {
     console.log("[USER_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });

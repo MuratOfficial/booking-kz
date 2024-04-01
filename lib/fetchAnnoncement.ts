@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import prismadb from "./prismadb";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
+import { fetchUserData } from "./fetchUserData";
 
 export async function fetchAnnoncement(id: string) {
   try {
@@ -72,5 +73,27 @@ export async function fetchHotModifierAnnoncementsRent() {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch annoncement");
+  }
+}
+
+export async function fetchFavorites() {
+  const user = await fetchUserData();
+
+  const favorites = user?.favourites.map((el) => el.annoncementId);
+
+  try {
+    const annoncements = await prismadb.annoncement.findMany({
+      where: {
+        id: { in: favorites },
+      },
+      include: {
+        testimonials: true,
+      },
+    });
+
+    return annoncements;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch annoncements");
   }
 }
