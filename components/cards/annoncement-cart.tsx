@@ -95,6 +95,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
       await axios.patch(`/api/annoncements/${data.id}/favourite`, formData);
       router.refresh();
     } catch (error) {
+      router.push("/auth");
       console.log(error);
     }
   };

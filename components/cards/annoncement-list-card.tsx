@@ -155,6 +155,7 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
 
       router.refresh();
     } catch (error) {
+      router.push("/auth");
       console.log(error);
     }
   };

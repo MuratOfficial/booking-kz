@@ -22,6 +22,11 @@ import {
 } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -71,6 +76,7 @@ const registerFormSchema = z.object({
         path: ["confirmPassword"],
       }
     ),
+  verificationCode: z.string().max(4, "Не должно превышать 4 цифр").optional(),
 });
 
 type RegisterFormValues = z.infer<typeof registerFormSchema>;
@@ -81,6 +87,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const [isVisible, setIsVisible] = React.useState(false);
+  const [isRegistered, setIsRegistered] = React.useState(false);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
@@ -98,16 +105,15 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const toggleVisibility = () => setIsVisible(!isVisible);
   const [isRegister, setIsRegister] = React.useState(false);
 
-  async function onRegisterSubmit(formData: RegisterFormValues) {
+  async function onVerificationSubmit(formData: RegisterFormValues) {
     try {
-      setIsLoading(true);
-
-      await axios.post(`/api/auth/register`, formData);
+      await axios.patch(`/api/auth/verify`, formData);
 
       router.refresh();
-      router.push(`/`);
+
       toast({
-        title: "Вы успешно зарегистрировались",
+        title: "Подтверждение успешно ",
+        description: "Идет авторизация в систему",
       });
     } catch (error: any) {
       toast({
@@ -116,10 +122,37 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       });
     } finally {
       setIsLoading(false);
+      setIsRegistered(false);
       await signIn("credentials", {
         email: formData.email,
         password: formData.password.password,
       });
+    }
+  }
+
+  async function onRegisterSubmit(formData: RegisterFormValues) {
+    try {
+      setIsLoading(true);
+      setIsRegistered(true);
+
+      await axios.post(`/api/auth/register`, formData);
+
+      router.refresh();
+
+      toast({
+        title: "На вашу почту отправлен код подтверждения",
+      });
+    } catch (error: any) {
+      toast({
+        description: "Что-то пошло не так... Попробуйте заново",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+      // await signIn("credentials", {
+      //   email: formData.email,
+      //   password: formData.password.password,
+      // });
     }
   }
 
@@ -274,6 +307,66 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                 </Button>
               </form>
             </Form>
+            {isRegistered && (
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onVerificationSubmit)}
+                  className=" text-slate-900 pb-4 flex flex-col gap-4"
+                >
+                  <FormField
+                    control={form.control}
+                    name="verificationCode"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col justify-center items-center">
+                        <FormLabel className="font-base font-semibold">
+                          Код валидации*
+                        </FormLabel>
+                        <FormDescription>
+                          Вам на почту было отправлено 4-значный код
+                          подтверждения. Введите этот код сюда
+                        </FormDescription>
+                        <FormControl>
+                          <InputOTP maxLength={4} {...field} className="">
+                            <InputOTPGroup>
+                              <InputOTPSlot
+                                index={0}
+                                className=" border-slate-800"
+                              />
+                              <InputOTPSlot
+                                index={1}
+                                className=" border-slate-800"
+                              />
+                              <InputOTPSlot
+                                index={2}
+                                className=" border-slate-800"
+                              />
+                              <InputOTPSlot
+                                index={3}
+                                className=" border-slate-800"
+                              />
+                            </InputOTPGroup>
+                          </InputOTP>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Button
+                    className="rounded-xl bg-slate-900 col-span-2 mt-4"
+                    type="submit"
+                    disabled={isLoading}
+                  >
+                    {isLoading && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Подтвердить
+                  </Button>
+                </form>
+              </Form>
+            )}
+
             <div className="flex flex-row items-center justify-center">
               <p className="text-sm">Уже есть учетная запись? </p>
               <Button

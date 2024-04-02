@@ -33,6 +33,7 @@ function FavoriteButton({ id, isFavorite }: FavoriteButtonProps) {
 
       router.refresh();
     } catch (error) {
+      router.push("/auth");
       console.log(error);
     }
   };

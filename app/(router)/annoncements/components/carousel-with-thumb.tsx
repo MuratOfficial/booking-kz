@@ -95,48 +95,16 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
         <CarouselContent>
           {images?.map((img, index) => (
             <CarouselItem key={index}>
-              {fetched ? (
-                <CldImage
-                  width={1400}
-                  height={1000}
-                  priority
-                  className=" object-cover rounded-xl aspect-[8/5] w-full  cursor-pointer "
-                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
-                  src="https://res.cloudinary.com/dhof3tglo/image/upload/v1710220609/vckqkhnl4s6ol8otyq4b.jpg"
-                  sizes="100vw"
-                  overlays={[
-                    {
-                      position: {
-                        x: "80%",
-                        y: "80%",
-                      },
-                      text: {
-                        color: "slate",
-                        fontFamily: "Source Sans Pro",
-                        fontSize: 80,
-                        fontWeight: "black",
-                        text: "etazhi.kz",
-                      },
-                    },
-                  ]}
-                  alt={`img+${index}`}
-                />
-              ) : (
-                <div className="relative">
-                  <Image
-                    src={img.url}
-                    alt={`img+${index}`}
-                    width={1400}
-                    height={1000}
-                    priority
-                    className=" object-cover rounded-xl aspect-[8/5] w-full  cursor-pointer "
-                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
-                  />
-                  <p className="font-bold text-3xl opacity-60 right-2 bottom-2 absolute">
-                    etazhi.kz
-                  </p>
-                </div>
-              )}
+              <Image
+                width={1400}
+                height={1000}
+                loading="lazy"
+                className=" object-cover rounded-xl aspect-[8/5] w-full  cursor-pointer "
+                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
+                src={img.url}
+                sizes="100vw"
+                alt={`img+${index}`}
+              />
             </CarouselItem>
           ))}
         </CarouselContent>
