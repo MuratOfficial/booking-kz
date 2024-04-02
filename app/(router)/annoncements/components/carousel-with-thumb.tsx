@@ -20,20 +20,6 @@ import {
 import useEmblaCarousel from "embla-carousel-react";
 import { cn } from "@/lib/utils";
 
-const images = [
-  "/random/1.jpg",
-  "/random/2.jpg",
-  "/random/3.jpg",
-  "/random/4.jpg",
-  "/random/5.jpg",
-  "/random/6.jpg",
-  "/random/4.jpg",
-  "/random/5.jpg",
-  "/random/6.jpg",
-  "/random/5.jpg",
-  "/random/6.jpg",
-];
-
 interface CarouselWithThumbsProps {
   images?: {
     url: string;
@@ -57,8 +43,6 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
     },
     [api, emblaThumbsApi]
   );
-
-  const [fetched, setFetched] = React.useState(false);
 
   const onSelect = React.useCallback(() => {
     if (!api || !emblaThumbsApi) return;
@@ -86,6 +70,7 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
   const scrollNext = React.useCallback(() => {
     if (api) api.scrollNext();
   }, [api]);
+
   return (
     <div className="flex flex-col w-full h-full gap-2">
       <Carousel
@@ -95,48 +80,122 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
         <CarouselContent>
           {images?.map((img, index) => (
             <CarouselItem key={index}>
-              <Image
+              <CldImage
+                width="1400"
+                height="1000"
+                loading="lazy"
+                className="object-cover rounded-xl aspect-[8/5] w-full  "
+                src={img.url}
+                sizes="100vw"
+                overlays={[
+                  {
+                    position: {
+                      x: 0,
+                      y: 0,
+                    },
+                    text: {
+                      color: "#f1f5f9",
+                      fontFamily: "Source Sans Pro",
+                      fontSize: 60,
+                      fontWeight: "bold",
+                      letterSpacing: 14,
+                      text: "etazhi.kz",
+                    },
+                    effects: [
+                      {
+                        opacity: "40",
+                      },
+                    ],
+                  },
+                  {
+                    position: {
+                      x: 600,
+                      y: 400,
+                    },
+                    text: {
+                      color: "#f1f5f9",
+                      fontFamily: "Source Sans Pro",
+                      fontSize: 60,
+                      fontWeight: "bold",
+                      letterSpacing: 14,
+                      text: "etazhi.kz",
+                    },
+                    effects: [
+                      {
+                        opacity: "60",
+                      },
+                    ],
+                  },
+                  {
+                    position: {
+                      x: -600,
+                      y: -400,
+                    },
+                    text: {
+                      color: "#f1f5f9",
+                      fontFamily: "Source Sans Pro",
+                      fontSize: 60,
+                      fontWeight: "bold",
+                      letterSpacing: 14,
+                      text: "etazhi.kz",
+                    },
+                    effects: [
+                      {
+                        opacity: "40",
+                      },
+                    ],
+                  },
+                ]}
+                alt={img.url}
+                defaultImage="/default.png"
+              />
+
+              {/* <Image
                 width={1400}
                 height={1000}
                 loading="lazy"
-                className=" object-cover rounded-xl aspect-[8/5] w-full  cursor-pointer "
+                className="  "
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
                 src={img.url}
                 sizes="100vw"
                 alt={`img+${index}`}
-              />
+              /> */}
             </CarouselItem>
           ))}
         </CarouselContent>
 
-        <div className="px-2 py-1 absolute left-4 top-4 self-end text-neutral-50   bg-sky-500 text-xs font-semibold rounded-full  text-center w-fit flex flex-row gap-x-1">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={3}
-            stroke="currentColor"
-            className="w-4 h-4 stroke-neutral-50"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
-          <TooltipProvider>
-            <Tooltip delayDuration={100}>
-              <TooltipTrigger asChild>
-                <p className="cursor-help">Проверено</p>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="w-60 text-xs">
-                  Данная недвижимость проверена модератором и не является фейком
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+        {isChecked && (
+          <div className="px-2 py-1 absolute left-4 top-4 self-end text-neutral-50   bg-sky-500 text-xs font-semibold rounded-full  text-center w-fit flex flex-row gap-x-1">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={3}
+              stroke="currentColor"
+              className="w-4 h-4 stroke-neutral-50"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+            <TooltipProvider>
+              <Tooltip delayDuration={100}>
+                <TooltipTrigger asChild>
+                  <p className="cursor-help">Проверено</p>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="w-60 text-xs">
+                    Данная недвижимость проверена модератором и не является
+                    фейком
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        )}
+
         <button
           className="absolute left-2 opacity-60 hover:opacity-100 hover:bg-opacity-100 rounded-full text-slate-900 transition delay-100 duration-300  bg-slate-50 bg-opacity-70  p-2 items-center flex "
           onClick={scrollPrev}

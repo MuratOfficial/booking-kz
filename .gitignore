@@ -20,6 +20,8 @@
 .DS_Store
 *.pem
 
+etazhikz-fd44c626c6da.json
+
 # debug
 npm-debug.log*
 yarn-debug.log*
