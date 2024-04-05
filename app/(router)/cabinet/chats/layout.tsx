@@ -1,5 +1,9 @@
 import { Metadata } from "next";
 import ChatList from "./components/chat-list";
+import { Suspense } from "react";
+import { fetchUserChats } from "@/lib/fetchChats";
+import { Loader } from "lucide-react";
+import { fetchUserData } from "@/lib/fetchUserData";
 
 export const metadata: Metadata = {
   title: {
@@ -28,6 +32,9 @@ export default async function ChatsLayout({ children }: ChatsLayoutProps) {
   //     return <NotFound />;
   //   }
 
+  const chatList = await fetchUserChats();
+  const user = await fetchUserData();
+
   return (
     <>
       <div className="flex flex-col items-center gap-2 w-full pb-4">
@@ -38,10 +45,18 @@ export default async function ChatsLayout({ children }: ChatsLayoutProps) {
         </div>
         <div className="w-full h-[720px] shadow-2xl rounded-3xl mt-2 grid grid-cols-3">
           <div className=" w-full h-full   rounded-l-3xl border-y-2 border-l-2 bg-slate-200 border-slate-300 py-3 pl-4">
-            <ChatList />
+            <ChatList chats={chatList} userId={user?.id} />
           </div>
           <div className="h-full w-full border-2 border-slate-300  rounded-r-3xl col-span-2 bg-slate-200">
-            {children}
+            <Suspense
+              fallback={
+                <div className="w-full h-full justify-center items-center flex flex-col">
+                  <Loader className="w-12 h-12 text-blue-500 animate-spin" />
+                </div>
+              }
+            >
+              {children}
+            </Suspense>
           </div>
         </div>
       </div>

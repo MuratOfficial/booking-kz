@@ -25,7 +25,6 @@ model User {
   totalBalance     String?        @default("0")
   bonusBalance     String?        @default("0")
   annoncements     Annoncement[]
-  chats            Chat[]
   payments         Payment[]
   favourites       Favourite[]
   testimonials     Testimonial[]
@@ -64,6 +63,7 @@ model Annoncement {
   coordinateY    String?
 
   testimonials Testimonial[]
+  chats        Chat[]
 
   isChecked         Boolean  @default(false)
   roomNumber        Int
@@ -110,16 +110,20 @@ model Payment {
 }
 
 model Chat {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @db.ObjectId
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  annoncement   Annoncement @relation(fields: [annoncementId], references: [id])
+  annoncementId String      @db.ObjectId
+  user1Id       String
+  user2Id       String
 
-  annoncementId String
-  createdAt     DateTime   @default(now())
-  messages      Messages[]
+  createdAt DateTime  @default(now())
+  messages  Message[]
 }
 
-type Messages {
+model Message {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  chatId    String   @db.ObjectId
   author    String
   text      String?
   status    String   @default("pending")

@@ -69,6 +69,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import FavoriteButton from "../components/favorite-button";
 import { fetchUserData } from "@/lib/fetchUserData";
 import ShareButton from "../components/share-button";
+import { fetchUserChats } from "@/lib/fetchChats";
 
 export async function generateMetadata({
   params,
@@ -94,8 +95,9 @@ const AnnoncementPage = async ({
 }) => {
   const annoncement = await fetchAnnoncement(params.annoncementId);
 
-  const session = await getServerSession(authOptions);
-  const userIdData = JSON.parse(JSON.stringify(session))?.user;
+  const userChats = await fetchUserChats();
+
+  const isChatId = userChats.find((el) => el.annoncementId === annoncement?.id);
 
   const userData = await fetchUserData();
 
@@ -350,7 +352,7 @@ const AnnoncementPage = async ({
           <AnnoncementRules annoncement={annoncement} />
           <AnnoncementTestimonials
             testimonials={annoncement?.testimonials || []}
-            isUserValid={userIdData ? true : false}
+            isUserValid={userData?.id ? true : false}
           />
           <AnnoncementMap />
         </div>
@@ -408,8 +410,25 @@ const AnnoncementPage = async ({
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-green-500 rounded-xl text-neutral-50 font-medium">
-                  <DropdownMenuItem className="cursor-pointer  text-center hover:bg-neutral-50 rounded-lg focus:bg-neutral-50 focus:text-green-500">
-                    На сайте
+                  <DropdownMenuItem
+                    asChild
+                    className="cursor-pointer  text-center hover:bg-neutral-50 rounded-lg focus:bg-neutral-50 focus:text-green-500"
+                  >
+                    {isChatId ? (
+                      <Link
+                        href={`/cabinet/chats/${annoncement?.id}/${isChatId.id}`}
+                        target="_blank"
+                      >
+                        На сайте
+                      </Link>
+                    ) : (
+                      <Link
+                        href={`/cabinet/chats/${annoncement?.id}/new`}
+                        target="_blank"
+                      >
+                        На сайте
+                      </Link>
+                    )}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     asChild
@@ -440,84 +459,86 @@ const AnnoncementPage = async ({
                     {el.icon} {el.name}
                   </span>
                 ))}
-                <Collapsible className="col-span-2 ">
-                  <CollapsibleContent className="w-full grid grid-cols-2 gap-2 ">
-                    {filteredArray.slice(8).map((el, ind) => (
-                      <span
-                        className="flex flex-row items-center gap-x-2 font-semibold text-xs"
-                        key={ind}
-                      >
-                        {el.icon} {el.name}
-                      </span>
-                    ))}
-                    {filteredArray2.length > 0 && (
-                      <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
-                        На территории
-                      </p>
-                    )}
+                {filteredArray.length !== 0 && (
+                  <Collapsible className="col-span-2 ">
+                    <CollapsibleContent className="w-full grid grid-cols-2 gap-2 ">
+                      {filteredArray.slice(8).map((el, ind) => (
+                        <span
+                          className="flex flex-row items-center gap-x-2 font-semibold text-xs"
+                          key={ind}
+                        >
+                          {el.icon} {el.name}
+                        </span>
+                      ))}
+                      {filteredArray2.length > 0 && (
+                        <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
+                          На территории
+                        </p>
+                      )}
 
-                    {filteredArray2.map((el, ind) => (
-                      <span
-                        className="flex flex-row items-center gap-x-2 font-semibold text-xs"
-                        key={ind}
-                      >
-                        {el.icon} {el.name}
-                      </span>
-                    ))}
-                    {filteredArray3.length > 0 && (
-                      <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
-                        Вид из окна
-                      </p>
-                    )}
+                      {filteredArray2.map((el, ind) => (
+                        <span
+                          className="flex flex-row items-center gap-x-2 font-semibold text-xs"
+                          key={ind}
+                        >
+                          {el.icon} {el.name}
+                        </span>
+                      ))}
+                      {filteredArray3.length > 0 && (
+                        <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
+                          Вид из окна
+                        </p>
+                      )}
 
-                    {filteredArray3.map((el, ind) => (
-                      <span
-                        className="flex flex-row items-center gap-x-2 font-semibold text-xs"
-                        key={ind}
-                      >
-                        {el.icon} {el.name}
-                      </span>
-                    ))}
-                    {filteredArray4.length > 0 && (
-                      <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
-                        Санузел
-                      </p>
-                    )}
+                      {filteredArray3.map((el, ind) => (
+                        <span
+                          className="flex flex-row items-center gap-x-2 font-semibold text-xs"
+                          key={ind}
+                        >
+                          {el.icon} {el.name}
+                        </span>
+                      ))}
+                      {filteredArray4.length > 0 && (
+                        <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
+                          Санузел
+                        </p>
+                      )}
 
-                    {filteredArray4.map((el, ind) => (
-                      <span
-                        className="flex flex-row items-center gap-x-2 font-semibold text-xs"
-                        key={ind}
-                      >
-                        {el.icon} {el.name}
-                      </span>
-                    ))}
-                    {filteredArray5.length > 0 && (
-                      <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
-                        Дополнительно
-                      </p>
-                    )}
+                      {filteredArray4.map((el, ind) => (
+                        <span
+                          className="flex flex-row items-center gap-x-2 font-semibold text-xs"
+                          key={ind}
+                        >
+                          {el.icon} {el.name}
+                        </span>
+                      ))}
+                      {filteredArray5.length > 0 && (
+                        <p className="text-sm font-semibold self-start col-span-2 mt-4 text-slate-600">
+                          Дополнительно
+                        </p>
+                      )}
 
-                    {filteredArray5.map((el, ind) => (
-                      <span
-                        className="flex flex-row items-center gap-x-2 font-semibold text-xs"
-                        key={ind}
-                      >
-                        {el.icon} {el.name}
-                      </span>
-                    ))}
-                  </CollapsibleContent>
-                  <CollapsibleTrigger asChild>
-                    <button className="border hover:border-slate-900 hover:text-slate-900 transition delay-100 duration-300 data-[state=open]:hidden px-2 py-1 mt-2 rounded-xl border-slate-400 text-slate-400 text-xs font-medium">
-                      Показать все удобства
-                    </button>
-                  </CollapsibleTrigger>
-                  <CollapsibleTrigger asChild>
-                    <button className="border hover:border-slate-900 hover:text-slate-900 transition delay-100 duration-300 data-[state=open]:flex data-[state=closed]:hidden px-2 py-1 mt-2 rounded-xl border-slate-400 text-slate-400 text-xs font-medium">
-                      Скрыть
-                    </button>
-                  </CollapsibleTrigger>
-                </Collapsible>
+                      {filteredArray5.map((el, ind) => (
+                        <span
+                          className="flex flex-row items-center gap-x-2 font-semibold text-xs"
+                          key={ind}
+                        >
+                          {el.icon} {el.name}
+                        </span>
+                      ))}
+                    </CollapsibleContent>
+                    <CollapsibleTrigger asChild>
+                      <button className="border hover:border-slate-900 hover:text-slate-900 transition delay-100 duration-300 data-[state=open]:hidden px-2 py-1 mt-2 rounded-xl border-slate-400 text-slate-400 text-xs font-medium">
+                        Показать все удобства
+                      </button>
+                    </CollapsibleTrigger>
+                    <CollapsibleTrigger asChild>
+                      <button className="border hover:border-slate-900 hover:text-slate-900 transition delay-100 duration-300 data-[state=open]:flex data-[state=closed]:hidden px-2 py-1 mt-2 rounded-xl border-slate-400 text-slate-400 text-xs font-medium">
+                        Скрыть
+                      </button>
+                    </CollapsibleTrigger>
+                  </Collapsible>
+                )}
               </div>
             </div>
           </div>
