@@ -10,7 +10,7 @@ import {
   SendHorizonal,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { fetchChat } from "@/lib/fetchChats";
+import { fetchChat, fetchChatUsers } from "@/lib/fetchChats";
 import { fetchAnnoncement } from "@/lib/fetchAnnoncement";
 import Link from "next/link";
 import DropdownChatButtons from "./components/dropdown-chat-button";
@@ -41,6 +41,8 @@ const ChatPage = async ({
 
   const annoncement = await fetchAnnoncement(params.annoncementId);
 
+  const anotherUser = await fetchChatUsers(params.chatId);
+
   return (
     <div className="grid grid-rows-9 h-full w-full ">
       <div className="border-b-2 border-slate-300 px-4 py-2 flex flex-row justify-between items-center">
@@ -53,7 +55,7 @@ const ChatPage = async ({
             className="aspect-[4/3] w-20  rounded-md object-cover"
           />
           <p className="font-semibold text-slate-900">
-            {annoncement?.user?.name || annoncement?.user?.username}
+            {anotherUser?.name || anotherUser?.username}
           </p>
         </div>
         <DropdownChatButtons
@@ -84,8 +86,11 @@ const ChatPage = async ({
                     </div>
                   ) : (
                     <div className=" w-full flex flex-row justify-start">
-                      <p className="rounded-xl py-2 px-4  w-fit text-neutral-50 bg-slate-700">
+                      <p className="rounded-xl pt-2 pb-0 px-4 flex flex-col items-start  w-fit text-neutral-50 bg-slate-700">
                         {el.text}
+                        <span className=" bottom-0 flex flex-row items-center gap-0.5 text-[10px] text-neutral-100 font-light">
+                          {el?.createdAt.toLocaleTimeString()}{" "}
+                        </span>
                       </p>
                     </div>
                   )}

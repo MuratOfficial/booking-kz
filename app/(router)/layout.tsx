@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/auth";
 import prismadb from "@/lib/prismadb";
+import { fetchUserChats } from "@/lib/fetchChats";
 
 export const metadata: Metadata = {
   title: {
@@ -23,6 +24,7 @@ export default async function ClientLayout({
   const userIdData = JSON.parse(JSON.stringify(session))?.user;
 
   let userData;
+  let chats;
 
   if (session?.user) {
     userData = await prismadb?.user?.findUnique({
@@ -30,14 +32,16 @@ export default async function ClientLayout({
         id: userIdData?.id,
       },
     });
+    chats = await fetchUserChats();
   } else {
     userData = null;
+    chats = null;
   }
 
   return (
     <main className="min-h-screen">
       <Suspense>
-        <MainNav userData={userData} />
+        <MainNav userData={userData} chats={chats} />
       </Suspense>
       {children}
       <Footer />

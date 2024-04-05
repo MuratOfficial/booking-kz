@@ -115,6 +115,8 @@ model Chat {
   annoncementId String      @db.ObjectId
   user1Id       String
   user2Id       String
+  user1Name     String?
+  user2Name     String?
 
   createdAt DateTime  @default(now())
   messages  Message[]

@@ -35,6 +35,7 @@ function ChatList({ chats, userId }: ChatListProps) {
                   `/cabinet/chats/${item.annoncementId}/${item.id}` &&
                   "opacity-100 grayscale-0",
                 item?.messages?.findLast((el) => el)?.status === "pending" &&
+                  item?.messages?.findLast((el) => el)?.author === userId &&
                   "  grayscale-0"
               )}
               key={index}
@@ -52,8 +53,7 @@ function ChatList({ chats, userId }: ChatListProps) {
               <div className=" col-span-3 w-full h-full flex flex-col justify-between px-2 pt-2 border  ">
                 <div className="flex flex-row justify-between items-center">
                   <p className="text-slate-900 font-semibold text-sm line-clamp-1 ">
-                    {item.annoncement.user?.name ||
-                      item.annoncement.user.username}
+                    {item.user1Id === userId ? item.user2Name : item.user1Name}
                   </p>
                   <p className="text-slate-500 text-xs ">
                     {item.messages
