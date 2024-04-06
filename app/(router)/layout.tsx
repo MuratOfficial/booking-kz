@@ -24,24 +24,28 @@ export default async function ClientLayout({
   const userIdData = JSON.parse(JSON.stringify(session))?.user;
 
   let userData;
-  let chats;
 
   if (session?.user) {
     userData = await prismadb?.user?.findUnique({
       where: {
         id: userIdData?.id,
       },
+      include: {
+        chats: {
+          include: {
+            messages: true,
+          },
+        },
+      },
     });
-    chats = await fetchUserChats();
   } else {
     userData = null;
-    chats = null;
   }
 
   return (
     <main className="min-h-screen">
       <Suspense>
-        <MainNav userData={userData} chats={chats} />
+        <MainNav userData={userData} />
       </Suspense>
       {children}
       <Footer />

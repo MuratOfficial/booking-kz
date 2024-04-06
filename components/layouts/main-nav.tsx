@@ -59,11 +59,12 @@ import { signOut } from "next-auth/react";
 import { Annoncement, Chat, Message, User } from "@prisma/client";
 
 interface MainNavProps {
-  userData: User | null;
-  chats: (Chat & { annoncement: Annoncement; messages: Message[] })[] | null;
+  userData:
+    | (User & { chats: (Chat & { messages: Message[] | null })[] | null })
+    | null;
 }
 
-function MainNav({ userData, chats }: MainNavProps) {
+function MainNav({ userData }: MainNavProps) {
   const [isOpenPopover1, setOpenPopover1] = React.useState(false);
   const [isOpenPopover2, setOpenPopover2] = React.useState(false);
   const [isOpenPopover3, setOpenPopover3] = React.useState(false);
@@ -527,9 +528,9 @@ function MainNav({ userData, chats }: MainNavProps) {
                   d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
                 />
               </svg>
-              {chats &&
-                chats?.filter((el) =>
-                  el.messages.filter((item) => item.status === "pending")
+              {userData?.chats &&
+                userData?.chats?.filter((el) =>
+                  el?.messages?.filter((item) => item.status === "pending")
                 ).length > 0 && (
                   <span className="absolute text-[5px] bottom-4 right-1 bg-blue-400 animate-pulse rounded-full w-1.5 text-neutral-50 h-1.5 text-center flex flex-col items-center justify-center"></span>
                 )}

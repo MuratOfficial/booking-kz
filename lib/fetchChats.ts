@@ -10,26 +10,18 @@ export async function fetchChat(chatId: string, annoncementId: string) {
   const user = await fetchUserData();
   const annoncement = await fetchAnnoncement(annoncementId);
 
-  const users = await prismadb.user.findMany();
-  const anotherUser = await prismadb.user.findUnique({
-    where: {
-      id: annoncement?.user.id || "",
-    },
-  });
+  // const users = await prismadb.user.findMany();
+  // const anotherUser = await prismadb.user.findUnique({
+  //   where: {
+  //     id: annoncement?.user.id || "",
+  //   },
+  // });
   const possibleChat = await prismadb.chat.findMany({
     where: {
-      OR: [
-        {
-          user1Id: user?.id,
-          user2Id: anotherUser?.id,
-          annoncementId: annoncementId,
-        },
-        {
-          user1Id: anotherUser?.id,
-          user2Id: user?.id,
-          annoncementId: annoncementId,
-        },
-      ],
+      userIds: {
+        hasEvery: [annoncement?.userId || "", user?.id || ""],
+      },
+      annoncementId: annoncementId,
     },
   });
 
@@ -39,18 +31,10 @@ export async function fetchChat(chatId: string, annoncementId: string) {
         await prismadb.chat.create({
           data: {
             annoncementId: annoncementId,
-            user1Id: user?.id || "",
-            user2Id: annoncement?.userId || "",
-            user1Name:
-              users.find((el) => el.id === user?.id)?.name ||
-              users.find((el) => el.id === user?.id)?.username ||
-              "Неизвестно",
-            user2Name:
-              users.find((el) => el.id === annoncement?.userId)?.name ||
-              users.find((el) => el.id === annoncement?.userId)?.username ||
-              "Неизвестно",
+            userIds: [user?.id || "", annoncement?.userId || ""],
           },
         });
+        // console.log(user!.id, annoncement!.userId);
       } catch (error) {
         console.error("Database Error:", error);
         throw new Error("Failed to fetch chat");
@@ -103,14 +87,9 @@ export async function fetchUserChats() {
         createdAt: "desc",
       },
       where: {
-        OR: [
-          {
-            user1Id: user?.id,
-          },
-          {
-            user2Id: user?.id,
-          },
-        ],
+        userIds: {
+          has: user!.id,
+        },
       },
       include: {
         annoncement: {
@@ -119,6 +98,7 @@ export async function fetchUserChats() {
           },
         },
         messages: true,
+        users: true,
       },
     });
 
@@ -132,14 +112,15 @@ export async function fetchUserChats() {
 export async function fetchChatUsers(chatId: string) {
   const user = await fetchUserData();
   try {
-    const chat = await prismadb?.chat?.findUnique({
+    const chat = await prismadb.chat.findUnique({
       where: {
         id: chatId,
       },
     });
 
-    const anotherUserId =
-      user?.id === chat?.user1Id ? chat?.user2Id : chat?.user1Id;
+    const anotherUserId = chat?.userIds.find((el) => el !== user?.id)
+      ? chat?.userIds.find((el) => el !== user?.id)
+      : user?.id;
 
     const anotherUser = await prismadb.user?.findUnique({
       where: { id: anotherUserId },

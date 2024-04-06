@@ -12,7 +12,8 @@ import React from "react";
 interface ChatListProps {
   chats:
     | (Chat & {
-        annoncement: Annoncement & { user: User };
+        annoncement: Annoncement;
+        users: User[];
         messages: Message[];
       })[]
     | null;
@@ -53,7 +54,9 @@ function ChatList({ chats, userId }: ChatListProps) {
               <div className=" col-span-3 w-full h-full flex flex-col justify-between px-2 pt-2 border  ">
                 <div className="flex flex-row justify-between items-center">
                   <p className="text-slate-900 font-semibold text-sm line-clamp-1 ">
-                    {item.user1Id === userId ? item.user2Name : item.user1Name}
+                    {item.users.find((el) => el.id !== userId)?.name ||
+                      item.users.find((el) => el.id !== userId)?.username ||
+                      "Вы"}
                   </p>
                   <p className="text-slate-500 text-xs ">
                     {item.messages

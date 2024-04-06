@@ -11,23 +11,26 @@ datasource db {
 }
 
 model User {
-  id               String         @id @default(auto()) @map("_id") @db.ObjectId
-  email            String         @unique
-  username         String         @unique
-  name             String?
-  password         String
-  passwordHash     String
-  phone            String?
-  notifications    Notification[]
-  subscription     Subscription?
-  accessType       String         @default("user")
-  status           String         @default("active")
-  totalBalance     String?        @default("0")
-  bonusBalance     String?        @default("0")
-  annoncements     Annoncement[]
-  payments         Payment[]
-  favourites       Favourite[]
-  testimonials     Testimonial[]
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  email         String         @unique
+  username      String         @unique
+  name          String?
+  password      String
+  passwordHash  String
+  phone         String?
+  notifications Notification[]
+  subscription  Subscription?
+  accessType    String         @default("user")
+  status        String         @default("active")
+  totalBalance  String?        @default("0")
+  bonusBalance  String?        @default("0")
+  annoncements  Annoncement[]
+  payments      Payment[]
+  favourites    Favourite[]
+  testimonials  Testimonial[]
+  chats         Chat[]         @relation(fields: [chatIds], references: [id])
+  chatIds       String[]       @db.ObjectId
+
   isVerified       Boolean?
   verificationCode String?
 
@@ -113,10 +116,8 @@ model Chat {
   id            String      @id @default(auto()) @map("_id") @db.ObjectId
   annoncement   Annoncement @relation(fields: [annoncementId], references: [id])
   annoncementId String      @db.ObjectId
-  user1Id       String
-  user2Id       String
-  user1Name     String?
-  user2Name     String?
+  users         User[]      @relation(fields: [userIds], references: [id])
+  userIds       String[]    @db.ObjectId
 
   createdAt DateTime  @default(now())
   messages  Message[]
