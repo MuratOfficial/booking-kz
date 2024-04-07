@@ -81,54 +81,58 @@ export async function fetchChat(chatId: string, annoncementId: string) {
 
 export async function fetchUserChats() {
   const user = await fetchUserData();
-  try {
-    const chats = await prismadb.chat.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-      where: {
-        userIds: {
-          has: user!.id,
+  if (user) {
+    try {
+      const chats = await prismadb.chat.findMany({
+        orderBy: {
+          createdAt: "desc",
         },
-      },
-      include: {
-        annoncement: {
-          include: {
-            user: true,
+        where: {
+          userIds: {
+            has: user!.id,
           },
         },
-        messages: true,
-        users: true,
-      },
-    });
+        include: {
+          annoncement: {
+            include: {
+              user: true,
+            },
+          },
+          messages: true,
+          users: true,
+        },
+      });
 
-    return chats;
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch chat");
+      return chats;
+    } catch (error) {
+      console.error("Database Error:", error);
+      throw new Error("Failed to fetch chat");
+    }
   }
 }
 
 export async function fetchChatUsers(chatId: string) {
   const user = await fetchUserData();
-  try {
-    const chat = await prismadb.chat.findUnique({
-      where: {
-        id: chatId,
-      },
-    });
+  if (user) {
+    try {
+      const chat = await prismadb.chat.findUnique({
+        where: {
+          id: chatId,
+        },
+      });
 
-    const anotherUserId = chat?.userIds.find((el) => el !== user?.id)
-      ? chat?.userIds.find((el) => el !== user?.id)
-      : user?.id;
+      const anotherUserId = chat?.userIds.find((el) => el !== user?.id)
+        ? chat?.userIds.find((el) => el !== user?.id)
+        : user?.id;
 
-    const anotherUser = await prismadb.user?.findUnique({
-      where: { id: anotherUserId },
-    });
+      const anotherUser = await prismadb.user?.findUnique({
+        where: { id: anotherUserId },
+      });
 
-    return anotherUser;
-  } catch (error) {
-    console.error("Database Error:", error);
-    return null;
+      return anotherUser;
+    } catch (error) {
+      console.error("Database Error:", error);
+      return null;
+    }
   }
 }

@@ -97,7 +97,9 @@ const AnnoncementPage = async ({
 
   const userChats = await fetchUserChats();
 
-  const isChatId = userChats.find((el) => el.annoncementId === annoncement?.id);
+  const isChatId = userChats?.find(
+    (el) => el.annoncementId === annoncement?.id
+  );
 
   const userData = await fetchUserData();
 

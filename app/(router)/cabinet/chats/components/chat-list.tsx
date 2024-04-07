@@ -16,7 +16,8 @@ interface ChatListProps {
         users: User[];
         messages: Message[];
       })[]
-    | null;
+    | null
+    | undefined;
   userId: string | null | undefined;
 }
 
