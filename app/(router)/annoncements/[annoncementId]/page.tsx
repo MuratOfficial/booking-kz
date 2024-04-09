@@ -70,6 +70,7 @@ import FavoriteButton from "../components/favorite-button";
 import { fetchUserData } from "@/lib/fetchUserData";
 import ShareButton from "../components/share-button";
 import { fetchUserChats } from "@/lib/fetchChats";
+import CallButton from "../components/call-button";
 
 export async function generateMetadata({
   params,
@@ -397,13 +398,7 @@ const AnnoncementPage = async ({
               <p>{annoncement?.user.name || annoncement?.user.username}</p>
             </div>
             <div className="grid grid-cols-2 w-full gap-2 mb-2">
-              <Link
-                href={`tel:${annoncement?.user.phone}`}
-                className="flex flex-row p-3 hover:opacity-80 items-center gap-x-1.5 justify-center rounded-xl bg-blue-500 font-medium text-neutral-50"
-              >
-                <Phone size={16} />
-                <span>Позвонить</span>
-              </Link>
+              <CallButton phone={annoncement?.user?.phone} />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex flex-row p-3 hover:opacity-80 items-center gap-x-1.5 justify-center rounded-xl bg-green-500 font-medium text-neutral-50">

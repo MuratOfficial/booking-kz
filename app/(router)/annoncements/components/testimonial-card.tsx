@@ -42,7 +42,7 @@ function TestimonialCard({ cardData }: TestimonialCardProps) {
                 />
               </svg>
               <span className="font-bold text-slate-900 ">
-                {cardData.ranking.overall}
+                {parseFloat(cardData.ranking.overall).toFixed(1)}
               </span>
             </p>
 

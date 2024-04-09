@@ -262,7 +262,12 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
           {current === 0 ? 1 : current}/{count}
         </span>
       </Carousel>
-      <Carousel className="w-full" ref={emblaThumbsRef} opts={{}}>
+      <Carousel
+        className="w-full"
+        ref={emblaThumbsRef}
+        opts={{}}
+        setApi={setApiThumb}
+      >
         <CarouselContent className="w-full -ml-2">
           {images?.map((thumb, index) => (
             <CarouselItem key={index} className=" basis-[12%] pl-2">

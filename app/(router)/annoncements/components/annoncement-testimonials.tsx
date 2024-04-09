@@ -29,6 +29,12 @@ function AnnoncementTestimonials({
   testimonials,
   isUserValid,
 }: AnnoncementTestimonials) {
+  const [onClose, setOnClose] = React.useState(false);
+
+  const handleChildClose = (type: boolean) => {
+    setOnClose(type);
+  };
+
   type RankingKeys = Exclude<keyof Testimonial["ranking"], "overall">;
 
   function calculateOverallRanking(testimonials: Testimonial[]) {
@@ -142,7 +148,7 @@ function AnnoncementTestimonials({
             />
           </svg>
           <span className="font-bold text-slate-900 text-lg">
-            {overallRanking.overall.toFixed(2)}
+            {overallRanking.overall.toFixed(1)}
           </span>
         </span>
       </div>
@@ -161,7 +167,7 @@ function AnnoncementTestimonials({
                 ></div>
               </div>
 
-              <span>{el.rating}</span>
+              <span>{el.rating.toFixed(1)}</span>
             </div>
           </div>
         ))}
@@ -199,7 +205,7 @@ function AnnoncementTestimonials({
           </p>
         )}
         {isUserValid && (
-          <Dialog>
+          <Dialog onOpenChange={() => setOnClose(true)} open={onClose}>
             <DialogTrigger asChild>
               <button className="flex w-fit font-semibold items-center flex-row gap-x-1 hover:bg-slate-500 bg-blue-500 rounded-lg px-2.5 py-1.5 self-center  text-white text-sm ">
                 <Star className="w-4" /> Поставьте оценку и оставьте отзыв{" "}
@@ -210,7 +216,7 @@ function AnnoncementTestimonials({
               <DialogHeader className="font-bold text-xl text-slate-800">
                 Оценка и отзыв
               </DialogHeader>
-              <NewTestimonialForm />
+              <NewTestimonialForm setOpen={handleChildClose} />
             </DialogContent>
           </Dialog>
         )}

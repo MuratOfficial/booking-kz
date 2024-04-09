@@ -71,6 +71,8 @@ function Filter({ allcount }: FilterProps) {
     replace(`${pathname}?${params.toString()}`);
   }
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   function resetFilterItem(value: string) {
     const params = new URLSearchParams(searchParams);
     if (params.has("more", value)) {
@@ -435,7 +437,7 @@ function Filter({ allcount }: FilterProps) {
           </button>
         ))}
       </div>
-      <div className="flex flex-row gap-x-6 items-center">
+      <div className="flex flex-row gap-6 items-center flex-wrap">
         <div className="flex flex-row items-center">
           <button
             onClick={() => handleFilter("1", "roomNumber")}
@@ -492,7 +494,7 @@ function Filter({ allcount }: FilterProps) {
             комнатные
           </p>
         </div>
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center gap-2 flex-wrap">
           <div className="w-40 h-10 relative">
             <Input
               className="rounded-xl pr-5"
@@ -523,7 +525,7 @@ function Filter({ allcount }: FilterProps) {
             </span>
           </div>
         </div>
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center gap-2 flex-wrap">
           <div className="w-40 h-10 relative">
             <Input
               className="rounded-xl pr-5"
@@ -555,7 +557,7 @@ function Filter({ allcount }: FilterProps) {
           </div>
         </div>
       </div>
-      <div className="flex flex-row gap-x-4 items-center">
+      <div className="flex flex-row gap-4 items-center flex-wrap">
         <ComboboxFilter
           buttonName="Выберите город"
           commandInputTitle="Поиск города"
@@ -584,7 +586,7 @@ function Filter({ allcount }: FilterProps) {
       <div className="flex flex-row gap-x-4 justify-between items-center">
         <div className="flex flex-row gap-x-4 items-center">
           {" "}
-          <Dialog>
+          <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
             <DialogTrigger asChild>
               <button className="flex flex-row  text-sm font-semibold text-neutral-50 items-center hover:text-slate-900 transition-all delay-75 duration-200">
                 <ChevronDown size={16} /> Расширенный поиск
@@ -1408,8 +1410,11 @@ function Filter({ allcount }: FilterProps) {
                 >
                   <X size={16} /> Сбросить
                 </button>
-                <button className="flex flex-row px-4 py-3 rounded-xl bg-blue-500 text-sm font-semibold text-neutral-50 items-center opacity-100 hover:opacity-80 transition-all delay-75 duration-200">
-                  Показать 202 обьявления
+                <button
+                  onClick={() => setDialogOpen(false)}
+                  className="flex flex-row px-4 py-3 rounded-xl bg-blue-500 text-sm font-semibold text-neutral-50 items-center opacity-100 hover:opacity-80 transition-all delay-75 duration-200"
+                >
+                  Показать {allcount} обьявления
                 </button>
               </DialogFooter>
             </DialogContent>

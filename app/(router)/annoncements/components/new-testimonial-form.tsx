@@ -43,9 +43,13 @@ type NewTestimonialFormValues = z.infer<typeof testimonialFormSchema>;
 
 interface NewTestimonialFormProps {
   userId?: string | null;
+  setOpen: (type: boolean) => void;
 }
 
-export function NewTestimonialForm({ userId }: NewTestimonialFormProps) {
+export function NewTestimonialForm({
+  userId,
+  setOpen,
+}: NewTestimonialFormProps) {
   const { toast } = useToast();
   const form = useForm<NewTestimonialFormValues>({
     resolver: zodResolver(testimonialFormSchema),
@@ -53,12 +57,12 @@ export function NewTestimonialForm({ userId }: NewTestimonialFormProps) {
       userId: userId || "",
       ranking: {
         overall: "0",
-        ranking1: "0",
-        ranking2: "0",
-        ranking3: "0",
-        ranking4: "0",
-        ranking5: "0",
-        ranking6: "0",
+        // ranking1: "0",
+        // ranking2: "0",
+        // ranking3: "0",
+        // ranking4: "0",
+        // ranking5: "0",
+        // ranking6: "0",
       },
     },
   });
@@ -77,7 +81,7 @@ export function NewTestimonialForm({ userId }: NewTestimonialFormProps) {
         (accumulator, currentValue) => accumulator + parseFloat(currentValue),
         0
       );
-      const overallRanking = (sum / validRankingValues.length).toFixed(2);
+      const overallRanking = (sum / validRankingValues.length).toFixed(1);
       form.setValue("ranking.overall", overallRanking);
     } else {
       form.setValue("ranking.overall", "0");
@@ -106,6 +110,7 @@ export function NewTestimonialForm({ userId }: NewTestimonialFormProps) {
         `/api/annoncements/${params.annoncementId}/testimonial`,
         formData
       );
+      setOpen(false);
       setTimeout(() => {
         router.refresh();
         toast({
@@ -137,7 +142,7 @@ export function NewTestimonialForm({ userId }: NewTestimonialFormProps) {
                   <Slider
                     defaultValue={[parseFloat(field.value) || 0]}
                     max={10}
-                    step={0.2}
+                    step={1}
                     onValueChange={(e) => {
                       field.onChange(e.join());
                     }}
@@ -165,7 +170,7 @@ export function NewTestimonialForm({ userId }: NewTestimonialFormProps) {
                   <Slider
                     defaultValue={[parseFloat(field.value) || 0]}
                     max={10}
-                    step={0.2}
+                    step={1}
                     onValueChange={(e) => {
                       field.onChange(e.join());
                     }}
@@ -193,7 +198,7 @@ export function NewTestimonialForm({ userId }: NewTestimonialFormProps) {
                   <Slider
                     defaultValue={[parseFloat(field.value) || 0]}
                     max={10}
-                    step={0.2}
+                    step={1}
                     onValueChange={(e) => {
                       field.onChange(e.join());
                     }}
@@ -221,7 +226,7 @@ export function NewTestimonialForm({ userId }: NewTestimonialFormProps) {
                   <Slider
                     defaultValue={[parseFloat(field.value) || 0]}
                     max={10}
-                    step={0.2}
+                    step={1}
                     onValueChange={(e) => {
                       field.onChange(e.join());
                     }}
@@ -249,7 +254,7 @@ export function NewTestimonialForm({ userId }: NewTestimonialFormProps) {
                   <Slider
                     defaultValue={[parseFloat(field.value) || 0]}
                     max={10}
-                    step={0.2}
+                    step={1}
                     onValueChange={(e) => {
                       field.onChange(e.join());
                     }}
@@ -277,7 +282,7 @@ export function NewTestimonialForm({ userId }: NewTestimonialFormProps) {
                   <Slider
                     defaultValue={[parseFloat(field.value) || 0]}
                     max={10}
-                    step={0.2}
+                    step={1}
                     onValueChange={(e) => {
                       field.onChange(e.join());
                     }}
