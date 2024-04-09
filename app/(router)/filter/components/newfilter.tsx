@@ -1,6 +1,7 @@
 "use client";
 import React, { Suspense, useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Link as ScrollLink } from "react-scroll";
 import {
   Bed,
   BedDouble,
@@ -49,9 +50,33 @@ function Filter({ allcount }: FilterProps) {
   const pathname = usePathname();
   const { replace } = useRouter();
   const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const [categoryStrings, setCategoryStrings] = useState<string[]>([]);
+  const [moreStrings, setMoreStrings] = useState<string[]>([]);
+
+  const addOrRemoveString = (newString: string): void => {
+    const stringIndex: number = categoryStrings.indexOf(newString);
+    if (stringIndex === -1) {
+      setCategoryStrings([...categoryStrings, newString]);
+    } else {
+      const updatedStrings: string[] = [...categoryStrings];
+      updatedStrings.splice(stringIndex, 1);
+      setCategoryStrings(updatedStrings);
+    }
+  };
+
+  const addOrRemoveMoreString = (newString: string): void => {
+    const stringIndex: number = moreStrings.indexOf(newString);
+    if (stringIndex === -1) {
+      setMoreStrings([...moreStrings, newString]);
+    } else {
+      const updatedStrings: string[] = [...moreStrings];
+      updatedStrings.splice(stringIndex, 1);
+      setMoreStrings(updatedStrings);
+    }
+  };
 
   function resetFilter(param: string) {
-    const params = new URLSearchParams(searchParams);
     if (param === "all") {
       params.delete("categoryType");
       params.delete("roomNumber");
@@ -67,14 +92,15 @@ function Filter({ allcount }: FilterProps) {
     } else {
       params.delete(param);
     }
+    setCategoryStrings([]);
 
-    replace(`${pathname}?${params.toString()}`);
+    // replace(`${pathname}?${params.toString()}`);
+    return params;
   }
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
   function resetFilterItem(value: string) {
-    const params = new URLSearchParams(searchParams);
     if (params.has("more", value)) {
       params.delete("more", value);
     }
@@ -87,12 +113,12 @@ function Filter({ allcount }: FilterProps) {
     if (params.has("moreFloorFrom", value)) {
       params.delete("moreFloorFrom", value);
     }
-
-    replace(`${pathname}?${params.toString()}`);
+    addOrRemoveMoreString(value);
+    // replace(`${pathname}?${params.toString()}`);
+    return params;
   }
 
   function resetAllMoreFilter() {
-    const params = new URLSearchParams(searchParams);
     if (params.has("more")) {
       params.delete("more");
     }
@@ -105,107 +131,133 @@ function Filter({ allcount }: FilterProps) {
     if (params.has("moreFloorFrom")) {
       params.delete("moreFloorFrom");
     }
-
-    replace(`${pathname}?${params.toString()}`);
+    setMoreStrings([]);
+    // replace(`${pathname}?${params.toString()}`);
+    return params;
   }
 
   function handleFilter(term: string, filter: string) {
-    const params = new URLSearchParams(searchParams);
     if (filter === "categoryType") {
       if (term) {
         if (params.has("categoryType", term)) {
           params.delete("categoryType", term);
+          addOrRemoveString(term);
         } else {
           params.append("categoryType", term);
+          addOrRemoveString(term);
         }
       } else {
         params.delete("categoryType");
+        addOrRemoveString(term);
       }
     }
     if (filter === "roomNumber") {
       if (term) {
         if (params.has("roomNumber", term)) {
           params.delete("roomNumber", term);
+          addOrRemoveString(`roomNumber:${term}`);
         } else {
           params.append("roomNumber", term);
+          addOrRemoveString(`roomNumber:${term}`);
         }
       } else {
         params.delete("roomNumber");
+        addOrRemoveString(`roomNumber:${term}`);
       }
     }
     if (filter === "more") {
       if (term) {
         if (params.has("more", term)) {
           params.delete("more", term);
+          addOrRemoveString(term);
         } else {
           params.append("more", term);
+          addOrRemoveString(term);
         }
       } else {
         params.delete("more");
+        addOrRemoveString(term);
       }
     }
     if (filter === "serviceTypeExt") {
       if (term) {
         if (params.has("serviceTypeExt", term)) {
           params.delete("serviceTypeExt", term);
+          addOrRemoveString(`serviceTypeExt:${term}`);
         } else {
           params.append("serviceTypeExt", term);
+          addOrRemoveString(`serviceTypeExt:${term}`);
         }
       } else {
         params.delete("serviceTypeExt");
+        addOrRemoveString(`serviceTypeExt:${term}`);
       }
     }
     if (filter === "priceFrom") {
       if (term) {
         params.set("priceFrom", term);
+        addOrRemoveString(`priceFrom:${term}`);
       } else {
         params.delete("priceFrom");
+        addOrRemoveString(`priceFrom:${term}`);
       }
     }
     if (filter === "priceTo") {
       if (term) {
         params.set("priceTo", term);
+        addOrRemoveString(`priceTo:${term}`);
       } else {
         params.delete("priceTo");
+        addOrRemoveString(`priceTo:${term}`);
       }
     }
     if (filter === "moreFloorTo") {
       if (term) {
         params.set("moreFloorTo", term);
+        addOrRemoveMoreString(`moreFloorTo:${term}`);
       } else {
         params.delete("moreFloorTo");
+        addOrRemoveMoreString(`moreFloorTo:${term}`);
       }
     }
     if (filter === "moreBed") {
       if (term) {
         params.set("moreBed", term);
+        addOrRemoveMoreString(`moreFloorTo:${term}`);
       } else {
         params.delete("moreBed");
+        addOrRemoveMoreString(`moreFloorTo:${term}`);
       }
     }
     if (filter === "moreFloorFrom") {
       if (term) {
         params.set("moreFloorFrom", term);
+        addOrRemoveMoreString(`moreFloorTo:${term}`);
       } else {
         params.delete("moreFloorFrom");
+        addOrRemoveMoreString(`moreFloorTo:${term}`);
       }
     }
     if (filter === "areaSqFrom") {
       if (term) {
         params.set("areaSqFrom", term);
+        addOrRemoveString(`areaSqFrom:${term}`);
       } else {
         params.delete("areaSqFrom");
+        addOrRemoveString(`areaSqFrom:${term}`);
       }
     }
     if (filter === "areaSqTo") {
       if (term) {
         params.set("areaSqTo", term);
+        addOrRemoveString(`areaSqTo:${term}`);
       } else {
         params.delete("areaSqTo");
+        addOrRemoveString(`areaSqTo:${term}`);
       }
     }
 
-    replace(`${pathname}?${params.toString()}`);
+    return params;
   }
 
   const citiesList = [
@@ -391,24 +443,20 @@ function Filter({ allcount }: FilterProps) {
     },
   ];
 
-  const cities = [
-    { value: "астана", label: "Астана" },
-    { value: "алматы", label: "Алматы" },
-    { value: "караганда", label: "Караганда" },
-    { value: "шымкент", label: "Шымкент" },
-  ];
-
   return (
     <div className=" bg-gradient-to-br from-blue-500 to-blue-400 px-6 py-4 rounded-3xl w-full flex flex-col gap-4">
       {searchParams.get("serviceType") === "Аренда" && (
         <div className="flex flex-row gap-2 ">
           {rentType.map((item, index) => (
             <button
-              onClick={() => handleFilter(item, "serviceTypeExt")}
+              onClick={() => {
+                handleFilter(item, "serviceTypeExt");
+              }}
               key={index}
               className={cn(
                 "px-3.5 py-2.5 rounded-xl bg-neutral-50 text-slate-900 transition delay-100  duration-300 hover:bg-slate-900 hover:text-neutral-50 text-sm font-semibold",
-
+                categoryStrings.includes(item) &&
+                  "text-neutral-50 bg-slate-900",
                 searchParams.has("serviceTypeExt", item) &&
                   "text-neutral-50 bg-slate-900"
               )}
@@ -430,6 +478,8 @@ function Filter({ allcount }: FilterProps) {
             className={cn(
               "px-3.5 py-2.5 flex flex-row gap-x-1 rounded-xl  text-slate-900 transition delay-100 duration-300 bg-neutral-50 hover:text-neutral-50 hover:bg-slate-900 text-sm font-semibold",
               searchParams.has("categoryType", item.name) &&
+                "text-neutral-50 bg-slate-900",
+              categoryStrings.includes(item.name) &&
                 "text-neutral-50 bg-slate-900"
             )}
           >
@@ -445,6 +495,8 @@ function Filter({ allcount }: FilterProps) {
             className={cn(
               "rounded-l-xl aspect-square w-10 text-sm font-semibold hover:text-neutral-50 hover:bg-slate-900 transition delay-100 bg-neutral-50 duration-300 text-slate-900",
               searchParams.has("roomNumber", "1") &&
+                "text-neutral-50 bg-slate-900",
+              categoryStrings.includes("roomNumber:1") &&
                 "text-neutral-50 bg-slate-900"
             )}
           >
@@ -455,6 +507,8 @@ function Filter({ allcount }: FilterProps) {
             className={cn(
               " aspect-square w-10 text-sm font-semibold hover:text-neutral-50 hover:bg-slate-900 transition delay-100 bg-neutral-50 duration-300 text-slate-900",
               searchParams.has("roomNumber", "2") &&
+                "text-neutral-50 bg-slate-900",
+              categoryStrings.includes("roomNumber:2") &&
                 "text-neutral-50 bg-slate-900"
             )}
           >
@@ -465,6 +519,8 @@ function Filter({ allcount }: FilterProps) {
             className={cn(
               " aspect-square w-10 text-sm font-semibold hover:text-neutral-50 hover:bg-slate-900 transition delay-100 bg-neutral-50 duration-300 text-slate-900",
               searchParams.has("roomNumber", "3") &&
+                "text-neutral-50 bg-slate-900",
+              categoryStrings.includes("roomNumber:3") &&
                 "text-neutral-50 bg-slate-900"
             )}
           >
@@ -475,6 +531,8 @@ function Filter({ allcount }: FilterProps) {
             className={cn(
               " aspect-square w-10 text-sm font-semibold hover:text-neutral-50 hover:bg-slate-900 transition delay-100 bg-neutral-50 duration-300 text-slate-900",
               searchParams.has("roomNumber", "4") &&
+                "text-neutral-50 bg-slate-900",
+              categoryStrings.includes("roomNumber:4") &&
                 "text-neutral-50 bg-slate-900"
             )}
           >
@@ -485,6 +543,8 @@ function Filter({ allcount }: FilterProps) {
             className={cn(
               "rounded-r-xl aspect-square w-10 text-sm font-semibold hover:text-neutral-50 hover:bg-slate-900 transition delay-100 bg-neutral-50 duration-300 text-slate-900",
               searchParams.has("roomNumber", "5+") &&
+                "text-neutral-50 bg-slate-900",
+              categoryStrings.includes("roomNumber:5+") &&
                 "text-neutral-50 bg-slate-900"
             )}
           >
@@ -1432,8 +1492,11 @@ function Filter({ allcount }: FilterProps) {
             <MapPin size={16} /> Смотреть на карте
           </button>
           <button
-            onClick={() => console.log(searchParams.get("count"))}
-            className="flex flex-row  px-4 py-3 rounded-xl bg-slate-900 text-sm font-semibold text-neutral-50 items-center opacity-100 hover:opacity-80 transition-all delay-75 duration-200"
+            onClick={() => {
+              replace(`${pathname}?${params.toString()}`);
+              console.log(`${pathname}?${params.toString()}`);
+            }}
+            className="flex flex-row cursor-pointer  px-4 py-3 rounded-xl bg-slate-900 text-sm font-semibold text-neutral-50 items-center opacity-100 hover:opacity-80 transition-all delay-75 duration-200"
           >
             Показать{" "}
             <span className="mx-1">

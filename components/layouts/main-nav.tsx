@@ -65,12 +65,7 @@ interface MainNavProps {
 }
 
 function MainNav({ userData }: MainNavProps) {
-  const [isOpenPopover1, setOpenPopover1] = React.useState(false);
-  const [isOpenPopover2, setOpenPopover2] = React.useState(false);
-  const [isOpenPopover3, setOpenPopover3] = React.useState(false);
-  const [isOpenPopover4, setOpenPopover4] = React.useState(false);
-  const [isOpenPopover5, setOpenPopover5] = React.useState(false);
-  const [isOpenPopover6, setOpenPopover6] = React.useState(false);
+  const [isOpenPopover, setOpenPopover] = React.useState("");
 
   const pathname = usePathname();
   const router = useRouter();
@@ -208,12 +203,12 @@ function MainNav({ userData }: MainNavProps) {
             className="w-36"
           />
         </Link>
-        <Popover open={isOpenPopover1}>
-          <PopoverTrigger asChild onMouseOver={() => setOpenPopover1(true)}>
+        <Popover open={isOpenPopover === "open1" ? true : false}>
+          <PopoverTrigger asChild onMouseOver={() => setOpenPopover("open1")}>
             <span
               className={cn(
                 "font-bold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
-                isOpenPopover1 && "text-blue-500 border-b-blue-500",
+                isOpenPopover === "open1" && "text-blue-500 border-b-blue-500",
                 searchParams.get("serviceType") === "Продажа" &&
                   "text-blue-500 border-b-blue-500"
               )}
@@ -238,17 +233,15 @@ function MainNav({ userData }: MainNavProps) {
           </PopoverTrigger>
           <PopoverContent
             className="rounded-2xl bg-slate-900 "
-            onMouseOver={() => setOpenPopover1(true)}
-            onMouseOut={() => setOpenPopover1(false)}
-            onBlur={() => setOpenPopover1(false)}
+            onMouseOver={() => setOpenPopover("open1")}
+            onMouseOut={() => setOpenPopover("")}
+            onBlur={() => setOpenPopover("")}
           >
             <ul className="w-full text-neutral-100">
               {menuList1.map((el, ind) => (
                 <li
                   key={ind}
-                  className={cn(
-                    "p-2 text-left cursor-pointer text-sm font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
-                  )}
+                  className="p-2 text-left cursor-pointer text-sm font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
                   onClick={() =>
                     router.push(
                       `/filter?serviceType=Продажа&categoryType=${el.name}`
@@ -262,12 +255,12 @@ function MainNav({ userData }: MainNavProps) {
           </PopoverContent>
         </Popover>
 
-        <Popover open={isOpenPopover2}>
-          <PopoverTrigger asChild onMouseOver={() => setOpenPopover2(true)}>
+        <Popover open={isOpenPopover === "open2" ? true : false}>
+          <PopoverTrigger asChild onMouseOver={() => setOpenPopover("open2")}>
             <span
               className={cn(
                 "font-bold flex cursor-pointer flex-row items-center gap-1 text-neutral-50 text-sm transition delay-150 duration-500 py-4 px-2 hover:text-blue-500 hover:border-b-blue-500 border-b-2 border-transparent",
-                isOpenPopover2 && "text-blue-500 border-b-blue-500",
+                isOpenPopover === "open2" && "text-blue-500 border-b-blue-500",
 
                 searchParams.get("serviceType") === "Аренда" &&
                   "text-blue-500 border-b-blue-500"
@@ -293,9 +286,9 @@ function MainNav({ userData }: MainNavProps) {
           </PopoverTrigger>
           <PopoverContent
             className="rounded-2xl bg-slate-900 "
-            onMouseOver={() => setOpenPopover2(true)}
-            onMouseOut={() => setOpenPopover2(false)}
-            onBlur={() => setOpenPopover2(false)}
+            onMouseOver={() => setOpenPopover("open2")}
+            onMouseOut={() => setOpenPopover("")}
+            // onBlur={() => setOpenPopover("")}
           >
             <ul className="w-full text-neutral-100">
               {menuList2.map((el, ind) => (
@@ -353,10 +346,10 @@ function MainNav({ userData }: MainNavProps) {
           </>
         )}
 
-        <Popover open={isOpenPopover6 && !userData}>
+        <Popover open={(isOpenPopover === "open6" ? true : false) && !userData}>
           <PopoverTrigger
             asChild
-            onMouseOver={() => setOpenPopover6(true)}
+            onMouseOver={() => setOpenPopover("open6")}
             onClick={() => router.push("/cabinet/annoncements")}
           >
             <span
@@ -384,9 +377,9 @@ function MainNav({ userData }: MainNavProps) {
           </PopoverTrigger>
           <PopoverContent
             className="rounded-2xl bg-slate-900 "
-            onMouseOver={() => setOpenPopover6(true)}
-            onMouseLeave={() => setOpenPopover6(false)}
-            onBlur={() => setOpenPopover6(false)}
+            onMouseOver={() => setOpenPopover("open6")}
+            onMouseLeave={() => setOpenPopover("")}
+            // onBlur={() => setOpenPopover("")}
           >
             <p className="text-neutral-100 text-sm font-semibold text-center">
               Авторизуйтесь чтобы увидеть{" "}
@@ -398,10 +391,10 @@ function MainNav({ userData }: MainNavProps) {
         </Popover>
         <Separator orientation="vertical" className="h-8 bg-slate-700" />
 
-        <Popover open={isOpenPopover3 && !userData}>
+        <Popover open={(isOpenPopover === "open3" ? true : false) && !userData}>
           <PopoverTrigger
             asChild
-            onMouseOver={() => setOpenPopover3(true)}
+            onMouseOver={() => setOpenPopover("open3")}
             onClick={() => router.push("/cabinet/favorites")}
           >
             <span
@@ -429,9 +422,9 @@ function MainNav({ userData }: MainNavProps) {
           </PopoverTrigger>
           <PopoverContent
             className="rounded-2xl bg-slate-900 "
-            onMouseOver={() => setOpenPopover3(true)}
-            onMouseOut={() => setOpenPopover3(false)}
-            onBlur={() => setOpenPopover3(false)}
+            onMouseOver={() => setOpenPopover("open3")}
+            onMouseOut={() => setOpenPopover("")}
+            // onBlur={() => setOpenPopover("")}
           >
             <p className="text-neutral-100 text-sm font-semibold text-center">
               Авторизуйтесь чтобы увидеть{" "}
@@ -441,10 +434,10 @@ function MainNav({ userData }: MainNavProps) {
         </Popover>
 
         <Separator orientation="vertical" className="h-8 bg-slate-700" />
-        <Popover open={isOpenPopover4 && !userData}>
+        <Popover open={(isOpenPopover === "open4" ? true : false) && !userData}>
           <PopoverTrigger
             asChild
-            onMouseOver={() => setOpenPopover4(true)}
+            onMouseOver={() => setOpenPopover("open4")}
             onClick={() => router.push("/cabinet/profile/notifications")}
           >
             <span
@@ -489,9 +482,9 @@ function MainNav({ userData }: MainNavProps) {
           </PopoverTrigger>
           <PopoverContent
             className="rounded-2xl bg-slate-900 "
-            onMouseOver={() => setOpenPopover4(true)}
-            onMouseOut={() => setOpenPopover4(false)}
-            onBlur={() => setOpenPopover4(false)}
+            onMouseOver={() => setOpenPopover("open4")}
+            onMouseOut={() => setOpenPopover("")}
+            // onBlur={() => setOpenPopover("")}
           >
             <p className="text-neutral-100 text-sm font-semibold text-center">
               Авторизуйтесь чтобы увидеть{" "}
@@ -501,10 +494,10 @@ function MainNav({ userData }: MainNavProps) {
         </Popover>
 
         <Separator orientation="vertical" className="h-8 bg-slate-700" />
-        <Popover open={isOpenPopover5 && !userData}>
+        <Popover open={(isOpenPopover === "open5" ? true : false) && !userData}>
           <PopoverTrigger
             asChild
-            onMouseOver={() => setOpenPopover5(true)}
+            onMouseOver={() => setOpenPopover("open5")}
             onClick={() => router.push("/cabinet/chats")}
           >
             <span
@@ -538,9 +531,9 @@ function MainNav({ userData }: MainNavProps) {
           </PopoverTrigger>
           <PopoverContent
             className="rounded-2xl bg-slate-900 "
-            onMouseOver={() => setOpenPopover5(true)}
-            onMouseLeave={() => setOpenPopover5(false)}
-            onBlur={() => setOpenPopover5(false)}
+            onMouseOver={() => setOpenPopover("open5")}
+            onMouseLeave={() => setOpenPopover("")}
+            // onBlur={() => setOpenPopover("")}
           >
             <p className="text-neutral-100 text-sm font-semibold text-center">
               Авторизуйтесь чтобы увидеть{" "}

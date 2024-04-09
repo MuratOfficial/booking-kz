@@ -217,7 +217,7 @@ const AnnoncementPage = async ({
     },
     {
       icon: <ShieldCheck size={16} />,
-      name: "Охранная территория",
+      name: "Охраняемая территория",
     },
   ];
 

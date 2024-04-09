@@ -389,7 +389,7 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
                         />
                       </svg>
                       <span className="font-bold text-slate-900">
-                        {overallRanking.overall.toFixed(2)}
+                        {overallRanking.overall.toFixed(1)}
                       </span>
                     </span>
                   </HoverCardTrigger>

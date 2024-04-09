@@ -46,7 +46,7 @@ export async function fetchFilteredAnnoncements(
           gte: parseInt(areaSqFrom || "0"),
           lte: parseInt(areaSqTo || "999000"),
         },
-        cityOrDistrict: city,
+        // cityOrDistrict: city,
         additionalFilters: {
           some: {
             value: Array.isArray(more)

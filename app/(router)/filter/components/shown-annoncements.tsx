@@ -9,6 +9,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { Element } from "react-scroll";
 
 interface ShownAnnoncementsProps {
   annoncements: (Annoncement & { testimonials: Testimonial[] } & {
@@ -47,27 +48,30 @@ function ShownAnnoncements({ annoncements }: ShownAnnoncementsProps) {
 
   return (
     <div className="col-span-5 flex flex-col gap-4">
-      <div className="flex flex-row justify-end items-center px-8 font-medium text-xs gap-x-2">
-        Сортировать ›{" "}
-        <button
-          onClick={sortByOverallRanking}
-          className={cn(
-            "py-1 px-2 rounded-full text-slate-900 bg-slate-300 hover:bg-slate-900 hover:text-slate-300",
-            sorted === "rate" && "bg-slate-900 text-slate-300"
-          )}
-        >
-          По рейтингу
-        </button>{" "}
-        <button
-          onClick={sortByPrice}
-          className={cn(
-            "py-1 px-2 rounded-full text-slate-900 bg-slate-300 hover:bg-slate-900 hover:text-slate-300",
-            sorted === "price" && "bg-slate-900 text-slate-300"
-          )}
-        >
-          По цене
-        </button>{" "}
-      </div>
+      <Element name="annoncements">
+        <div className="flex flex-row justify-end items-center px-8 font-medium text-xs gap-x-2">
+          Сортировать ›{" "}
+          <button
+            onClick={sortByOverallRanking}
+            className={cn(
+              "py-1 px-2 rounded-full text-slate-900 bg-slate-300 hover:bg-slate-900 hover:text-slate-300",
+              sorted === "rate" && "bg-slate-900 text-slate-300"
+            )}
+          >
+            По рейтингу
+          </button>{" "}
+          <button
+            onClick={sortByPrice}
+            className={cn(
+              "py-1 px-2 rounded-full text-slate-900 bg-slate-300 hover:bg-slate-900 hover:text-slate-300",
+              sorted === "price" && "bg-slate-900 text-slate-300"
+            )}
+          >
+            По цене
+          </button>{" "}
+        </div>
+      </Element>
+
       {sorted === "" ? (
         <>
           {annoncements?.slice(0, 10).map((el, index) => (

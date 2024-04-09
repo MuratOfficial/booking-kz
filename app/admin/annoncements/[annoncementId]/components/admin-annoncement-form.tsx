@@ -1152,7 +1152,7 @@ function AdminAnnoncementForm({
                           type="single"
                           disabled={manual}
                         >
-                          {Array<number>(1, 2, 3, 4, 5).map((el, ind) => (
+                          {Array<number>(1, 2, 3, 4).map((el, ind) => (
                             <ToggleGroupItem
                               key={ind}
                               value={el.toString()}
@@ -1161,6 +1161,12 @@ function AdminAnnoncementForm({
                               {el}
                             </ToggleGroupItem>
                           ))}
+                          <ToggleGroupItem
+                            value="5+"
+                            className="text-sm h-10 border w-10"
+                          >
+                            5+
+                          </ToggleGroupItem>
                         </ToggleGroup>
                       </FormControl>
 
@@ -1168,7 +1174,7 @@ function AdminAnnoncementForm({
                     </FormItem>
                   )}
                 />
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="roomNumber"
                   render={({ field }) => (
@@ -1196,7 +1202,7 @@ function AdminAnnoncementForm({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
               </div>
 
               <div className="flex flex-col gap-2 items-center">
@@ -1290,7 +1296,7 @@ function AdminAnnoncementForm({
                   </FormItem>
                 )}
               />
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="priceNego"
                 render={({ field }) => (
@@ -1308,7 +1314,7 @@ function AdminAnnoncementForm({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
             </div>
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">
@@ -1426,7 +1432,7 @@ function AdminAnnoncementForm({
                 name="yearBuild"
                 render={({ field }) => (
                   <FormItem className="flex flex-col ">
-                    <p className="text-base font-semibold">Площадь</p>
+                    <p className="text-base font-semibold">Год постройки</p>
                     <FormItem className="flex flex-col">
                       <FormControl>
                         <div className="flex flex-row gap-x-2 items-center relative w-fit">
@@ -2162,14 +2168,14 @@ function AdminAnnoncementForm({
                         checked={field.value ? true : false}
                         onCheckedChange={(state) =>
                           state
-                            ? field.onChange("Охранная территория")
+                            ? field.onChange("Охраняемая территория")
                             : field.onChange(null)
                         }
                         className="bg-slate-100 shadow-inner mt-2"
                       />
                     </FormControl>
                     <p className="text-sm font-medium text-slate-700 ">
-                      Охранная территория
+                      Охраняемая территория
                     </p>
                     <FormMessage />
                   </FormItem>
@@ -2682,7 +2688,7 @@ function AdminAnnoncementForm({
             disabled={loading}
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {initialData ? "Обновить обьявление" : "Создать обьявление"}
+            {initialData ? "Сохранить изменения" : "Создать обьявление"}
           </Button>
         </form>
       </Form>
