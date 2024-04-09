@@ -1,7 +1,6 @@
 "use client";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { chatList } from "@/lib/externalData";
 import { cn } from "@/lib/utils";
 import { Annoncement, Chat, Message, User } from "@prisma/client";
 import { Check, CheckCheck, Circle } from "lucide-react";

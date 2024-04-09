@@ -29,6 +29,9 @@ const AnnoncementsPage = async ({
   const userIdData = JSON.parse(JSON.stringify(session))?.user;
 
   const annoncements = await prismadb.annoncement.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
     where: {
       userId: userIdData?.id,
       serviceType: searchParams?.serviceType,

@@ -76,13 +76,13 @@ function ShownAnnoncements({ annoncements }: ShownAnnoncementsProps) {
           {annoncements && annoncements?.length > 10 && (
             <Collapsible className="">
               <CollapsibleContent className="flex flex-col gap-8">
-                {orderedAnnoncements?.slice(3).map((el, ind) => (
+                {annoncements?.slice(3).map((el, ind) => (
                   <AnnoncementListCard data={el} key={ind} />
                 ))}
               </CollapsibleContent>
               <CollapsibleTrigger asChild>
                 <button className=" px-3 py-2 data-[state=open]:hidden rounded-xl  transition-all delay-75 duration-200 w-full border text-slate-400 hover:text-slate-800 hover:border-slate-700 font-semibold">
-                  Показать все {orderedAnnoncements?.length} обьявления
+                  Показать все {annoncements?.length} обьявления
                 </button>
               </CollapsibleTrigger>
               <CollapsibleTrigger asChild>
