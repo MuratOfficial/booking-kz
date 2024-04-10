@@ -19,3 +19,13 @@ export async function fetchUserData() {
     console.error("Database Error:", error);
   }
 }
+
+export async function fetchSubscriptions() {
+  try {
+    const subs = await prismadb.subscription.findMany();
+
+    return subs;
+  } catch (error) {
+    console.error("Database Error:", error);
+  }
+}

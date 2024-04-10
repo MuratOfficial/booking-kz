@@ -7,6 +7,7 @@ import {
   Flame,
   HelpCircle,
   Plus,
+  Podcast,
   RefreshCw,
   WalletCards,
   Zap,
@@ -25,23 +26,15 @@ export default function PaymentsAdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const annoncementAdminRoutes = [
+  const subsAdminRoutes = [
     {
-      path: "/admin/payments",
+      path: "/admin/subscriptions",
       title: "Все",
-      icon: <WalletCards size={17} />,
+      icon: <Podcast size={17} />,
     },
-    { title: "Продление", icon: <RefreshCw size={17} /> },
+
     {
-      title: "Модификаторы",
-      icon: <Zap size={17} />,
-    },
-    {
-      title: "Подписки",
-      icon: <Crown size={17} />,
-    },
-    {
-      path: "/admin/payments/new",
+      path: "/admin/subscriptions/new",
       title: "Добавить",
       icon: <Plus size={17} />,
       isButton: true,
@@ -51,7 +44,7 @@ export default function PaymentsAdminLayout({
   return (
     <div className="flex flex-row w-full h-full gap-2">
       <Suspense>
-        <SideNavAdmin links={annoncementAdminRoutes} />
+        <SideNavAdmin links={subsAdminRoutes} />
       </Suspense>
 
       {children}

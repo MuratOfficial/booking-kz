@@ -16,14 +16,18 @@ import {
   Crown,
   Eye,
   Flame,
+  Heart,
   Loader2,
   MapPin,
   RefreshCcw,
+  Rocket,
+  Star,
+  ThumbsUpIcon,
   UserRoundCheck,
   Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Annoncement, Testimonial } from "@prisma/client";
+import { Annoncement, Subscription, Testimonial } from "@prisma/client";
 import { Graphics } from "@/components/layouts/graphics";
 import { PhotoChangingForm } from "./photo-changing-form";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -37,9 +41,10 @@ import Link from "next/link";
 
 interface MyAnnoncementCardProps {
   data: Annoncement & { testimonials: Testimonial[] };
+  subs?: Subscription[] | null;
 }
 
-function MyAnnoncementCard({ data }: MyAnnoncementCardProps) {
+function MyAnnoncementCard({ data, subs }: MyAnnoncementCardProps) {
   const [api, setApi] = React.useState<CarouselApi>();
 
   const [current, setCurrent] = React.useState(0);
@@ -88,6 +93,37 @@ function MyAnnoncementCard({ data }: MyAnnoncementCardProps) {
 
     return totalOverall / totalCount;
   }
+
+  const icons = [
+    {
+      value: "1",
+      icon: <Crown className="w-7" />,
+    },
+    {
+      value: "2",
+      icon: <Flame className="w-7" />,
+    },
+    {
+      value: "3",
+      icon: <CheckCircle2 className="w-7" />,
+    },
+    {
+      value: "4",
+      icon: <Rocket className="w-7" />,
+    },
+    {
+      value: "5",
+      icon: <ThumbsUpIcon className="w-7" />,
+    },
+    {
+      value: "6",
+      icon: <Star className="w-7" />,
+    },
+    {
+      value: "7",
+      icon: <Heart className="w-7" />,
+    },
+  ];
 
   const overallRanking = calculateOverallRanking(data.testimonials);
 
@@ -372,24 +408,41 @@ function MyAnnoncementCard({ data }: MyAnnoncementCardProps) {
             </button>
           </div>
           <div className=" row-span-3 grid grid-cols-2 w-full gap-4">
-            <div className="border-2 border-green-500 rounded-xl flex flex-col justify-between px-4 py-2">
-              <div className="flex flex-row gap-x-2 items-center">
-                <CheckCircle2 className="text-green-500 w-7" />
-                <p className=" font-semibold text-lg">
-                  Пакет продвижения на 30 дней
+            {subs?.map((el, ind) => (
+              <div
+                key={ind}
+                style={{ borderColor: `#${el.color}` }}
+                className="border-2  rounded-xl flex flex-col justify-between px-4 py-2"
+              >
+                <div className="flex flex-row gap-x-2 items-center">
+                  <span style={{ color: `#${el.color}` }}>
+                    {" "}
+                    {icons.filter((item) => item.value === el.icon)[0].icon}
+                  </span>
+
+                  <p className=" font-semibold text-lg">{el.name}</p>
+                </div>
+                <p className="text-slate-800 text-sm text-center font-medium">
+                  {el.description}
                 </p>
+                <div className="flex flex-row justify-between items-center ">
+                  <p
+                    className=" font-semibold text-2xl"
+                    style={{ color: `#${el.color}` }}
+                  >
+                    {el.price} ₸
+                  </p>
+                  <button
+                    className="text-white rounded-full py-2 px-4  text-sm hover:opacity-80"
+                    style={{ backgroundColor: `#${el.color}` }}
+                  >
+                    Подключить
+                  </button>
+                </div>
               </div>
-              <p className="text-slate-800 text-sm text-center font-medium">
-                Каждый день в ТОП, каждый второй день в Горячие
-              </p>
-              <div className="flex flex-row justify-between items-center ">
-                <p className="text-green-500 font-semibold text-2xl">3320 ₸</p>
-                <button className="text-white rounded-full py-2 px-4 bg-green-500 text-sm hover:opacity-80">
-                  Подключить
-                </button>
-              </div>
-            </div>
-            <div className="border-2 border-yellow-400 rounded-xl flex flex-col justify-between px-4 py-2">
+            ))}
+
+            {/* <div className="border-2 border-yellow-400 rounded-xl flex flex-col justify-between px-4 py-2">
               <div className="flex flex-row gap-x-2 items-center">
                 <Crown className="text-yellow-400 w-7" />
                 <p className=" font-semibold text-lg">
@@ -405,7 +458,7 @@ function MyAnnoncementCard({ data }: MyAnnoncementCardProps) {
                   Подключить
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className=" grid grid-rows-4 gap-2">

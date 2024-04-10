@@ -11,6 +11,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { fetchSubscriptions } from "@/lib/fetchUserData";
 
 export const metadata: Metadata = {
   title: "Мои обьявления",
@@ -42,12 +43,14 @@ const AnnoncementsPage = async ({
     },
   });
 
+  const subs = await fetchSubscriptions();
+
   return (
     <div className="w-full">
       {annoncements.length > 0 ? (
         <div className=" flex flex-col gap-8">
           {annoncements.slice(0, 3).map((el, ind) => (
-            <MyAnnoncementCard data={el} key={ind} />
+            <MyAnnoncementCard data={el} key={ind} subs={subs} />
           ))}
           {annoncements.length > 3 && (
             <Collapsible className="">

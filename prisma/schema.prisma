@@ -19,30 +19,23 @@ model User {
   passwordHash  String
   phone         String?
   notifications Notification[]
-  subscription  Subscription?
-  accessType    String         @default("user")
-  status        String         @default("active")
-  totalBalance  String?        @default("0")
-  bonusBalance  String?        @default("0")
-  annoncements  Annoncement[]
-  payments      Payment[]
-  favourites    Favourite[]
-  testimonials  Testimonial[]
-  chats         Chat[]         @relation(fields: [chatIds], references: [id])
-  chatIds       String[]       @db.ObjectId
+
+  accessType   String        @default("user")
+  status       String        @default("active")
+  totalBalance String?       @default("0")
+  bonusBalance String?       @default("0")
+  annoncements Annoncement[]
+  payments     Payment[]
+  favourites   Favourite[]
+  testimonials Testimonial[]
+  chats        Chat[]        @relation(fields: [chatIds], references: [id])
+  chatIds      String[]      @db.ObjectId
 
   isVerified       Boolean?
   verificationCode String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-type Subscription {
-  subsType      String
-  subsName      String
-  topModifier   Int?
-  hurryModifier Int?
 }
 
 type Notification {
@@ -68,26 +61,27 @@ model Annoncement {
   testimonials Testimonial[]
   chats        Chat[]
 
-  isChecked         Boolean  @default(false)
-  roomNumber        Int
-  floor             Int?
-  floorFrom         Int?
-  repairType        String?
-  roofHeight        String?
-  yearBuild         Int?
-  priceNego         Boolean?
-  description       String
-  comeIn            String?
-  comeOut           String?
-  additionalFilters Filter[]
-  areaSq            Int
-  price             Int
-  images            Image[]
-  phase             String   @default("активно")
-  phone             String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
+  isChecked           Boolean       @default(false)
+  roomNumber          Int
+  floor               Int?
+  floorFrom           Int?
+  repairType          String?
+  roofHeight          String?
+  yearBuild           Int?
+  priceNego           Boolean?
+  description         String
+  comeIn              String?
+  comeOut             String?
+  additionalFilters   Filter[]
+  areaSq              Int
+  price               Int
+  images              Image[]
+  phase               String        @default("активно")
+  phone               String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  subscription        Subscription? @relation(fields: [subscriptionId], references: [id])
+  subscriptionId      String?       @db.ObjectId
   categoryType        String
   serviceType         String
   serviceTypeExt      String?
@@ -197,4 +191,15 @@ model Building {
   floors         Int?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+}
+
+model Subscription {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  days         Int
+  description  String
+  price        Int
+  color        String        @default("16a34a")
+  icon         String        @default("1")
+  annoncements Annoncement[]
 }

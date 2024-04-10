@@ -9,41 +9,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "@/components/ui/use-toast";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import {
-  ActivityIcon,
-  ArrowUpDown,
-  CalendarDays,
-  CheckCircle2Icon,
-  Circle,
-  Clock,
-  Coins,
-  Crown,
-  Dot,
-  Flame,
-  History,
-  KeyRound,
-  MoreHorizontal,
-  Newspaper,
-  User,
-  UserCircle,
-  Wrench,
-  XCircle,
-  Zap,
-} from "lucide-react";
+import axios from "axios";
+import { MoreHorizontal, Newspaper, Podcast } from "lucide-react";
+import Link from "next/link";
 
-export type PaymentColumn = {
+export type SubsColumn = {
   id: string;
-  user: string;
-  cost: number;
-  status: "success" | "fail" | "pending";
-  createdAt: string;
-  service: "modification" | "adding" | "subscription" | "prolong";
+  name: string;
+  price: string;
+  color: string;
 };
 
-const columnHelper = createColumnHelper<PaymentColumn>();
+// const columnHelper = createColumnHelper<SubsColumn>();
 
-export const columns: ColumnDef<PaymentColumn>[] = [
+export const columns: ColumnDef<SubsColumn>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -69,94 +50,38 @@ export const columns: ColumnDef<PaymentColumn>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "user",
-    header: "Пользователь",
+    accessorKey: "name",
+    header: "Название",
     enableHiding: true,
 
     cell: ({ row }) => (
       <div className="flex flex-row gap-1 items-center">
-        <User className="w-4" />
-        <p className="font-medium">{row.getValue("user")}</p>
+        <Podcast className="w-4" />
+        <p className="font-medium">{row.getValue("name")}</p>
       </div>
     ),
   },
   {
-    accessorKey: "cost",
-    header: "Сумма",
+    accessorKey: "price",
+    header: "Стоимость",
     enableHiding: true,
 
     cell: ({ row }) => (
       <div className="flex flex-row gap-1 w-fit items-center rounded-full border border-slate-900 py-0.5 px-2">
-        <p className="font-medium ">{row.getValue("cost")} ₸</p>
+        <p className="font-medium ">{row.getValue("price")} ₸</p>
       </div>
     ),
   },
-  {
-    accessorKey: "status",
-    header: "Статус",
-    cell: ({ row }) => (
-      <div className="capitalize flex flex-row gap-x-1 items-center">
-        {row.getValue("status") === "success" && (
-          <span className="flex flex-row gap-x-1 items-center">
-            <CheckCircle2Icon className="w-4 stroke-green-600" />
-            Успешно
-          </span>
-        )}
-        {row.getValue("status") === "fail" && (
-          <span className="flex flex-row gap-x-1 items-center">
-            <XCircle className="w-4 stroke-red-500" />
-            Ошибка
-          </span>
-        )}
-        {row.getValue("status") === "pending" && (
-          <span className="flex flex-row gap-x-1 items-center">
-            <Clock className="w-4 stroke-slate-600" />В процессе
-          </span>
-        )}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Создана",
-    enableHiding: true,
 
-    cell: ({ row }) => (
-      <div className="flex flex-row gap-1 items-center">
-        <CalendarDays className="w-4" />
-        <p className="font-medium">{row.getValue("createdAt")}</p>
-      </div>
-    ),
-  },
   {
-    accessorKey: "service",
-    header: "Транзакция",
+    accessorKey: "color",
+    header: "Цвет",
     cell: ({ row }) => (
       <div className="capitalize flex flex-row gap-x-1 items-center">
-        {row.getValue("service") === "modification" && (
-          <span className="flex flex-row gap-x-1 items-center">
-            <Zap className="w-4" />
-            Модификация
-          </span>
-        )}
-        {row.getValue("service") === "adding" && (
-          <span className="flex flex-row gap-x-1 items-center">
-            <Coins className="w-4 " />
-            Пополнение
-          </span>
-        )}
-        {row.getValue("service") === "subscription" && (
-          <span className="flex flex-row gap-x-1 items-center">
-            <Crown className="w-4 " />
-            Подписка
-          </span>
-        )}
-        {row.getValue("service") === "prolong" && (
-          <span className="flex flex-row gap-x-1 items-center">
-            <History className="w-4 " />
-            Продление
-          </span>
-        )}
+        <span
+          style={{ backgroundColor: `#${row.getValue("color")}` }}
+          className="w-5 h-5 rounded-full"
+        ></span>
       </div>
     ),
   },
@@ -165,7 +90,18 @@ export const columns: ColumnDef<PaymentColumn>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const PaymentColumn = row.original;
+      const SubsColumn = row.original;
+      const onDelete = async (id: string) => {
+        try {
+          await axios.delete(`/api/admin/subscriptions/${id}`);
+          toast({ description: "Продвижение удалено", variant: "default" });
+        } catch (error) {
+          toast({
+            description: "Упс... что-то пошло не так(",
+            variant: "destructive",
+          });
+        }
+      };
 
       return (
         <DropdownMenu>
@@ -178,13 +114,19 @@ export const columns: ColumnDef<PaymentColumn>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Действия</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(PaymentColumn.id)}
+              onClick={() => navigator.clipboard.writeText(SubsColumn.id)}
             >
               Скопировать ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Редактировать</DropdownMenuItem>
-            <DropdownMenuItem>Удалить</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/subscriptions/${SubsColumn.id}`}>
+                Редактировать
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(SubsColumn.id)}>
+              Удалить
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
