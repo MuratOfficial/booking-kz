@@ -8,7 +8,8 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Горячие предложения | etazhi.kz",
+  title:
+    "etazhi.kz. Бесплатные обьявления по аренде и продаже недвижимости в Казахстане | etazhi.kz",
 };
 
 export default async function Home() {

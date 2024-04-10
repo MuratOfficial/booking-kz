@@ -19,7 +19,7 @@ export async function fetchFilteredAnnoncements(
       where: {
         serviceType: serviceType,
         phase: {
-          in: ["активно", "проверка"],
+          in: ["активно"],
         },
 
         categoryType: Array.isArray(categoryType)

@@ -9,15 +9,20 @@ interface HotSuggestCardProps {
 
 function HotSuggestCard({ data }: HotSuggestCardProps) {
   return (
-    <div className="grid grid-cols-4 h-fit border-b w-full gap-2  pb-1">
-      <Image
-        src={data?.images[0]?.url}
-        alt={data?.images[0]?.url}
-        width={240}
-        height={320}
-        className=" object-cover rounded-lg h-[70px] w-full"
-        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
-      />
+    <div className="grid grid-cols-4 h-fit border-b w-full gap-2   pb-1">
+      {data?.images[0] ? (
+        <Image
+          src={data?.images[0]?.url || ""}
+          alt={data?.images[0]?.url || ""}
+          width={240}
+          height={320}
+          className=" object-cover rounded-lg h-[70px] w-full"
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM01PE8AgACqAFsxPlcSAAAAABJRU5ErkJggg=="
+        />
+      ) : (
+        <div className="bg-white rounded-lg h-[70px] aspect-square"></div>
+      )}
+
       <div className="col-span-3 w-full h-full flex flex-col text-sm">
         <Link className="font-semibold hover:underline text-blue-500" href="/">
           {data?.roomNumber}-комнатная {data?.categoryType.toLowerCase()},{" "}

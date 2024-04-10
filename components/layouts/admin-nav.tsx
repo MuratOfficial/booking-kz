@@ -99,6 +99,16 @@ function AdminNav() {
         >
           Платежи
         </Link>
+        <Link
+          className={cn(
+            "font-medium flex mt-1 cursor-pointer flex-row text-[15px] items-center gap-1 text-slate-500  transition delay-150 duration-500 py-2 px-2 hover:text-blue-500 hover: border-b-2 border-transparent",
+
+            pathname.startsWith("/admin/subscriptions") && "text-blue-500 "
+          )}
+          href="/admin/subscriptions"
+        >
+          Продвижения
+        </Link>
       </div>
 
       <div className="flex flex-row items-center  gap-x-3">

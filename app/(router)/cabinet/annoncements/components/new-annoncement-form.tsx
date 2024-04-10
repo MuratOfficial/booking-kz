@@ -860,21 +860,15 @@ function AnnoncementForm({
                           type="single"
                           disabled={manual}
                         >
-                          {Array<number>(1, 2, 3, 4).map((el, ind) => (
+                          {Array<number>(1, 2, 3, 4, 5).map((el, ind) => (
                             <ToggleGroupItem
                               key={ind}
                               value={el.toString()}
                               className="text-sm h-10 border w-10"
                             >
-                              {el}
+                              {el !== 5 ? el : "5+"}
                             </ToggleGroupItem>
                           ))}
-                          <ToggleGroupItem
-                            value="5+"
-                            className="text-sm h-10 border w-10"
-                          >
-                            5+
-                          </ToggleGroupItem>
                         </ToggleGroup>
                       </FormControl>
 

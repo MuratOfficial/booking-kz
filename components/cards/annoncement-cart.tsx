@@ -90,13 +90,18 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
     },
   });
 
+  const [loading, setLoading] = React.useState(false);
+
   const onFavourite = async (formData: z.infer<typeof FormSchema>) => {
     try {
+      setLoading(true);
       await axios.patch(`/api/annoncements/${data.id}/favourite`, formData);
       router.refresh();
     } catch (error) {
       router.push("/auth");
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -182,7 +187,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
               </svg>
             </button>
             <form onSubmit={form.handleSubmit(onFavourite)}>
-              {data.isFavorite ? (
+              {data.isFavorite || loading ? (
                 <button
                   type="submit"
                   className="p-1 rounded-full bg-slate-200  bg-opacity-50 absolute top-2 right-2 transition delay-100 duration-300 hover:bg-opacity-80"

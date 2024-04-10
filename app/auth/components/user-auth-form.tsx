@@ -133,11 +133,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   async function onRegisterSubmit(formData: RegisterFormValues) {
     try {
       setIsLoading(true);
-      setIsRegistered(true);
 
       await axios.post(`/api/auth/register`, formData);
-
-      router.refresh();
 
       toast({
         title: "На вашу почту отправлен код подтверждения",
@@ -149,6 +146,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       });
     } finally {
       setIsLoading(false);
+      setIsRegistered(true);
       // await signIn("credentials", {
       //   email: formData.email,
       //   password: formData.password.password,
@@ -322,7 +320,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                           Код валидации*
                         </FormLabel>
                         <FormDescription>
-                          Вам на почту было отправлено 4-значный код
+                          Вам на почту был отправлен 4-значный код
                           подтверждения. Введите этот код сюда
                         </FormDescription>
                         <FormControl>
