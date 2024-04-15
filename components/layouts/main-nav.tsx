@@ -346,7 +346,7 @@ function MainNav({ userData }: MainNavProps) {
           </>
         )}
 
-        <Popover open={(isOpenPopover === "open6" ? true : false) && !userData}>
+        {/* <Popover open={(isOpenPopover === "open6" ? true : false) && !userData}>
           <PopoverTrigger
             asChild
             onMouseOver={() => setOpenPopover("open6")}
@@ -389,7 +389,7 @@ function MainNav({ userData }: MainNavProps) {
             </p>
           </PopoverContent>
         </Popover>
-        <Separator orientation="vertical" className="h-8 bg-slate-700" />
+        <Separator orientation="vertical" className="h-8 bg-slate-700" /> */}
 
         <Popover open={(isOpenPopover === "open3" ? true : false) && !userData}>
           <PopoverTrigger
@@ -595,6 +595,30 @@ function MainNav({ userData }: MainNavProps) {
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
                   <span>Счет и Платежи</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className={cn(
+                    "cursor-pointer",
+                    pathname.startsWith("/cabinet/annoncements") &&
+                      "text-blue-500"
+                  )}
+                  onClick={() => router.push("/cabinet/annoncements")}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-4 h-4 mr-2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z"
+                    />
+                  </svg>
+                  <span>Мои обьявления</span>
                 </DropdownMenuItem>
                 {/* <DropdownMenuItem className="text-slate-600 pointer-events-none">
                   <span className="font-normal">Баланс:</span>

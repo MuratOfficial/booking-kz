@@ -106,16 +106,16 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
   };
 
   return (
-    <div>
+    <div className=" hover:scale-125 hover:shadow-xl transition-all duration-300 delay-75 hover:z-40 ">
       <div>
         {data ? (
           <Carousel
             setApi={setApi}
-            className="w-full group aspect-[5/4] relative rounded-xl items-center flex justify-center  "
+            className="w-full group aspect-[5/4] relative rounded-xl items-center flex justify-center  bg-white"
           >
-            <CarouselContent>
+            <CarouselContent className="">
               {data?.images.map((img, index) => (
-                <CarouselItem key={index}>
+                <CarouselItem key={index} className="">
                   <Image
                     src={img.url}
                     alt={`img+${index}`}

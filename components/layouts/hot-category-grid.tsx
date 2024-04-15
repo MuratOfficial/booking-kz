@@ -2,12 +2,6 @@
 import Link from "next/link";
 import React from "react";
 import AnnoncementCard from "../cards/annoncement-cart";
-import {
-  Carousel,
-  CarouselApi,
-  CarouselContent,
-  CarouselItem,
-} from "../ui/carousel";
 import { cn } from "@/lib/utils";
 import { Annoncement, Testimonial } from "@prisma/client";
 
@@ -20,38 +14,34 @@ interface HotCategoryGridProps {
 }
 
 function HotCategoryGrid({ title, data, link }: HotCategoryGridProps) {
-  const [api, setApi] = React.useState<CarouselApi>();
-
-  const [statePrev, setStatePrev] = React.useState(false);
-  const [stateNext, setStateNext] = React.useState(true);
+  const [annoncements, setAnnoncements] = React.useState<
+    (Annoncement & { testimonials: Testimonial[] } & {
+      isFavorite?: boolean;
+    })[]
+  >([]);
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
   React.useEffect(() => {
-    if (!api) {
-      return;
+    setIsLoaded(true);
+    setAnnoncements(data);
+  }, []);
+
+  const [startIndex, setStartIndex] = React.useState(0);
+
+  const nextItem = (num: number) => {
+    if (startIndex < annoncements.length - num) {
+      setStartIndex((prevIndex) => prevIndex + 1);
     }
+  };
 
-    api.on("select", () => {
-      setStatePrev(api.canScrollPrev());
+  const prevItem = () => {
+    if (startIndex > 0) {
+      setStartIndex((prevIndex) => prevIndex - 1);
+    }
+  };
 
-      setStateNext(api.canScrollNext());
-    });
-  }, [api]);
-
-  const scrollPrev = React.useCallback(() => {
-    if (api) api.scrollPrev();
-  }, [api]);
-
-  const scrollNext = React.useCallback(() => {
-    if (api) api.scrollNext();
-  }, [api]);
   return (
-    <Carousel
-      setApi={setApi}
-      className="flex flex-col gap-2 py-2"
-      opts={{
-        duration: 50,
-      }}
-    >
+    <div className="flex flex-col gap-2 py-2 ">
       <div className="w-full flex flex-row justify-between items-center">
         <Link
           href={link || ""}
@@ -63,11 +53,11 @@ function HotCategoryGrid({ title, data, link }: HotCategoryGridProps) {
           <button
             className={cn(
               " rounded-full transition-all delay-100 duration-300 hover:bg-blue-500 hover:text-neutral-100 text-slate-900 transition delay-100 duration-300  bg-slate-200 bg-opacity-70  p-2 items-center flex ",
-              !statePrev &&
+              startIndex === 0 &&
                 " text-slate-500 hover:bg-slate-200 hover:text-slate-500"
             )}
-            onClick={scrollPrev}
-            disabled={!statePrev}
+            onClick={prevItem}
+            disabled={startIndex === 0}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -87,11 +77,11 @@ function HotCategoryGrid({ title, data, link }: HotCategoryGridProps) {
           <button
             className={cn(
               " rounded-full transition-all delay-100 duration-300 hover:bg-blue-500 hover:text-neutral-100 text-slate-900 transition delay-100 duration-300  bg-slate-200 bg-opacity-70  p-2 items-center flex ",
-              !stateNext &&
+              startIndex === annoncements.length - 16 &&
                 " text-slate-500 hover:bg-slate-200 hover:text-slate-500"
             )}
-            onClick={scrollNext}
-            disabled={!stateNext}
+            onClick={() => nextItem(16)}
+            disabled={startIndex === annoncements.length - 16}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -110,25 +100,26 @@ function HotCategoryGrid({ title, data, link }: HotCategoryGridProps) {
           </button>
         </div>
       </div>
-      <CarouselContent>
-        <CarouselItem key={1}>
-          <div className="w-full grid grid-cols-8 gap-3">
-            {data?.slice(0, 16)?.map((item, ind) => (
-              <AnnoncementCard key={ind} data={item} />
+      <div className="w-full grid grid-cols-8 gap-2 ">
+        {annoncements &&
+          annoncements.length > 0 &&
+          annoncements
+            .slice(startIndex, startIndex + 16)
+            .map((item, index) => (
+              <AnnoncementCard data={item} key={startIndex + index} />
             ))}
-          </div>
-        </CarouselItem>
-        {data?.length > 16 && (
-          <CarouselItem key={2}>
-            <div className="w-full grid grid-cols-8 gap-3">
-              {data?.slice(16, 32)?.map((item, ind) => (
-                <AnnoncementCard key={ind} data={item} />
-              ))}
-            </div>
-          </CarouselItem>
-        )}
-      </CarouselContent>
-    </Carousel>
+      </div>
+
+      {/* <div className="w-full grid grid-cols-8 gap-2">
+        {data &&
+          data.length > 0 &&
+          data
+            .slice(startIndex, startIndex + 8)
+            .map((item, index) => (
+              <AnnoncementCard data={item} key={startIndex + index} />
+            ))}
+      </div> */}
+    </div>
   );
 }
 
