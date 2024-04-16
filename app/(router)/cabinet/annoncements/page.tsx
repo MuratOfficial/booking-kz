@@ -12,6 +12,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { fetchSubscriptions } from "@/lib/fetchUserData";
+import LinksList from "./components/links-list";
 
 export const metadata: Metadata = {
   title: "Мои обьявления",
@@ -43,10 +44,39 @@ const AnnoncementsPage = async ({
     },
   });
 
+  const annoncementsOfFilter = await prismadb.annoncement.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    where: {
+      userId: userIdData?.id,
+    },
+    include: {
+      testimonials: true,
+    },
+  });
+
   const subs = await fetchSubscriptions();
 
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col gap-2">
+      <LinksList
+        allCount={annoncementsOfFilter.length}
+        rentCount={
+          annoncementsOfFilter.filter((el) => el.serviceType === "Аренда")
+            .length
+        }
+        sellCount={
+          annoncementsOfFilter.filter((el) => el.serviceType === "Продажа")
+            .length
+        }
+        archiveCount={
+          annoncements.filter((el) => el.phase === "блокировано").length
+        }
+        moderateCount={
+          annoncements.filter((el) => el.phase === "проверка").length
+        }
+      />
       {annoncements.length > 0 ? (
         <div className=" flex flex-col gap-8">
           {annoncements.slice(0, 3).map((el, ind) => (

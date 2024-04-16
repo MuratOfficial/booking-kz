@@ -131,7 +131,7 @@ function AnnoncementTestimonials({
         <span className=" flex flex-row w-fit items-center  gap-x-1 flex-wrap text-sm  pr-4">
           <span className=" text-slate-500 pr-2">
             {testimonials?.length} {testimonials?.length === 1 && "отзыв"}{" "}
-            {testimonials?.length && testimonials?.length > 1 && "отзыв"}
+            {testimonials?.length && testimonials?.length > 1 && "отзывов"}
           </span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -201,7 +201,7 @@ function AnnoncementTestimonials({
           </>
         ) : (
           <p className="w-full text-center text-sm font-medium text-slate-600">
-            Комментарии нету
+            Отзывов нету
           </p>
         )}
         {isUserValid && (

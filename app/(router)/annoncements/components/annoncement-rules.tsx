@@ -49,6 +49,22 @@ function AnnoncementRules({ annoncement }: AnnoncementRulesProps) {
 
   const filteredRules: any[] = [];
 
+  function getPlaceToLive(term: string | undefined | null) {
+    if (
+      term === "Прочее" ||
+      term === "Паркинги" ||
+      term === "Помещения" ||
+      term === "Промбазы" ||
+      term === "Магазины"
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  const isPlaceToLive = getPlaceToLive(annoncement?.categoryType);
+
   rulesIcons.forEach((filterItem) => {
     if (
       annoncement?.additionalFilters.some(
@@ -62,27 +78,29 @@ function AnnoncementRules({ annoncement }: AnnoncementRulesProps) {
   return (
     <div className="w-full rounded-xl bg-white flex flex-col gap-2 text-slate-900 h-full px-4 py-3">
       <p className="font-semibold text-lg text-left w-fit">Правила заселения</p>
+      {annoncement?.serviceType !== "Продажа" && isPlaceToLive && (
+        <div className="grid grid-cols-2 gap-2 text-sm mt-2">
+          <div className="flex flex-row gap-x-2 items-center justify-center">
+            <LogIn className="rounded-full bg-slate-900 stroke-green-500 w-10 h-10 p-3" />
+            <p className="font-semibold flex flex-col items-center justify-center">
+              Заселение
+              <span className="font-medium text-slate-900/70">
+                {annoncement?.comeIn}
+              </span>
+            </p>
+          </div>
+          <div className="flex flex-row gap-x-2 items-center justify-center">
+            <LogOut className="rounded-full bg-slate-900 stroke-red-500 w-10 h-10 p-3" />
+            <p className="font-semibold flex flex-col items-center justify-center">
+              Выселение
+              <span className="font-medium text-slate-900/70">
+                {annoncement?.comeOut}
+              </span>
+            </p>
+          </div>
+        </div>
+      )}
 
-      <div className="grid grid-cols-2 gap-2 text-sm mt-2">
-        <div className="flex flex-row gap-x-2 items-center justify-center">
-          <LogIn className="rounded-full bg-slate-900 stroke-green-500 w-10 h-10 p-3" />
-          <p className="font-semibold flex flex-col items-center justify-center">
-            Заселение
-            <span className="font-medium text-slate-900/70">
-              {annoncement?.comeIn}
-            </span>
-          </p>
-        </div>
-        <div className="flex flex-row gap-x-2 items-center justify-center">
-          <LogOut className="rounded-full bg-slate-900 stroke-red-500 w-10 h-10 p-3" />
-          <p className="font-semibold flex flex-col items-center justify-center">
-            Выселение
-            <span className="font-medium text-slate-900/70">
-              {annoncement?.comeOut}
-            </span>
-          </p>
-        </div>
-      </div>
       <div className="flex flex-col gap-2 w-full mt-2">
         {filteredRules.map((el, ind) => (
           <span

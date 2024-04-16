@@ -4,6 +4,7 @@ import React from "react";
 import AnnoncementCard from "../cards/annoncement-cart";
 import { cn } from "@/lib/utils";
 import { Annoncement, Testimonial } from "@prisma/client";
+import { Skeleton } from "../ui/skeleton";
 
 interface HotCategoryGridProps {
   title: string;
@@ -20,6 +21,12 @@ function HotCategoryGrid({ title, data, link }: HotCategoryGridProps) {
     })[]
   >([]);
   const [isLoaded, setIsLoaded] = React.useState(false);
+
+  let myArray = new Array(16);
+
+  for (let i = 0; i < myArray.length; i++) {
+    myArray[i] = i + 1; // Just using consecutive numbers for demonstration
+  }
 
   React.useEffect(() => {
     setIsLoaded(true);
@@ -100,15 +107,26 @@ function HotCategoryGrid({ title, data, link }: HotCategoryGridProps) {
           </button>
         </div>
       </div>
-      <div className="w-full grid grid-cols-8 gap-2 ">
-        {annoncements &&
-          annoncements.length > 0 &&
-          annoncements
-            .slice(startIndex, startIndex + 16)
-            .map((item, index) => (
-              <AnnoncementCard data={item} key={startIndex + index} />
-            ))}
-      </div>
+      {isLoaded ? (
+        <div className="w-full grid grid-cols-8 gap-2 ">
+          {annoncements &&
+            annoncements.length > 0 &&
+            annoncements
+              .slice(startIndex, startIndex + 16)
+              .map((item, index) => (
+                <AnnoncementCard data={item} key={startIndex + index} />
+              ))}
+        </div>
+      ) : (
+        <div className="w-full grid grid-cols-8 gap-2 ">
+          {myArray.map((el, ind) => (
+            <Skeleton
+              className="rounded-xl aspect-[5/4] bg-slate-200"
+              key={ind}
+            />
+          ))}
+        </div>
+      )}
 
       {/* <div className="w-full grid grid-cols-8 gap-2">
         {data &&

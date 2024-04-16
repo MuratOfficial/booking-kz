@@ -377,7 +377,9 @@ const AnnoncementPage = async ({
               <p className="w-fit  font-semibold text-slate-900 text-2xl leading-5">
                 {annoncement?.price.toLocaleString().replace(/,/g, " ")} ₸{" "}
               </p>
-              <p className="font-normal text-lg opacity-80">посуточно</p>
+              <p className="font-normal text-lg opacity-80">
+                {annoncement?.serviceTypeExt?.toLowerCase()}
+              </p>
             </div>
             <p className="mt-4 font-medium">
               {annoncement?.roomNumber && (

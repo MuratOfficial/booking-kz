@@ -31,9 +31,9 @@ export default async function ProfileLayout({ children }: ProfileLayoutProps) {
   //   }
 
   return (
-    <div className="w-full grid grid-cols-5 gap-4">
-      <SideMenuProfile />
-      <div className="rounded-3xl  col-span-4   flex flex-col gap-4 w-full">
+    <div className="w-full flex flex-col  gap-4">
+      {/* <SideMenuProfile /> */}
+      <div className="rounded-3xl     flex flex-col gap-4 w-full">
         {children}
       </div>
     </div>

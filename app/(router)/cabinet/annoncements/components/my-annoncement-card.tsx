@@ -29,15 +29,12 @@ import {
 import { useRouter } from "next/navigation";
 import { Annoncement, Subscription, Testimonial } from "@prisma/client";
 import { Graphics } from "@/components/layouts/graphics";
-import { PhotoChangingForm } from "./photo-changing-form";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useToast } from "@/components/ui/use-toast";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import axios from "axios";
-import { zodResolver } from "@hookform/resolvers/zod";
+
 import PhaseChangeButton from "./phase-change-button";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+import SubsDateChangeButton from "./subs-date-change-button";
+import { NewPriceForm } from "./change-price-form";
 
 interface MyAnnoncementCardProps {
   data: Annoncement & { testimonials: Testimonial[] };
@@ -148,10 +145,8 @@ function MyAnnoncementCard({ data, subs }: MyAnnoncementCardProps) {
               {data?.subscriptionDate?.toLocaleDateString()}
             </span>
           </p>
-          <button className="flex flex-row items-center group transition delay-75 duration-200 gap-x-1 items-center hover:text-blue-500">
-            <RefreshCcw className="w-3 group-hover:rotate-180 transition delay-75 duration-200" />{" "}
-            Продлить
-          </button>
+
+          <SubsDateChangeButton id={data.id} date={data?.subscriptionDate} />
         </div>
       </div>
       <div className="w-full rounded-xl hover:shadow-xl shadow-md transition delay-100 duration-300 ">
@@ -397,13 +392,13 @@ function MyAnnoncementCard({ data, subs }: MyAnnoncementCardProps) {
       <div className=" w-full grid grid-cols-5 gap-4 p-4">
         <div className="col-span-4 w-full grid-rows-4 grid gap-4">
           <div className=" grid grid-cols-3 gap-2">
-            <button className="rounded-full px-3 py-1 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-red-500 opacity-70 hover:opacity-100">
+            <button className="rounded-full px-3 py-3 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-red-500 opacity-70 hover:opacity-100">
               <Flame className="w-5" /> В Горячие
             </button>
-            <button className="rounded-full px-3 py-1 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-amber-500 opacity-70 hover:opacity-100">
+            <button className="rounded-full px-3 py-3 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-amber-500 opacity-70 hover:opacity-100">
               <ArrowBigUp className="w-5" /> В ТОП
             </button>
-            <button className="rounded-full px-3 py-1 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-sky-500 opacity-70 hover:opacity-100">
+            <button className="rounded-full px-3 py-3 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-sky-500 opacity-70 hover:opacity-100">
               <Zap className="w-5" /> Срочно
             </button>
           </div>
@@ -462,9 +457,7 @@ function MyAnnoncementCard({ data, subs }: MyAnnoncementCardProps) {
           </div>
         </div>
         <div className=" grid grid-rows-4 gap-2">
-          <button className=" rounded-xl px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200">
-            Изменить цену
-          </button>
+          <NewPriceForm id={data.id} initialPrice={data.price} />
           <button
             onClick={() => router.push(`/cabinet/annoncements/${data.id}`)}
             className=" rounded-xl px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200"
