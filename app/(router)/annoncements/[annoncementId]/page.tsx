@@ -356,6 +356,7 @@ const AnnoncementPage = async ({
           <AnnoncementTestimonials
             testimonials={annoncement?.testimonials || []}
             isUserValid={userData?.id ? true : false}
+            serviceType={annoncement?.serviceType}
           />
           <AnnoncementMap />
         </div>
