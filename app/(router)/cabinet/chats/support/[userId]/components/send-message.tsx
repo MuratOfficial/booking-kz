@@ -21,7 +21,6 @@ import {
 
 const SendMessageSchema = z.object({
   author: z.string(),
-  annoncementId: z.string(),
   text: z.string().optional(),
 });
 
@@ -29,17 +28,10 @@ type SendMessageValue = z.infer<typeof SendMessageSchema>;
 
 interface SendMessageFormValue {
   authorId: string | undefined;
-  type?: boolean | null;
-  annoncementId: string | undefined;
-  chatId?: string | undefined;
+  chatId: string | null | undefined;
 }
 
-function SendMessageButton({
-  authorId,
-  type,
-  annoncementId,
-  chatId,
-}: SendMessageFormValue) {
+function SendMessageButton({ authorId, chatId }: SendMessageFormValue) {
   const [loading, setLoading] = React.useState(false);
   const { toast } = useToast();
 
@@ -50,7 +42,6 @@ function SendMessageButton({
     defaultValues: {
       author: authorId,
       text: "",
-      annoncementId: annoncementId,
     },
   });
 
@@ -60,11 +51,8 @@ function SendMessageButton({
   async function onSubmit(formData: SendMessageValue) {
     try {
       setLoading(true);
-      if (type) {
-        await axios.patch(`/api/chats/${chatId}`, formData);
-      } else {
-        await axios.post(`/api/chats`, formData);
-      }
+
+      await axios.post(`/api/chats/${chatId}`, formData);
 
       setTimeout(() => {
         router.refresh();

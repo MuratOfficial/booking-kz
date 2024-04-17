@@ -108,14 +108,14 @@ model Payment {
 }
 
 model Chat {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  annoncement   Annoncement @relation(fields: [annoncementId], references: [id], onDelete: Cascade)
-  annoncementId String      @db.ObjectId
-  users         User[]      @relation(fields: [userIds], references: [id])
-  userIds       String[]    @db.ObjectId
-
-  createdAt DateTime  @default(now())
-  messages  Message[]
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  annoncement   Annoncement? @relation(fields: [annoncementId], references: [id], onDelete: Cascade)
+  annoncementId String?      @db.ObjectId
+  users         User[]       @relation(fields: [userIds], references: [id])
+  userIds       String[]     @db.ObjectId
+  toSupport     Boolean?     @default(false)
+  createdAt     DateTime     @default(now())
+  messages      Message[]
 }
 
 model Message {

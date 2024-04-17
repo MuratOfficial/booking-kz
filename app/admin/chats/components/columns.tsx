@@ -22,10 +22,8 @@ import Link from "next/link";
 
 export type ChatColumn = {
   id: string;
-  user1: string;
-  user2: string;
-  annoncementLink: string;
-  status: "active" | "blocked" | "archived";
+  user: string;
+  message?: string;
 };
 
 export const columns: ColumnDef<ChatColumn>[] = [
@@ -54,61 +52,24 @@ export const columns: ColumnDef<ChatColumn>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "annoncementLink",
-    header: "Обьявление",
+    accessorKey: "message",
+    header: "Сообщение",
     cell: ({ row }) => (
-      <Link
-        href={row.getValue("annoncementLink")}
-        className="line-clamp-1 max-w-40 hover:text-blue-500 hover:underline underline-offset-2 gap-1 flex flex-row items-center"
-      >
-        <LinkIcon className="w-3" /> {row.getValue("annoncementLink")}
-      </Link>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: "Статус",
-    cell: ({ row }) => (
-      <div className="capitalize text-xs">
-        {row.getValue("status") === "active" && (
-          <span className=" py-0.5 px-2 rounded-full bg-green-600 text-neutral-50">
-            Активно
-          </span>
-        )}
-        {row.getValue("status") === "blocked" && (
-          <span className=" py-0.5 px-2 rounded-full bg-red-600 text-neutral-50">
-            Заблокировано
-          </span>
-        )}
-        {row.getValue("status") === "archived" && (
-          <span className=" py-0.5 px-2 rounded-full bg-slate-600 text-neutral-50">
-            Архив
-          </span>
-        )}
+      <div className="line-clamp-1 max-w-40 hover:text-blue-500 hover:underline underline-offset-2 gap-1 flex flex-row items-center">
+        {row.getValue("message")}
       </div>
     ),
   },
+
   {
-    accessorKey: "user1",
-    header: "Пользователь 1",
+    accessorKey: "user",
+    header: "Пользователь",
     enableHiding: true,
 
     cell: ({ row }) => (
       <div className="flex flex-row gap-1 items-center">
         <User className="w-4" />
-        <p className="font-medium">{row.getValue("user1")}</p>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "user2",
-    header: "Пользователь 2",
-    enableHiding: true,
-
-    cell: ({ row }) => (
-      <div className="flex flex-row gap-1 items-center">
-        <User className="w-4" />
-        <p className="font-medium">{row.getValue("user2")}</p>
+        <p className="font-medium">{row.getValue("user")}</p>
       </div>
     ),
   },

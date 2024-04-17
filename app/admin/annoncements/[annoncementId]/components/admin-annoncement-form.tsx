@@ -753,7 +753,7 @@ function AdminAnnoncementForm({
                     </Popover>
                     <FormMessage />
                     <FormDescription className="text-white">
-                      Установите "Активно" если обьявление прошло проверку
+                      Установите Активно если обьявление прошло проверку
                     </FormDescription>
                   </FormItem>
                 )}

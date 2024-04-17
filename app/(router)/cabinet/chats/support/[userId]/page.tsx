@@ -1,60 +1,48 @@
 import Image from "next/image";
 import React from "react";
 
-import { Check, CheckCheck } from "lucide-react";
-import { fetchChat, fetchChatUsers } from "@/lib/fetchChats";
+import {
+  Check,
+  CheckCheck,
+  ImagePlus,
+  MoreHorizontal,
+  Paperclip,
+  SendHorizonal,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { fetchChat, fetchChatUsers, fetchSupportChat } from "@/lib/fetchChats";
 import { fetchAnnoncement } from "@/lib/fetchAnnoncement";
+import Link from "next/link";
 import DropdownChatButtons from "./components/dropdown-chat-button";
 import SendMessageButton from "./components/send-message";
 import { fetchUserData } from "@/lib/fetchUserData";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { chatId: string; annoncementId: string };
-}) {
-  const chat = await fetchChat(params.chatId, params.annoncementId);
-
+export async function generateMetadata() {
   return {
-    title: `${chat ? `Чат ID ${chat?.id}` : "Новый чат"}`,
+    title: `Чат - Служба Поддержки`,
   };
 }
 
-const ChatPage = async ({
-  params,
-}: {
-  params: { chatId: string; annoncementId: string };
-}) => {
-  const chat = await fetchChat(params.chatId, params.annoncementId);
-
-  const postUpdate = chat ? true : false;
+const SupportChatPage = async ({ params }: { params: { userId: string } }) => {
+  const chat = await fetchSupportChat(params.userId);
 
   const user = await fetchUserData();
-
-  const annoncement = await fetchAnnoncement(params.annoncementId);
-
-  const anotherUser = await fetchChatUsers(params.chatId);
 
   return (
     <div className="grid grid-rows-9 h-full w-full ">
       <div className="border-b-2 border-slate-300 px-4 py-2 flex flex-row justify-between items-center">
         <div className="flex flex-row gap-x-4 h-fit w-60 items-center">
           <Image
-            src={annoncement?.images[0].url || ""}
+            src="/svg/cust.svg"
             alt="chat thumb"
             width={200}
             height={160}
             className="aspect-[4/3] w-20  rounded-md object-cover"
           />
-          <p className="font-semibold text-slate-900">
-            {anotherUser?.name || anotherUser?.username}
-          </p>
+          <p className="font-semibold text-slate-900">Служба Поддержки</p>
         </div>
-        <DropdownChatButtons
-          chatId={chat?.id}
-          annoncementId={annoncement?.id}
-        />
+        <DropdownChatButtons chatId={chat?.id} />
       </div>
       <div className="row-span-7 bg-slate-100 w-full h-full  ">
         {chat && chat?.messages.length > 0 && (
@@ -107,14 +95,9 @@ const ChatPage = async ({
           </div>
         )}
       </div>
-      <SendMessageButton
-        authorId={user?.id}
-        type={postUpdate}
-        annoncementId={params.annoncementId}
-        chatId={chat?.id}
-      />
+      <SendMessageButton authorId={user?.id} chatId={chat?.id} />
     </div>
   );
 };
 
-export default ChatPage;
+export default SupportChatPage;

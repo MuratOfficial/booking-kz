@@ -2,8 +2,9 @@ import { Metadata } from "next";
 import ChatList from "./components/chat-list";
 import { Suspense } from "react";
 import { fetchUserChats } from "@/lib/fetchChats";
-import { Loader } from "lucide-react";
+import { Headset, Loader } from "lucide-react";
 import { fetchUserData } from "@/lib/fetchUserData";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: {
@@ -42,6 +43,13 @@ export default async function ChatsLayout({ children }: ChatsLayoutProps) {
           <h2 className="text-2xl text-slate-900 uppercase font-bold">
             Сообщения
           </h2>
+          <Link
+            href={`/cabinet/chats/support/${user?.id}`}
+            className="flex flex-row gap-x-1 text-xs text-neutral-600 items-center hover:text-blue-500 font-medium"
+          >
+            <Headset className="w-3" />
+            Написать в поддержку
+          </Link>
         </div>
         <div className="w-full h-[720px] shadow-2xl rounded-3xl mt-2 grid grid-cols-3">
           <div className=" w-full h-full   rounded-l-3xl border-y-2 border-l-2 bg-slate-200 border-slate-300 py-3 pl-4">

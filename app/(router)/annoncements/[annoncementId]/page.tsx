@@ -414,21 +414,12 @@ const AnnoncementPage = async ({
                     asChild
                     className="cursor-pointer  text-center hover:bg-neutral-50 rounded-lg focus:bg-neutral-50 focus:text-green-500"
                   >
-                    {isChatId ? (
-                      <Link
-                        href={`/cabinet/chats/${annoncement?.id}/${isChatId.id}`}
-                        target="_blank"
-                      >
-                        На сайте
-                      </Link>
-                    ) : (
-                      <Link
-                        href={`/cabinet/chats/${annoncement?.id}/new`}
-                        target="_blank"
-                      >
-                        На сайте
-                      </Link>
-                    )}
+                    <Link
+                      href={`/cabinet/chats/${annoncement?.id}/${annoncement?.user.id}`}
+                      target="_blank"
+                    >
+                      На сайте
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     asChild
