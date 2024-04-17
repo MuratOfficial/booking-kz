@@ -83,6 +83,7 @@ export async function PATCH(
       subscriptionDate,
       phase,
       description,
+      moderatorText,
     } = body;
 
     if (!params.annoncementId) {
@@ -131,6 +132,7 @@ export async function PATCH(
         isChecked,
         subscriptionDate,
         phase,
+        moderatorText,
       },
     });
 

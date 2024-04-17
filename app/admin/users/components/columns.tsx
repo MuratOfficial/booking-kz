@@ -162,7 +162,7 @@ export const columns: ColumnDef<UserColumn>[] = [
     enableHiding: true,
 
     cell: ({ row }) => (
-      <div className="flex flex-row gap-1 items-center rounded-full border border-slate-900 py-0.5 px-2">
+      <div className="flex flex-row gap-1 items-center rounded-full border border-slate-900 py-0.5 px-2 w-fit">
         <p className="font-medium ">{row.getValue("totalBalance")} ед.</p>
       </div>
     ),

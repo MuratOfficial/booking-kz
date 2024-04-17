@@ -389,6 +389,12 @@ function MyAnnoncementCard({ data, subs }: MyAnnoncementCardProps) {
           </div>
         </div>
       </div>
+      {data?.moderatorText && (
+        <p className="py-2 px-4 text-sm text-red-600 font-medium">
+          {data?.moderatorText}
+        </p>
+      )}
+
       <div className=" w-full grid grid-cols-5 gap-4 p-4">
         <div className="col-span-4 w-full grid-rows-4 grid gap-4">
           <div className=" grid grid-cols-3 gap-2">

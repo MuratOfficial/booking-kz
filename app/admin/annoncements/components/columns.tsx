@@ -74,16 +74,16 @@ export const columns: ColumnDef<AnnoncementColumn>[] = [
   },
   {
     accessorKey: "isChecked",
-    header: "Проверено?",
+    header: "Валидация",
     cell: ({ row }) => (
       <div className="capitalize text-xs">
         {row.getValue("isChecked") ? (
-          <span className=" py-0.5 px-2 rounded-full bg-green-600 text-neutral-50">
-            Проверено
+          <span className=" py-1 px-2.5 rounded-full bg-green-600 text-neutral-50">
+            Да
           </span>
         ) : (
-          <span className=" py-0.5 px-2 rounded-full bg-slate-600 text-neutral-50">
-            Непроверено
+          <span className=" py-1 px-2.5 rounded-full bg-slate-600 text-neutral-50">
+            Нет
           </span>
         )}
       </div>

@@ -89,6 +89,7 @@ model Annoncement {
   modificators        Modificator?
   companySubscription String?
   stats               Stats?
+  moderatorText       String?
 }
 
 type Filter {
@@ -108,7 +109,7 @@ model Payment {
 
 model Chat {
   id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  annoncement   Annoncement @relation(fields: [annoncementId], references: [id])
+  annoncement   Annoncement @relation(fields: [annoncementId], references: [id], onDelete: Cascade)
   annoncementId String      @db.ObjectId
   users         User[]      @relation(fields: [userIds], references: [id])
   userIds       String[]    @db.ObjectId
@@ -119,7 +120,7 @@ model Chat {
 
 model Message {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  chat      Chat     @relation(fields: [chatId], references: [id])
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
   chatId    String   @db.ObjectId
   author    String
   text      String?

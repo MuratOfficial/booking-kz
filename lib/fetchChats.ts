@@ -16,7 +16,7 @@ export async function fetchChat(chatId: string, annoncementId: string) {
   //     id: annoncement?.user.id || "",
   //   },
   // });
-  const possibleChat = await prismadb.chat.findMany({
+  const possibleChat = await prismadb.chat.findFirst({
     where: {
       userIds: {
         hasEvery: [annoncement?.userId || "", user?.id || ""],
@@ -26,31 +26,47 @@ export async function fetchChat(chatId: string, annoncementId: string) {
   });
 
   if (chatId === "new") {
-    if (possibleChat.length === 0) {
+    if (!possibleChat) {
       try {
-        await prismadb.chat.create({
-          data: {
+        const existingChat = await prismadb.chat.findFirst({
+          where: {
             annoncementId: annoncementId,
-            userIds: [user?.id || "", annoncement?.userId || ""],
+            userIds: {
+              hasEvery: [user?.id || "", annoncement?.userId || ""],
+            },
           },
         });
-        // console.log(user!.id, annoncement!.userId);
+
+        if (existingChat) {
+          revalidatePath(`/cabinet/chats/${annoncementId}/${existingChat.id}`);
+          redirect(`/cabinet/chats/${annoncementId}/${existingChat.id}`);
+        } else {
+          await prismadb.chat.create({
+            data: {
+              annoncementId: annoncementId,
+              userIds: [user?.id || "", annoncement?.userId || ""],
+            },
+          });
+        }
       } catch (error) {
         console.error("Database Error:", error);
         throw new Error("Failed to fetch chat");
       } finally {
-        const chat = await prismadb.chat.findMany({
+        const newCreatedChat = await prismadb.chat.findFirst({
           where: {
             annoncementId: annoncementId,
+            userIds: {
+              hasEvery: [user?.id || "", annoncement?.userId || ""],
+            },
           },
         });
-        revalidatePath(`/cabinet/chats/${annoncementId}/${chat[0].id}`);
-        redirect(`/cabinet/chats/${annoncementId}/${chat[0].id}`);
+        revalidatePath(`/cabinet/chats/${annoncementId}/${newCreatedChat?.id}`);
+        redirect(`/cabinet/chats/${annoncementId}/${newCreatedChat?.id}`);
       }
     }
   } else {
     try {
-      const chat = await prismadb.chat.findUnique({
+      const chat = await prismadb.chat.findFirst({
         where: {
           id: chatId,
         },
@@ -81,6 +97,7 @@ export async function fetchChat(chatId: string, annoncementId: string) {
 
 export async function fetchUserChats() {
   const user = await fetchUserData();
+
   if (user) {
     try {
       const chats = await prismadb.chat.findMany({
@@ -112,6 +129,10 @@ export async function fetchUserChats() {
 }
 
 export async function fetchChatUsers(chatId: string) {
+  if (chatId === "new") {
+    return null;
+  }
+
   const user = await fetchUserData();
   if (user) {
     try {

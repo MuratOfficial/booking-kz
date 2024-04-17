@@ -92,6 +92,10 @@ const annoncementFormSchema = z.object({
     .string()
     .min(75, "Не Должно быть меньше 75 знаков")
     .max(2000, "Не Должно превышать 2000 знаков"),
+  moderatorText: z
+    .string()
+    .max(320, "Не Должно превышать 320 знаков")
+    .optional(),
   comeIn: z.string().optional(),
   comeOut: z.string().optional(),
   additionalFilters: z
@@ -171,6 +175,7 @@ function AdminAnnoncementForm({
       subscriptionDate: initialData?.subscriptionDate || add30days,
       phase: initialData?.phase || "проверка",
       description: initialData?.description || "",
+      moderatorText: initialData?.moderatorText || "",
     },
   });
 
@@ -656,27 +661,6 @@ function AdminAnnoncementForm({
             <div className="grid grid-cols-3 gap-4">
               <FormField
                 control={form.control}
-                name="isChecked"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center bg-slate-800 justify-between rounded-lg p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Проверено</FormLabel>
-                      <FormDescription>
-                        Данные по обьявлению достоверны
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        className="data-[state=checked]:bg-blue-500"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="subscriptionDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
@@ -768,6 +752,31 @@ function AdminAnnoncementForm({
                       </PopoverContent>
                     </Popover>
                     <FormMessage />
+                    <FormDescription className="text-white">
+                      Установите "Активно" если обьявление прошло проверку
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="isChecked"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center bg-slate-800 justify-between rounded-lg p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Валидировано</FormLabel>
+                      <FormDescription>
+                        Данные по обьявлению достоверны, валидация прошла
+                        успешно
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="data-[state=checked]:bg-blue-500"
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />
@@ -830,6 +839,25 @@ function AdminAnnoncementForm({
                           onChange={field.onChange}
                         />
                       </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="moderatorText"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <p className="text-base font-semibold ">
+                      Сообщение модератора
+                    </p>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Опишите кратко причину отказа, блокировки и т.д."
+                        className="resize-none min-h-[4rem] text-neutral-800"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
