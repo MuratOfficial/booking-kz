@@ -41,6 +41,7 @@ const AnnoncementsPage = async ({
     },
     include: {
       testimonials: true,
+      analytics: true,
     },
   });
 
@@ -53,6 +54,7 @@ const AnnoncementsPage = async ({
     },
     include: {
       testimonials: true,
+      analytics: true,
     },
   });
 

@@ -108,10 +108,19 @@ function AnnoncementTestimonials({
         </Element>
         {serviceType === "Аренда" && (
           <span className=" flex flex-row w-fit items-center  gap-x-1 flex-wrap text-sm  pr-4">
-            <span className=" text-slate-500 pr-2">
-              {testimonials?.length} {testimonials?.length === 1 && "отзыв"}{" "}
-              {testimonials?.length && testimonials?.length > 1 && "отзывов"}
+            <span className=" text-slate-500 text-xs">
+              {testimonials?.length !== 0 ? (
+                <>
+                  {testimonials?.length}{" "}
+                  {testimonials?.length && testimonials?.length > 1
+                    ? "отзывов"
+                    : "отзыв"}
+                </>
+              ) : (
+                "Нету отзывов"
+              )}
             </span>
+
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

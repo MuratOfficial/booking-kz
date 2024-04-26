@@ -60,6 +60,7 @@ model Annoncement {
 
   testimonials Testimonial[]
   chats        Chat[]
+  analytics    Analytics[]
 
   isChecked           Boolean       @default(false)
   roomNumber          Int
@@ -126,6 +127,16 @@ model Message {
   text      String?
   status    String   @default("pending")
   createdAt DateTime @default(now())
+}
+
+model Analytics {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  annoncement   Annoncement @relation(fields: [annoncementId], references: [id], onDelete: Cascade)
+  annoncementId String      @db.ObjectId
+  mobileCount   Int?        @default(0)
+  viewCount     Int?        @default(0)
+  createdDate   String?
+  createdAt     DateTime    @default(now())
 }
 
 type Modificator {

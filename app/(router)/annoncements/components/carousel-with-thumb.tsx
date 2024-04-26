@@ -85,7 +85,7 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
   return (
     <div className="flex flex-col w-full h-full gap-2">
       <Carousel
-        setApi={setApi}
+        setApi={!dialogOpen ? setApi : undefined}
         className="w-full group aspect-[8/5] w-full relative rounded-xl items-center flex justify-center  bg-white"
       >
         <CarouselContent>
@@ -291,7 +291,7 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-h-screen flex flex-col gap-2 backdrop-blur-sm w-full max-w-[90%]  w-full rounded-xl bg-opacity-80">
           <Carousel
-            setApi={setApi}
+            setApi={dialogOpen ? setApi : undefined}
             className="w-full group aspect-[12/5]  relative rounded-xl items-center flex justify-center  "
           >
             <CarouselContent>
@@ -413,7 +413,10 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
               {current === 0 ? 1 : current}/{count}
             </span>
           </Carousel>
-          <Carousel className="w-full" ref={emblaThumbsRef}>
+          <Carousel
+            className="w-full"
+            ref={dialogOpen ? emblaThumbsRef : undefined}
+          >
             <CarouselContent className="w-full -ml-2">
               {images?.map((thumb, index) => (
                 <CarouselItem key={index} className=" basis-[12%] pl-2">

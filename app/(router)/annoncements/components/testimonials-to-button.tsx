@@ -39,8 +39,13 @@ function TestimonialsToButton({ detail1, detail2 }: TestimonialsToButtonProps) {
         </span>
       </span>
       <span className=" text-slate-500 text-xs">
-        {detail2} {detail2 === 1 && "отзыв"}{" "}
-        {detail2 && detail2 > 1 && "отзывов"}
+        {detail2 !== 0 ? (
+          <>
+            {detail2} {detail2 && detail2 > 1 ? "отзывов" : "отзыв"}
+          </>
+        ) : (
+          "Нету отзывов"
+        )}
       </span>
     </ScrollLink>
   );

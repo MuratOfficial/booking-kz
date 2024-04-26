@@ -401,7 +401,10 @@ const AnnoncementPage = async ({
               <p>{annoncement?.user.name || annoncement?.user.username}</p>
             </div>
             <div className="grid grid-cols-2 w-full gap-2 mb-2">
-              <CallButton phone={annoncement?.user?.phone} />
+              <CallButton
+                phone={annoncement?.user?.phone}
+                id={annoncement?.id}
+              />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex flex-row p-3 hover:opacity-80 items-center gap-x-1.5 justify-center rounded-xl bg-green-500 font-medium text-neutral-50">
