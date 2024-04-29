@@ -53,6 +53,9 @@ export async function POST(req: Request) {
       subscriptionDate,
       phase,
       description,
+      coordinateX,
+      coordinateY,
+      fizOrBiz,
     } = body;
 
     if (!userId) {
@@ -82,6 +85,8 @@ export async function POST(req: Request) {
         cityOrDistrict,
         buildingId,
         additionalFilters,
+        coordinateX,
+        coordinateY,
 
         yearBuild,
         price,
@@ -94,6 +99,7 @@ export async function POST(req: Request) {
         isChecked,
         subscriptionDate,
         phase,
+        fizOrBiz,
       },
     });
 

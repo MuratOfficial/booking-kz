@@ -11,7 +11,10 @@ export async function fetchFilteredAnnoncements(
   areaSqFrom?: string,
   areaSqTo?: string,
   city?: string,
-  more?: string[]
+
+  more?: string[],
+  cityOrTown?: string,
+  street?: string
 ) {
   try {
     noStore();
@@ -46,7 +49,15 @@ export async function fetchFilteredAnnoncements(
           gte: parseInt(areaSqFrom || "0"),
           lte: parseInt(areaSqTo || "999000"),
         },
-        // cityOrDistrict: city,
+        cityOrDistrict: {
+          contains: city?.slice(1),
+        },
+        cityOrTown: {
+          contains: cityOrTown?.slice(1),
+        },
+        townOrStreet: {
+          contains: street?.slice(1),
+        },
         additionalFilters: {
           some: {
             value: Array.isArray(more)

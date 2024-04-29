@@ -18,6 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useDebouncedCallback } from "use-debounce";
 
 interface ComboboxFilterProps {
   buttonName: string;
@@ -40,21 +41,21 @@ export function ComboboxFilter({
   const { replace } = useRouter();
   const searchParams = useSearchParams();
 
-  function handleFilter(term: string, filter: string) {
+  const handleFilter = useDebouncedCallback((term: string, filter: string) => {
     const params = new URLSearchParams(searchParams);
     if (filter === filter) {
       if (term) {
         if (params.has(filter, term)) {
           params.delete(filter, term);
         } else {
-          params.append(filter, term);
+          params.set(filter, term);
         }
       } else {
         params.delete(filter);
       }
     }
     replace(`${pathname}?${params.toString()}`);
-  }
+  }, 500);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -67,12 +68,9 @@ export function ComboboxFilter({
         >
           <span className="line-clamp-1 w-[240px]">
             {searchParams.getAll(filter).length > 0
-              ? data
-                  .filter((item) =>
-                    searchParams.getAll(filter).includes(item.value)
-                  )
-                  .map((el, ind) => el.label)
-                  .join(", ")
+              ? data.find((item) =>
+                  searchParams.getAll(filter).includes(item.value)
+                )?.label
               : buttonName}
           </span>
 

@@ -8,7 +8,21 @@ import {
 } from "@pbe/react-yandex-maps";
 import React from "react";
 
-function YandexMap() {
+interface YandexMapProps {
+  width?: number;
+  height?: number;
+  coordinate1?: number | null | undefined;
+  coordinate2?: number | null | undefined;
+  zoom?: number | null | undefined;
+}
+
+function YandexMap({
+  width,
+  height,
+  coordinate1,
+  coordinate2,
+  zoom,
+}: YandexMapProps) {
   const mapRef = React.useRef(null);
   const error = console.error;
   console.error = (...args: any) => {
@@ -19,15 +33,24 @@ function YandexMap() {
   return (
     <YMaps>
       <Map
-        defaultState={{
-          center: [51.128201, 71.430429],
-          zoom: 12,
+        // defaultState={{
+        //   center: [51.128201, 71.430429],
+        //   zoom: 12,
+        // }}
+
+        state={{
+          center: [coordinate1 || 51.128201, coordinate2 || 71.430429],
+          zoom: zoom || 14,
         }}
-        width={600}
-        height={460}
+        width={width || 600}
+        height={height || 460}
       >
-        <Placemark geometry={[55.684758, 37.738521]} />
-        <SearchControl options={{ float: "right" }} />
+        {zoom && zoom > 10 && (
+          <Placemark
+            geometry={[coordinate1 || 51.128201, coordinate2 || 71.430429]}
+          />
+        )}
+
         <ZoomControl />
       </Map>
     </YMaps>

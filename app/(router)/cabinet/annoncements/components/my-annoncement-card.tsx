@@ -11,6 +11,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import {
   ArrowBigUp,
+  Briefcase,
   CheckCircle2,
   Copy,
   Crown,
@@ -34,7 +35,11 @@ import {
   Subscription,
   Testimonial,
 } from "@prisma/client";
-import { Graphics } from "@/components/layouts/graphics";
+import dynamic from "next/dynamic";
+
+const Graphics = dynamic(() => import("@/components/layouts/graphics"), {
+  ssr: false,
+});
 
 import PhaseChangeButton from "./phase-change-button";
 import Link from "next/link";
@@ -306,9 +311,19 @@ function MyAnnoncementCard({ data, subs }: MyAnnoncementCardProps) {
                 {data?.description}
               </p>
               <div className="flex flex-row justify-between">
-                <div className="flex flex-row gap-x-1 text-green-500 items-center">
-                  <UserRoundCheck size={14} />
-                  <p className="text-xs font-semibold">Физическое лицо</p>
+                <div className="flex flex-row gap-x-1  items-center">
+                  {data?.fizOrBiz === "fiz" && (
+                    <div className="text-green-500 flex flex-row gap-x-1">
+                      <UserRoundCheck size={14} />
+                      <p className="text-xs font-semibold">Физическое лицо</p>
+                    </div>
+                  )}
+                  {data?.fizOrBiz === "biz" && (
+                    <div className="text-violet-500 flex flex-row gap-x-1">
+                      <Briefcase size={14} />
+                      <p className="text-xs font-semibold">Юридическое лицо</p>
+                    </div>
+                  )}
                 </div>
                 <Link
                   href={`/annoncements/${data.id}`}

@@ -234,6 +234,20 @@ function Filter({ allcount }: FilterProps) {
         params.delete("areaSqTo");
       }
     }
+    if (filter === "cityOrTown") {
+      if (term) {
+        params.set("cityOrTown", term);
+      } else {
+        params.delete("cityOrTown");
+      }
+    }
+    if (filter === "street") {
+      if (term) {
+        params.set("street", term);
+      } else {
+        params.delete("street");
+      }
+    }
 
     replace(`${pathname}?${params.toString()}`);
   }, 300);
@@ -595,24 +609,27 @@ function Filter({ allcount }: FilterProps) {
           </div>
         </div>
       </div>
-      <div className="flex flex-row gap-4 items-center flex-wrap">
+      <div className="grid grid-cols-4 gap-4 items-center flex-wrap">
         <ComboboxFilter
           buttonName="Выберите город"
           commandInputTitle="Поиск города"
           data={citiesList}
           filter="city"
         />
-        <ComboboxFilter
-          buttonName="Выберите район"
-          commandInputTitle="Поиск района"
-          data={[]}
-          filter="area"
+        <Input
+          className="rounded-xl "
+          placeholder="Район (город)"
+          onChange={(e) => {
+            handleFilter(e.target.value, "cityOrTown");
+          }}
         />
-        <ComboboxFilter
-          buttonName="Укажите ул., мкр."
-          commandInputTitle="Поиск ул., мкр."
-          data={[]}
-          filter="address"
+
+        <Input
+          className="rounded-xl "
+          placeholder="Улица (мкр.)"
+          onChange={(e) => {
+            handleFilter(e.target.value, "street");
+          }}
         />
         <ComboboxFilter
           buttonName="Все жилые комплексы"

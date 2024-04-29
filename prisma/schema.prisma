@@ -63,6 +63,7 @@ model Annoncement {
   analytics    Analytics[]
 
   isChecked           Boolean       @default(false)
+  fizOrBiz            String?       @default("fiz")
   roomNumber          Int
   floor               Int?
   floorFrom           Int?
@@ -193,14 +194,18 @@ type Favourite {
 
 model Building {
   id             String        @id @default(auto()) @map("_id") @db.ObjectId
-  buildingYear   String?
+  buildingYear   Int?
   annoncements   Annoncement[]
   type           String?
   name           String
   cityOrDistrict String
   cityOrTown     String?
   townOrStreet   String?
+  description    String?
+  images         Image[]
   floors         Int?
+  coordinateX    String?
+  coordinateY    String?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 }

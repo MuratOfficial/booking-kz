@@ -358,7 +358,18 @@ const AnnoncementPage = async ({
             isUserValid={userData?.id ? true : false}
             serviceType={annoncement?.serviceType}
           />
-          <AnnoncementMap />
+          <AnnoncementMap
+            coordinate1={
+              (annoncement?.coordinateX &&
+                parseFloat(annoncement?.coordinateX)) ||
+              undefined
+            }
+            coordinate2={
+              (annoncement?.coordinateY &&
+                parseFloat(annoncement?.coordinateY)) ||
+              undefined
+            }
+          />
         </div>
         <div className="col-span-4 w-full h-full ">
           <div className="bg-white rounded-xl w-full h-fit px-4 py-3 flex flex-col gap-2  sticky top-[10%]">
@@ -366,6 +377,7 @@ const AnnoncementPage = async ({
               <TestimonialsToButton
                 detail1={overallRanking}
                 detail2={annoncement?.testimonials.length || 0}
+                serviceType={annoncement?.serviceType}
               />
               <FavoriteButton
                 id={annoncement?.id}

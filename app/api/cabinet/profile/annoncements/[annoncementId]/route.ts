@@ -87,6 +87,9 @@ export async function PATCH(
       isChecked,
       subscriptionDate,
       description,
+      coordinateX,
+      coordinateY,
+      fizOrBiz,
     } = body;
 
     if (!params.annoncementId) {
@@ -130,6 +133,9 @@ export async function PATCH(
         isChecked,
         subscriptionDate,
         phase: "проверка",
+        coordinateX,
+        coordinateY,
+        fizOrBiz,
       },
     });
 

@@ -8,7 +8,7 @@ interface GraphicsProps {
   data: Analytics[] | null;
 }
 
-export function Graphics({ data }: GraphicsProps) {
+export default function Graphics({ data }: GraphicsProps) {
   function overallCount(analytics: Analytics[]) {
     let totalCount = 0;
     let mobileCount = 0;

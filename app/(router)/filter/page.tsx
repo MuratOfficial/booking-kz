@@ -28,6 +28,8 @@ export async function generateMetadata({
     areaSqTo?: string;
     city?: string;
     more?: string[];
+    cityOrTown?: string;
+    street?: string;
   };
 }): Promise<Metadata> {
   const annoncements = await fetchFilteredAnnoncements(
@@ -40,7 +42,9 @@ export async function generateMetadata({
     searchParams?.areaSqFrom,
     searchParams?.areaSqTo,
     searchParams?.city,
-    searchParams?.more
+    searchParams?.more,
+    searchParams?.cityOrTown,
+    searchParams?.street
   );
 
   return {

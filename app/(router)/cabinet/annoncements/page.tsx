@@ -4,8 +4,14 @@ import Image from "next/image";
 import { Metadata } from "next";
 import prismadb from "@/lib/prismadb";
 import { getServerSession } from "next-auth";
+import dynamic from "next/dynamic";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
-import MyAnnoncementCard from "./components/my-annoncement-card";
+const MyAnnoncementCard = dynamic(
+  () => import("./components/my-annoncement-card"),
+  {
+    ssr: false,
+  }
+);
 import {
   Collapsible,
   CollapsibleContent,
@@ -88,7 +94,7 @@ const AnnoncementsPage = async ({
             <Collapsible className="">
               <CollapsibleContent className="flex flex-col gap-8">
                 {annoncements.slice(3).map((el, ind) => (
-                  <MyAnnoncementCard data={el} key={ind} />
+                  <MyAnnoncementCard data={el} key={ind} subs={subs} />
                 ))}
               </CollapsibleContent>
               <CollapsibleTrigger asChild>

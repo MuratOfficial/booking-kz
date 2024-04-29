@@ -53,6 +53,8 @@ import { Switch } from "@/components/ui/switch";
 import { Calendar } from "@/components/ui/calendar";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
+import { fetchMap } from "@/lib/fetchMap";
+import { useDebouncedCallback } from "use-debounce";
 
 const annoncementFormSchema = z.object({
   userId: z
@@ -117,6 +119,9 @@ const annoncementFormSchema = z.object({
       hurryModifier: z.coerce.number().int().optional(),
     })
     .optional(),
+  coordinateX: z.string().optional(),
+  coordinateY: z.string().optional(),
+  fizOrBiz: z.string().optional(),
 });
 
 type AnnoncementFormValues = z.infer<typeof annoncementFormSchema>;
@@ -176,6 +181,7 @@ function AdminAnnoncementForm({
       phase: initialData?.phase || "проверка",
       description: initialData?.description || "",
       moderatorText: initialData?.moderatorText || "",
+      fizOrBiz: initialData?.fizOrBiz || "fiz",
     },
   });
 
@@ -186,6 +192,52 @@ function AdminAnnoncementForm({
   const router = useRouter();
   const params = useParams();
   const [loading, setLoading] = React.useState(false);
+  const [cityOrDistrict, setCityOrDistrict] = React.useState<string>(
+    initialData?.cityOrDistrict || ""
+  );
+  const [townOrCity, setTownOrCity] = React.useState<string>(
+    initialData?.cityOrTown || ""
+  );
+  const [streetOrHouse, setStreetOrHouse] = React.useState<string>(
+    initialData?.townOrStreet || ""
+  );
+  const [pos1, setPos1] = React.useState<number | null>(null);
+  const [pos2, setPos2] = React.useState<number | null>(null);
+  const [zoom, setZoom] = React.useState<number | null>(null);
+
+  const handleChange = useDebouncedCallback((term: string, type: string) => {
+    if (type === "city") {
+      setTownOrCity(term);
+    }
+    if (type === "street") {
+      setStreetOrHouse(term);
+    }
+  }, 500);
+
+  React.useEffect(() => {
+    if (townOrCity || streetOrHouse) {
+      setZoom(16);
+    } else {
+      setZoom(10);
+    }
+
+    const fetchData = async () => {
+      const location = `${cityOrDistrict}+${townOrCity}+${streetOrHouse}`;
+      if (!location.trim()) return;
+
+      const positions = await fetchMap(location);
+      if (positions) {
+        setPos1(positions.pos1);
+        form.setValue("coordinateX", positions.pos1.toString());
+        setPos2(positions.pos2);
+        form.setValue("coordinateY", positions.pos2.toString());
+      } else {
+        console.log("Failed to fetch position.");
+      }
+    };
+
+    fetchData();
+  }, [cityOrDistrict, townOrCity, streetOrHouse]);
 
   async function onSubmit(formData: AnnoncementFormValues) {
     try {
@@ -222,6 +274,17 @@ function AdminAnnoncementForm({
     {
       value: "Аренда",
       label: "Аренда",
+    },
+  ];
+
+  const fizbiz = [
+    {
+      value: "fiz",
+      label: "Физическое лицо",
+    },
+    {
+      value: "biz",
+      label: "Юридическое лицо",
     },
   ];
 
@@ -564,7 +627,7 @@ function AdminAnnoncementForm({
                           variant="outline"
                           role="combobox"
                           className={cn(
-                            "w-[280px] justify-between",
+                            "w-full justify-between",
                             !field.value && "text-muted-foreground"
                           )}
                         >
@@ -712,7 +775,7 @@ function AdminAnnoncementForm({
                           variant="outline"
                           role="combobox"
                           className={cn(
-                            "w-[280px] justify-between text-slate-900 capitalize",
+                            "w-full justify-between text-slate-900 capitalize",
                             !field.value && "text-muted-foreground"
                           )}
                         >
@@ -867,7 +930,7 @@ function AdminAnnoncementForm({
           </div>
 
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl py-4 px-6">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <FormField
                 control={form.control}
                 name="serviceType"
@@ -880,15 +943,19 @@ function AdminAnnoncementForm({
                           variant="outline"
                           role="combobox"
                           className={cn(
-                            "w-[280px] justify-between",
+                            "w-full justify-between",
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          {field.value
-                            ? services.find(
-                                (service) => service.value === field.value
-                              )?.label
-                            : "Выберите вид обьявления"}
+                          {field.value ? (
+                            services.find(
+                              (service) => service.value === field.value
+                            )?.label
+                          ) : (
+                            <span className="line-clamp-1">
+                              Выберите вид обьявления
+                            </span>
+                          )}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
@@ -938,15 +1005,19 @@ function AdminAnnoncementForm({
                             variant="outline"
                             role="combobox"
                             className={cn(
-                              "w-[280px] justify-between",
+                              "w-full justify-between",
                               !field.value && "text-muted-foreground"
                             )}
                           >
-                            {field.value
-                              ? menuList1.find(
-                                  (item) => item.value === field.value
-                                )?.value
-                              : "Выберите кат. недвижимости"}
+                            {field.value ? (
+                              menuList1.find(
+                                (item) => item.value === field.value
+                              )?.value
+                            ) : (
+                              <span className="line-clamp-1">
+                                Выберите кат. недвижимости
+                              </span>
+                            )}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </PopoverTrigger>
@@ -997,15 +1068,19 @@ function AdminAnnoncementForm({
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[280px] justify-between",
+                                "w-full justify-between",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
-                              {field.value
-                                ? menuList2.find(
-                                    (item) => item.value === field.value
-                                  )?.value
-                                : "Выберите кат. недвижимости"}
+                              {field.value ? (
+                                menuList2.find(
+                                  (item) => item.value === field.value
+                                )?.value
+                              ) : (
+                                <span className="line-clamp-1">
+                                  Выберите кат. недвижимости
+                                </span>
+                              )}
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
@@ -1051,13 +1126,17 @@ function AdminAnnoncementForm({
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[280px] justify-between",
+                                "w-full justify-between",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
-                              {field.value
-                                ? field.value
-                                : "Выберите вид аренды"}
+                              {field.value ? (
+                                field.value
+                              ) : (
+                                <span className="line-clamp-1">
+                                  Выберите вид аренды
+                                </span>
+                              )}
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
@@ -1134,6 +1213,64 @@ function AdminAnnoncementForm({
                   />
                 </>
               )}
+              <FormField
+                control={form.control}
+                name="fizOrBiz"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <p className="text-base font-semibold">Физ. или юр. лицо</p>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            fizbiz.find(
+                              (service) => service.value === field.value
+                            )?.label
+                          ) : (
+                            <span className="line-clamp-1">
+                              Нажмите чтобы выбрать
+                            </span>
+                          )}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[280px] p-0">
+                        <Command>
+                          <CommandGroup>
+                            {fizbiz.map((service) => (
+                              <CommandItem
+                                value={service.label}
+                                key={service.value}
+                                onSelect={() => {
+                                  form.setValue("fizOrBiz", service.value);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    service.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {service.label}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 pt-4 pb-4">
@@ -1359,7 +1496,7 @@ function AdminAnnoncementForm({
                           variant="outline"
                           role="combobox"
                           className={cn(
-                            "w-[280px] justify-between",
+                            "w-full justify-between",
                             !field.value && "text-muted-foreground"
                           )}
                         >
@@ -1413,7 +1550,7 @@ function AdminAnnoncementForm({
                           variant="outline"
                           role="combobox"
                           className={cn(
-                            "w-[280px] justify-between",
+                            "w-full justify-between",
                             !field.value && "text-muted-foreground"
                           )}
                         >
@@ -1516,7 +1653,7 @@ function AdminAnnoncementForm({
                             variant="outline"
                             role="combobox"
                             className={cn(
-                              "w-[280px] justify-between",
+                              "w-full justify-between",
                               !field.value && "text-muted-foreground"
                             )}
                           >
@@ -1567,7 +1704,7 @@ function AdminAnnoncementForm({
                             variant="outline"
                             role="combobox"
                             className={cn(
-                              "w-[280px] justify-between",
+                              "w-full justify-between",
                               !field.value && "text-muted-foreground"
                             )}
                           >
@@ -2548,7 +2685,7 @@ function AdminAnnoncementForm({
                           variant="outline"
                           role="combobox"
                           className={cn(
-                            "w-[220px] justify-between  flex flex-row gap-x-1 items-center",
+                            "w-full justify-between  flex flex-row gap-x-1 items-center",
                             !field.value && "text-muted-foreground"
                           )}
                         >
@@ -2563,7 +2700,7 @@ function AdminAnnoncementForm({
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-fit p-0 max-h-40">
+                      <PopoverContent className="w-full p-0 max-h-40">
                         <Command>
                           <CommandInput placeholder="Найти..." />
                           <CommandEmpty>Не найдено.</CommandEmpty>
@@ -2574,6 +2711,7 @@ function AdminAnnoncementForm({
                                 key={city.value}
                                 onSelect={() => {
                                   form.setValue("cityOrDistrict", city.value);
+                                  setCityOrDistrict(city.value);
                                 }}
                               >
                                 <Check
@@ -2607,7 +2745,11 @@ function AdminAnnoncementForm({
                       <Input
                         className=" placeholder:opacity-50"
                         placeholder="г. Костанай"
-                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e.target.value);
+                          handleChange(e.target.value, "city");
+                        }}
+                        value={field.value}
                       />
                     </FormControl>
 
@@ -2631,7 +2773,11 @@ function AdminAnnoncementForm({
                       <Input
                         className=" placeholder:opacity-50"
                         placeholder="16 мкр., 5 дом"
-                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e.target.value);
+                          handleChange(e.target.value, "street");
+                        }}
+                        value={field.value}
                       />
                     </FormControl>
 
@@ -2648,7 +2794,7 @@ function AdminAnnoncementForm({
                 name="buildingId"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <p className="text-base font-semibold">ЖК</p>
+                    <p className="text-base font-semibold">Жилой комплекс</p>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -2707,7 +2853,12 @@ function AdminAnnoncementForm({
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">
             <p className="text-base font-semibold">Расположение на карте</p>
-            <YandexMap />
+            <YandexMap
+              width={900}
+              coordinate1={pos1}
+              coordinate2={pos2}
+              zoom={zoom}
+            />
           </div>
 
           <Button

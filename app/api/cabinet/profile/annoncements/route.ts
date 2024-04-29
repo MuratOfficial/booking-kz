@@ -54,6 +54,9 @@ export async function POST(req: Request) {
       images,
       townOrStreet,
       description,
+      coordinateX,
+      coordinateY,
+      fizOrBiz,
     } = body;
 
     let add30days: Date = new Date();
@@ -93,6 +96,9 @@ export async function POST(req: Request) {
         isChecked: false,
         subscriptionDate: add30days,
         phase: "проверка",
+        coordinateX,
+        coordinateY,
+        fizOrBiz,
       },
     });
 

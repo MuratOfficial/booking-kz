@@ -53,6 +53,8 @@ import { Switch } from "@/components/ui/switch";
 import { Calendar } from "@/components/ui/calendar";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
+import { fetchMap } from "@/lib/fetchMap";
+import { useDebouncedCallback } from "use-debounce";
 
 const annoncementFormSchema = z.object({
   phone: z
@@ -103,6 +105,9 @@ const annoncementFormSchema = z.object({
     .string({ required_error: "Пользователь не выбран" })
     .nullable()
     .optional(),
+  coordinateX: z.string().optional(),
+  coordinateY: z.string().optional(),
+  fizOrBiz: z.string().optional(),
 });
 
 type AnnoncementFormValues = z.infer<typeof annoncementFormSchema>;
@@ -153,6 +158,7 @@ function AnnoncementForm({
       images: initialData?.images || [],
       townOrStreet: initialData?.townOrStreet || "",
       description: initialData?.description || "",
+      fizOrBiz: initialData?.fizOrBiz || "fiz",
     },
   });
 
@@ -164,6 +170,52 @@ function AnnoncementForm({
   const router = useRouter();
   const params = useParams();
   const [loading, setLoading] = React.useState(false);
+  const [cityOrDistrict, setCityOrDistrict] = React.useState<string>(
+    initialData?.cityOrDistrict || ""
+  );
+  const [townOrCity, setTownOrCity] = React.useState<string>(
+    initialData?.cityOrTown || ""
+  );
+  const [streetOrHouse, setStreetOrHouse] = React.useState<string>(
+    initialData?.townOrStreet || ""
+  );
+  const [pos1, setPos1] = React.useState<number | null>(null);
+  const [pos2, setPos2] = React.useState<number | null>(null);
+  const [zoom, setZoom] = React.useState<number | null>(null);
+
+  const handleChange = useDebouncedCallback((term: string, type: string) => {
+    if (type === "city") {
+      setTownOrCity(term);
+    }
+    if (type === "street") {
+      setStreetOrHouse(term);
+    }
+  }, 500);
+
+  React.useEffect(() => {
+    if (townOrCity || streetOrHouse) {
+      setZoom(16);
+    } else {
+      setZoom(10);
+    }
+
+    const fetchData = async () => {
+      const location = `${cityOrDistrict}+${townOrCity}+${streetOrHouse}`;
+      if (!location.trim()) return;
+
+      const positions = await fetchMap(location);
+      if (positions) {
+        setPos1(positions.pos1);
+        form.setValue("coordinateX", positions.pos1.toString());
+        setPos2(positions.pos2);
+        form.setValue("coordinateY", positions.pos2.toString());
+      } else {
+        console.log("Failed to fetch position.");
+      }
+    };
+
+    fetchData();
+  }, [cityOrDistrict, townOrCity, streetOrHouse]);
 
   async function onSubmit(formData: AnnoncementFormValues) {
     try {
@@ -209,6 +261,17 @@ function AnnoncementForm({
     {
       value: "Аренда",
       label: "Аренда",
+    },
+  ];
+
+  const fizbiz = [
+    {
+      value: "fiz",
+      label: "Физическое лицо",
+    },
+    {
+      value: "biz",
+      label: "Юридическое лицо",
     },
   ];
 
@@ -538,7 +601,7 @@ function AnnoncementForm({
           className="flex flex-col gap-6 w-full"
         >
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl py-4 px-6">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <FormField
                 control={form.control}
                 name="serviceType"
@@ -551,7 +614,7 @@ function AnnoncementForm({
                           variant="outline"
                           role="combobox"
                           className={cn(
-                            "w-[280px] justify-between",
+                            "w-full justify-between",
                             !field.value && "text-muted-foreground"
                           )}
                         >
@@ -563,7 +626,7 @@ function AnnoncementForm({
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-[280px] p-0">
+                      <PopoverContent className="w-[280px]  p-0">
                         <Command>
                           <CommandGroup>
                             {services.map((service) => (
@@ -609,7 +672,7 @@ function AnnoncementForm({
                             variant="outline"
                             role="combobox"
                             className={cn(
-                              "w-[280px] justify-between",
+                              "w-full justify-between",
                               !field.value && "text-muted-foreground"
                             )}
                           >
@@ -668,7 +731,7 @@ function AnnoncementForm({
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[280px] justify-between",
+                                "w-full justify-between",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -722,7 +785,7 @@ function AnnoncementForm({
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[280px] justify-between",
+                                "w-full justify-between",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -805,6 +868,60 @@ function AnnoncementForm({
                   />
                 </>
               )}
+              <FormField
+                control={form.control}
+                name="fizOrBiz"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <p className="text-base font-semibold">Физ. или юр. лицо</p>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? fizbiz.find(
+                                (service) => service.value === field.value
+                              )?.label
+                            : "Нажмите чтобы выбрать"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[280px] p-0">
+                        <Command>
+                          <CommandGroup>
+                            {fizbiz.map((service) => (
+                              <CommandItem
+                                value={service.label}
+                                key={service.value}
+                                onSelect={() => {
+                                  form.setValue("fizOrBiz", service.value);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    service.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {service.label}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <p className="flex flex-row gap-x-1 items-center text-xs text-slate-400">
               <Info className="w-3" />
@@ -2284,7 +2401,7 @@ function AnnoncementForm({
                           variant="outline"
                           role="combobox"
                           className={cn(
-                            "w-[220px] justify-between  flex flex-row gap-x-1 items-center",
+                            "w-full justify-between  flex flex-row gap-x-1 items-center",
                             !field.value && "text-muted-foreground"
                           )}
                         >
@@ -2299,7 +2416,7 @@ function AnnoncementForm({
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-fit p-0 max-h-40">
+                      <PopoverContent className="w-full p-0 max-h-40">
                         <Command>
                           <CommandInput placeholder="Найти..." />
                           <CommandEmpty>Не найдено.</CommandEmpty>
@@ -2310,6 +2427,7 @@ function AnnoncementForm({
                                 key={city.value}
                                 onSelect={() => {
                                   form.setValue("cityOrDistrict", city.value);
+                                  setCityOrDistrict(city.value);
                                 }}
                               >
                                 <Check
@@ -2343,7 +2461,11 @@ function AnnoncementForm({
                       <Input
                         className=" placeholder:opacity-50"
                         placeholder="г. Костанай"
-                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e.target.value);
+                          handleChange(e.target.value, "city");
+                        }}
+                        value={field.value}
                       />
                     </FormControl>
 
@@ -2367,7 +2489,11 @@ function AnnoncementForm({
                       <Input
                         className=" placeholder:opacity-50"
                         placeholder="16 мкр., 5 дом"
-                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e.target.value);
+                          handleChange(e.target.value, "street");
+                        }}
+                        value={field.value}
                       />
                     </FormControl>
 
@@ -2384,7 +2510,7 @@ function AnnoncementForm({
                 name="buildingId"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <p className="text-base font-semibold">Пользователь</p>
+                    <p className="text-base font-semibold">Жилой комплекс</p>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -2443,7 +2569,12 @@ function AnnoncementForm({
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">
             <p className="text-base font-semibold">Расположение на карте</p>
-            <YandexMap />
+            <YandexMap
+              width={1120}
+              coordinate1={pos1}
+              coordinate2={pos2}
+              zoom={zoom}
+            />
           </div>
 
           <Button

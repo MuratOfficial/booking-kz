@@ -84,6 +84,9 @@ export async function PATCH(
       phase,
       description,
       moderatorText,
+      coordinateX,
+      coordinateY,
+      fizOrBiz,
     } = body;
 
     if (!params.annoncementId) {
@@ -122,6 +125,8 @@ export async function PATCH(
         cityOrDistrict,
         buildingId,
         additionalFilters: formattedAdditionalFilters,
+        coordinateX,
+        coordinateY,
         yearBuild,
         price,
         priceNego,
@@ -133,6 +138,7 @@ export async function PATCH(
         subscriptionDate,
         phase,
         moderatorText,
+        fizOrBiz,
       },
     });
 
