@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Annoncement, Testimonial } from "@prisma/client";
+import { Analytics, Annoncement, Building, Testimonial } from "@prisma/client";
 import AnnoncementListCard from "@/components/cards/annoncement-list-card";
 import {
   Collapsible,
@@ -12,14 +12,24 @@ import { cn } from "@/lib/utils";
 import { Element } from "react-scroll";
 
 interface ShownAnnoncementsProps {
-  annoncements: (Annoncement & { testimonials: Testimonial[] } & {
+  annoncements: (Annoncement & {
+    testimonials: Testimonial[];
+    analytics: Analytics[];
+    buildingName: Building | null;
+  } & {
     isFavorite?: boolean;
   })[];
 }
-
 function ShownAnnoncements({ annoncements }: ShownAnnoncementsProps) {
-  const [orderedAnnoncements, setOrderedAnnoncements] =
-    useState<(Annoncement & { testimonials: Testimonial[] })[]>();
+  const [orderedAnnoncements, setOrderedAnnoncements] = useState<
+    (Annoncement & {
+      testimonials: Testimonial[];
+      analytics: Analytics[];
+      buildingName: Building | null;
+    } & {
+      isFavorite?: boolean;
+    })[]
+  >();
   const [sorted, setSorted] = useState("");
 
   const sortByPrice = () => {

@@ -170,15 +170,9 @@ function AnnoncementForm({
   const router = useRouter();
   const params = useParams();
   const [loading, setLoading] = React.useState(false);
-  const [cityOrDistrict, setCityOrDistrict] = React.useState<string>(
-    initialData?.cityOrDistrict || ""
-  );
-  const [townOrCity, setTownOrCity] = React.useState<string>(
-    initialData?.cityOrTown || ""
-  );
-  const [streetOrHouse, setStreetOrHouse] = React.useState<string>(
-    initialData?.townOrStreet || ""
-  );
+  const [cityOrDistrict, setCityOrDistrict] = React.useState<string>("");
+  const [townOrCity, setTownOrCity] = React.useState<string>("");
+  const [streetOrHouse, setStreetOrHouse] = React.useState<string>("");
   const [pos1, setPos1] = React.useState<number | null>(null);
   const [pos2, setPos2] = React.useState<number | null>(null);
   const [zoom, setZoom] = React.useState<number | null>(null);
@@ -191,6 +185,20 @@ function AnnoncementForm({
       setStreetOrHouse(term);
     }
   }, 500);
+
+  React.useEffect(() => {
+    if (initialData?.buildingId) {
+      const building = buildings.find((el) => el.id);
+      setCityOrDistrict(building?.cityOrDistrict || "");
+      setTownOrCity(building?.cityOrTown || "");
+      setStreetOrHouse(building?.townOrStreet || "");
+    }
+    if (!initialData?.buildingId && initialData) {
+      setCityOrDistrict(initialData.cityOrDistrict || "");
+      setTownOrCity(initialData?.cityOrTown || "");
+      setStreetOrHouse(initialData?.townOrStreet || "");
+    }
+  });
 
   React.useEffect(() => {
     if (townOrCity || streetOrHouse) {
@@ -2544,6 +2552,9 @@ function AnnoncementForm({
                                 key={building.id}
                                 onSelect={() => {
                                   form.setValue("buildingId", building.id);
+                                  setCityOrDistrict(building.cityOrDistrict);
+                                  setTownOrCity(building?.cityOrTown || "");
+                                  setStreetOrHouse(building.townOrStreet || "");
                                 }}
                               >
                                 <Check

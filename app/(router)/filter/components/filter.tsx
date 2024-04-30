@@ -41,14 +41,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useDebouncedCallback } from "use-debounce";
+import { Building } from "@prisma/client";
 
 interface FilterProps {
   allcount: number;
+  buildings?: Building[] | null | undefined;
 }
 
-function Filter({ allcount }: FilterProps) {
+function Filter({ allcount, buildings }: FilterProps) {
   const pathname = usePathname();
-  const { replace } = useRouter();
+  const { replace, push } = useRouter();
   const searchParams = useSearchParams();
 
   const [categoryStrings, setCategoryStrings] = useState<string[]>([]);
@@ -251,6 +253,12 @@ function Filter({ allcount }: FilterProps) {
 
     replace(`${pathname}?${params.toString()}`);
   }, 300);
+
+  const buildingsList = buildings?.map((el) => ({
+    value: el.id,
+    label: el.name,
+  }));
+
   const citiesList = [
     {
       value: "астана",
@@ -634,7 +642,7 @@ function Filter({ allcount }: FilterProps) {
         <ComboboxFilter
           buttonName="Все жилые комплексы"
           commandInputTitle="Поиск ЖК"
-          data={[]}
+          data={buildingsList || []}
           filter="building"
         />
       </div>

@@ -1,29 +1,29 @@
 import prismadb from "@/lib/prismadb";
 import React from "react";
-import AdminSubscriptionForm from "./components/admin-subscription-form";
+import AdminBuildingForm from "./components/admin-building-form";
 
 const AdminSubsPage = async ({
   params,
 }: {
   params: {
-    subscriptionId: string;
+    buildingId: string;
   };
 }) => {
-  let subscription;
+  let building;
 
-  if (params.subscriptionId === "new") {
-    subscription = null;
+  if (params.buildingId === "new") {
+    building = null;
   } else {
-    subscription = await prismadb.subscription.findUnique({
+    building = await prismadb.building.findUnique({
       where: {
-        id: params.subscriptionId,
+        id: params.buildingId,
       },
     });
   }
 
   return (
     <div className="w-4/5 flex flex-col">
-      <AdminSubscriptionForm initialData={subscription} />
+      <AdminBuildingForm initialData={building} />
     </div>
   );
 };

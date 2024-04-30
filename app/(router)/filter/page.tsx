@@ -3,7 +3,10 @@ import Filter from "./components/filter";
 
 import HotSuggestCard from "@/components/cards/hot-suggest-card";
 
-import { fetchFilteredAnnoncements } from "@/lib/fetchingFilter";
+import {
+  fetchBuildings,
+  fetchFilteredAnnoncements,
+} from "@/lib/fetchingFilter";
 import { Metadata } from "next";
 import { Skeleton } from "@/components/ui/skeleton";
 import ShownAnnoncements from "./components/shown-annoncements";
@@ -66,6 +69,9 @@ const FilterPage = async ({
     areaSqTo?: string;
     city?: string;
     more?: string[];
+    cityOrTown?: string;
+    street?: string;
+    building?: string;
   };
 }) => {
   // const annoncements = await prismadb.annoncement.findMany({
@@ -149,7 +155,10 @@ const FilterPage = async ({
     searchParams?.areaSqFrom,
     searchParams?.areaSqTo,
     searchParams?.city,
-    searchParams?.more
+    searchParams?.more,
+    searchParams?.cityOrTown,
+    searchParams?.street,
+    searchParams?.building
   );
 
   const annoncements = nonfilteredannoncements.map((el) => ({
@@ -161,12 +170,14 @@ const FilterPage = async ({
       : false,
   }));
 
+  const buildings = await fetchBuildings(searchParams?.city);
+
   return (
     <>
       <Suspense
         fallback={<Skeleton className=" w-full h-72 rounded-2xl bg-blue-300" />}
       >
-        <Filter allcount={annoncements.length} />
+        <Filter allcount={annoncements.length} buildings={buildings} />
       </Suspense>
       <div className="w-full grid grid-cols-7 gap-4">
         <ShownAnnoncements annoncements={annoncements} />

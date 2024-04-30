@@ -1,16 +1,17 @@
 import { DataTable } from "@/components/ui/data-table-ui";
 import React from "react";
-import { SubsColumn, columns } from "./components/columns";
+import { BuildingsColumn, columns } from "./components/columns";
 import prismadb from "@/lib/prismadb";
 
 const AdminSubsPage = async () => {
-  const subs = await prismadb.subscription.findMany();
+  const buildings = await prismadb.building.findMany();
 
-  const data: SubsColumn[] = subs.map((el) => ({
+  const data: BuildingsColumn[] = buildings.map((el) => ({
     id: el.id,
     name: el.name,
-    price: el.price.toString(),
-    color: el.color,
+    city: el.cityOrDistrict || "Не указано",
+    year: el.buildingYear || 9999,
+    floors: el.floors || 0,
   }));
   return (
     <div className=" min-h-screen flex flex-col w-4/5 pl-4 pr-6 py-2 text-slate-900">

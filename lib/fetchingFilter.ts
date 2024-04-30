@@ -14,7 +14,8 @@ export async function fetchFilteredAnnoncements(
 
   more?: string[],
   cityOrTown?: string,
-  street?: string
+  street?: string,
+  building?: string
 ) {
   try {
     noStore();
@@ -67,13 +68,33 @@ export async function fetchFilteredAnnoncements(
               : more,
           },
         },
+        buildingId: building,
       },
       include: {
         testimonials: true,
+        analytics: true,
+        buildingName: true,
       },
     });
 
     return annoncements;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch filtered Data");
+  }
+}
+
+export async function fetchBuildings(city?: string) {
+  try {
+    noStore();
+    const buildings = await prismadb.building.findMany({
+      where: {
+        cityOrDistrict: {
+          contains: city?.slice(1),
+        },
+      },
+    });
+    return buildings;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch filtered Data");

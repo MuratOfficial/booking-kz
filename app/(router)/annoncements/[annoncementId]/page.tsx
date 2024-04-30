@@ -71,6 +71,7 @@ import { fetchUserData } from "@/lib/fetchUserData";
 import ShareButton from "../components/share-button";
 import { fetchUserChats } from "@/lib/fetchChats";
 import CallButton from "../components/call-button";
+import Image from "next/image";
 
 export async function generateMetadata({
   params,
@@ -97,10 +98,6 @@ const AnnoncementPage = async ({
   const annoncement = await fetchAnnoncement(params.annoncementId);
 
   const userChats = await fetchUserChats();
-
-  const isChatId = userChats?.find(
-    (el) => el.annoncementId === annoncement?.id
-  );
 
   const userData = await fetchUserData();
 
@@ -406,7 +403,9 @@ const AnnoncementPage = async ({
               detail1={annoncement?.cityOrDistrict}
               detail2={annoncement?.cityOrTown}
               detail3={annoncement?.townOrStreet}
+              building={annoncement?.buildingName}
             />
+
             <Separator />
             <div className="flex flex-row gap-x-1.5 items-center justify-center  text-lg font-semibold text-slate-900">
               <UserCheck2 className="w-5" />

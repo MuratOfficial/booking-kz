@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   ArrowBigUp,
   Briefcase,
+  Building2,
   CheckCircle2,
   Copy,
   Crown,
@@ -32,6 +33,7 @@ import { useRouter } from "next/navigation";
 import {
   Analytics,
   Annoncement,
+  Building,
   Subscription,
   Testimonial,
 } from "@prisma/client";
@@ -48,7 +50,11 @@ import SubsDateChangeButton from "./subs-date-change-button";
 import { NewPriceForm } from "./change-price-form";
 
 interface MyAnnoncementCardProps {
-  data: Annoncement & { testimonials: Testimonial[]; analytics: Analytics[] };
+  data: Annoncement & {
+    testimonials: Testimonial[];
+    analytics: Analytics[];
+    buildingName: Building | null;
+  };
   subs?: Subscription[] | null;
 }
 
@@ -291,18 +297,28 @@ function MyAnnoncementCard({ data, subs }: MyAnnoncementCardProps) {
             <div className="flex flex-col gap-2 w-[60%] h-full py-2 px-3 justify-between">
               <div className="col-span-3 flex flex-col gap-1 w-full">
                 <div className="w-full flex flex-row justify-between items-center">
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 w-full">
                     <p className="  text-slate-900 group font-semibold text-lg text-left flex flex-row gap-x-1 items-center">
                       {data?.roomNumber}-комнатная {data.categoryType},{" "}
                       {data.areaSq} м², {data.floor}/{data.floorFrom} этаж{" "}
                     </p>
-                    <div className="flex flex-row gap-x-4">
+                    <div className="flex flex-row justify-between gap-x-4 flex-wrap w-full">
                       <p className=" text-slate-900/50 flex flex-row items-center gap-x-1 font-medium text-sm rounded-full  text-center w-fit">
                         <MapPin className="stroke-red-500" size={12} />{" "}
                         {data?.cityOrDistrict && `${data?.cityOrDistrict}`}
-                        {data?.cityOrTown && `, ${data?.cityOrTown}`}
-                        {data?.townOrStreet && `, ${data?.townOrStreet}`}
+                        {!data?.buildingName && (
+                          <span className="flex flex-row gap-x-1">
+                            {data?.cityOrTown && `, ${data?.cityOrTown}`}
+                            {data?.townOrStreet && `, ${data?.townOrStreet}`}
+                          </span>
+                        )}
                       </p>
+                      {data?.buildingName && (
+                        <p className=" text-slate-900/50 flex flex-row items-center gap-x-1 font-medium text-sm rounded-full  w-fit">
+                          <Building2 className="stroke-blue-500" size={12} />{" "}
+                          {data?.buildingName.name}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>

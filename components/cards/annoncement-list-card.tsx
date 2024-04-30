@@ -9,9 +9,16 @@ import {
   CarouselItem,
 } from "../ui/carousel";
 import { Separator } from "../ui/separator";
-import { Eye, MapPin, UserRoundCheck, Zap } from "lucide-react";
+import {
+  Briefcase,
+  Building2,
+  Eye,
+  MapPin,
+  UserRoundCheck,
+  Zap,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Annoncement, Testimonial } from "@prisma/client";
+import { Analytics, Annoncement, Building, Testimonial } from "@prisma/client";
 import {
   HoverCard,
   HoverCardContent,
@@ -23,7 +30,11 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface AnnoncementListCardProps {
-  data: Annoncement & { testimonials: Testimonial[] } & {
+  data: Annoncement & {
+    testimonials: Testimonial[];
+    analytics: Analytics[];
+    buildingName: Building | null;
+  } & {
     isFavorite?: boolean;
   };
 }
@@ -141,6 +152,25 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
   // }
 
   // const overallRanking = calculateOverallRanking(data.testimonials);
+
+  function overallCount(analytics: Analytics[]) {
+    let totalCount = 0;
+    let mobileCount = 0;
+    if (analytics) {
+      for (const item of analytics) {
+        if (typeof item.viewCount === "number") {
+          totalCount += item.viewCount;
+        }
+        if (typeof item.mobileCount === "number") {
+          mobileCount += item.mobileCount;
+        }
+      }
+    }
+
+    return { totalCount, mobileCount };
+  }
+
+  const overallAnalyticsView = overallCount(data.analytics);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -277,18 +307,28 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
           <div className="flex flex-col gap-2 w-[70%] h-full py-2 px-3 justify-between">
             <div className="col-span-3 flex flex-col gap-1 w-full">
               <div className="w-full flex flex-row justify-between items-center">
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 w-full">
                   <p className="  text-slate-900 group font-semibold text-lg text-left flex flex-row gap-x-1 items-center">
                     {data?.roomNumber}-комнатная {data.categoryType},{" "}
                     {data.areaSq} м², {data.floor}/{data.floorFrom} этаж{" "}
                   </p>
-                  <div className="flex flex-row gap-x-4">
+                  <div className="flex flex-row justify-between gap-x-4 flex-wrap">
                     <p className=" text-slate-900/50 flex flex-row items-center gap-x-1 font-medium text-sm rounded-full  text-center w-fit">
                       <MapPin className="stroke-red-500" size={12} />{" "}
                       {data?.cityOrDistrict && `${data?.cityOrDistrict}`}
-                      {data?.cityOrTown && `, ${data?.cityOrTown}`}
-                      {data?.townOrStreet && `, ${data?.townOrStreet}`}
+                      {!data?.buildingName && (
+                        <span className="flex flex-row gap-x-1">
+                          {data?.cityOrTown && `, ${data?.cityOrTown}`}
+                          {data?.townOrStreet && `, ${data?.townOrStreet}`}
+                        </span>
+                      )}
                     </p>
+                    {data?.buildingName && (
+                      <p className=" text-slate-900/50 flex flex-row items-center gap-x-1 font-medium text-sm rounded-full  w-fit">
+                        <Building2 className="stroke-blue-500" size={12} />{" "}
+                        {data?.buildingName.name}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -296,9 +336,19 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
             <p className="line-clamp-2 text-sm text-slate-900/90 mt-2">
               {data?.description}
             </p>
-            <div className="flex flex-row gap-x-1 text-green-500 items-center">
-              <UserRoundCheck size={14} />
-              <p className="text-xs font-semibold">Физическое лицо</p>
+            <div className="flex flex-row gap-x-1  items-center">
+              {data?.fizOrBiz === "fiz" && (
+                <div className="text-green-500 flex flex-row gap-x-1 items-center">
+                  <UserRoundCheck className="w-4" />
+                  <p className="text-xs font-semibold">Физическое лицо</p>
+                </div>
+              )}
+              {data?.fizOrBiz === "biz" && (
+                <div className="text-violet-500 flex flex-row gap-x-1 items-center">
+                  <Briefcase className="w-4" />
+                  <p className="text-xs font-semibold">Юридическое лицо</p>
+                </div>
+              )}
             </div>
             <div className="text-sm flex flex-row items-center gap-1">
               {/* <p className="text-sm font-semibold text-slate-800 ">
@@ -311,7 +361,7 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
                 </span>
               </p>
               <div className="flex flex-row gap-0.5 items-center text-slate-400 px-4 text-xs">
-                <Eye size={16} /> {data?.stats?.allCount || 0}
+                <Eye className="w-4" /> {overallAnalyticsView.totalCount || 0}
               </div>
             </div>
 

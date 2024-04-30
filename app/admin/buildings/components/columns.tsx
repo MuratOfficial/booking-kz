@@ -15,16 +15,17 @@ import axios from "axios";
 import { MoreHorizontal, Newspaper, Podcast } from "lucide-react";
 import Link from "next/link";
 
-export type SubsColumn = {
+export type BuildingsColumn = {
   id: string;
   name: string;
-  price: string;
-  color: string;
+  city: string;
+  year: number;
+  floors: number;
 };
 
-// const columnHelper = createColumnHelper<SubsColumn>();
+// const columnHelper = createColumnHelper<BuildingsColumn>();
 
-export const columns: ColumnDef<SubsColumn>[] = [
+export const columns: ColumnDef<BuildingsColumn>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -62,26 +63,32 @@ export const columns: ColumnDef<SubsColumn>[] = [
     ),
   },
   {
-    accessorKey: "price",
-    header: "Стоимость",
+    accessorKey: "city",
+    header: "Город (область)",
     enableHiding: true,
 
     cell: ({ row }) => (
-      <div className="flex flex-row gap-1 w-fit items-center rounded-full border border-slate-900 py-0.5 px-2">
-        <p className="font-medium ">{row.getValue("price")} ₸</p>
+      <div className="flex flex-row gap-1 w-fit items-center ">
+        <p className="font-medium ">{row.getValue("city")}</p>
       </div>
     ),
   },
 
   {
-    accessorKey: "color",
-    header: "Цвет",
+    accessorKey: "year",
+    header: "Год",
     cell: ({ row }) => (
       <div className="capitalize flex flex-row gap-x-1 items-center">
-        <span
-          style={{ backgroundColor: `#${row.getValue("color")}` }}
-          className="w-5 h-5 rounded-full"
-        ></span>
+        {row.getValue("year")}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "floors",
+    header: "Этажи",
+    cell: ({ row }) => (
+      <div className="capitalize flex flex-row gap-x-1 items-center">
+        {row.getValue("floors")}
       </div>
     ),
   },
@@ -90,11 +97,11 @@ export const columns: ColumnDef<SubsColumn>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const SubsColumn = row.original;
+      const BuildingsColumn = row.original;
       const onDelete = async (id: string) => {
         try {
-          await axios.delete(`/api/admin/subscriptions/${id}`);
-          toast({ description: "Продвижение удалено", variant: "default" });
+          await axios.delete(`/api/admin/buildings/${id}`);
+          toast({ description: "ЖК удален", variant: "default" });
         } catch (error) {
           toast({
             description: "Упс... что-то пошло не так(",
@@ -114,17 +121,17 @@ export const columns: ColumnDef<SubsColumn>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Действия</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(SubsColumn.id)}
+              onClick={() => navigator.clipboard.writeText(BuildingsColumn.id)}
             >
               Скопировать ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href={`/admin/subscriptions/${SubsColumn.id}`}>
+              <Link href={`/admin/buildings/${BuildingsColumn.id}`}>
                 Редактировать
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onDelete(SubsColumn.id)}>
+            <DropdownMenuItem onClick={() => onDelete(BuildingsColumn.id)}>
               Удалить
             </DropdownMenuItem>
           </DropdownMenuContent>

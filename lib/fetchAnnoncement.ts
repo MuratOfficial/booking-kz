@@ -18,6 +18,7 @@ export async function fetchAnnoncement(id: string) {
         },
         user: true,
         analytics: true,
+        buildingName: true,
       },
     });
 
