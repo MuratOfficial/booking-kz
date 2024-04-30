@@ -250,6 +250,17 @@ function Filter({ allcount, buildings }: FilterProps) {
         params.delete("street");
       }
     }
+    if (filter === "map") {
+      if (term) {
+        if (params.has("map", term)) {
+          params.delete("map", term);
+        } else {
+          params.set("map", term);
+        }
+      } else {
+        params.delete("map");
+      }
+    }
 
     replace(`${pathname}?${params.toString()}`);
   }, 300);
@@ -1490,13 +1501,15 @@ function Filter({ allcount, buildings }: FilterProps) {
           </button>
         </div>
         <div className="flex flex-row gap-x-4 items-center">
-          <button className="flex flex-row gap-x-1 text-sm px-3.5 py-2.5 rounded-xl hover:border-slate-900 border-2 font-semibold text-neutral-50 items-center hover:text-slate-900 transition-all delay-75 duration-200">
+          <button
+            onClick={() => {
+              handleFilter("on", "map");
+            }}
+            className="flex flex-row gap-x-1 text-sm px-3.5 py-2.5 rounded-xl hover:border-slate-900 border-2 font-semibold text-neutral-50 items-center hover:text-slate-900 transition-all delay-75 duration-200"
+          >
             <MapPin size={16} /> Смотреть на карте
           </button>
-          <button
-            onClick={() => console.log(searchParams.get("count"))}
-            className="flex flex-row  px-4 py-3 rounded-xl bg-slate-900 text-sm font-semibold text-neutral-50 items-center opacity-100 hover:opacity-80 transition-all delay-75 duration-200"
-          >
+          <button className="flex flex-row  px-4 py-3 rounded-xl bg-slate-900 text-sm font-semibold text-neutral-50 items-center opacity-100 hover:opacity-80 transition-all delay-75 duration-200">
             Показать{" "}
             <span className="mx-1">
               <Suspense fallback={<Loader2 className="w-4 animate-spin" />}>

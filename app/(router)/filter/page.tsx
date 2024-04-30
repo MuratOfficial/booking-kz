@@ -16,6 +16,8 @@ import {
 } from "@/lib/fetchAnnoncement";
 import { Annoncement, Testimonial } from "@prisma/client";
 import { fetchUserData } from "@/lib/fetchUserData";
+import BigMap from "./components/big-map";
+import ScreenMap from "./components/screen-map";
 
 export async function generateMetadata({
   searchParams,
@@ -72,57 +74,9 @@ const FilterPage = async ({
     cityOrTown?: string;
     street?: string;
     building?: string;
+    map?: string;
   };
 }) => {
-  // const annoncements = await prismadb.annoncement.findMany({
-  //   where: {
-  //     serviceType: searchParams?.serviceType,
-  //     phase: {
-  //       in: ["активно", "проверка"],
-  //     },
-
-  //     categoryType: Array.isArray(searchParams?.categoryType)
-  //       ? {
-  //           in: searchParams?.categoryType && [...searchParams?.categoryType],
-  //         }
-  //       : searchParams?.categoryType,
-
-  //     roomNumber: Array.isArray(searchParams?.roomNumber)
-  //       ? {
-  //           in: searchParams?.roomNumber && [
-  //             ...searchParams?.roomNumber?.map((el) => parseInt(el)),
-  //           ],
-  //           gte: searchParams?.roomNumber?.includes("5+") ? 5 : undefined,
-  //         }
-  //       : searchParams?.roomNumber
-  //       ? parseInt(searchParams?.roomNumber)
-  //       : {
-  //           gte: searchParams?.roomNumber === "5+" ? 5 : undefined,
-  //         },
-  //     price: {
-  //       gte: parseInt(searchParams?.priceFrom || "0"),
-  //       lte: parseInt(searchParams?.priceTo || "9990000000"),
-  //     },
-  //     areaSq: {
-  //       gte: parseInt(searchParams?.areaSqFrom || "0"),
-  //       lte: parseInt(searchParams?.areaSqTo || "999000"),
-  //     },
-  //     cityOrDistrict: searchParams?.city,
-  //     additionalFilters: {
-  //       some: {
-  //         value: Array.isArray(searchParams?.more)
-  //           ? {
-  //               in: searchParams?.more && [...searchParams?.more],
-  //             }
-  //           : searchParams?.more,
-  //       },
-  //     },
-  //   },
-  //   include: {
-  //     testimonials: true,
-  //   },
-  // });
-
   const hotannoncementsrent = await fetchHotModifierAnnoncementsRent();
   const hotannoncementssell = await fetchHotModifierAnnoncementsSell();
 
@@ -174,21 +128,30 @@ const FilterPage = async ({
 
   return (
     <>
-      <Suspense
-        fallback={<Skeleton className=" w-full h-72 rounded-2xl bg-blue-300" />}
-      >
-        <Filter allcount={annoncements.length} buildings={buildings} />
-      </Suspense>
-      <div className="w-full grid grid-cols-7 gap-4">
-        <ShownAnnoncements annoncements={annoncements} />
+      {searchParams?.map === "on" && searchParams?.city ? (
+        <ScreenMap />
+      ) : (
+        <>
+          <Suspense
+            fallback={
+              <Skeleton className=" w-full h-72 rounded-2xl bg-blue-300" />
+            }
+          >
+            <Filter allcount={annoncements.length} buildings={buildings} />
+          </Suspense>
 
-        <div className="col-span-2 bg-white rounded-xl h-fit w-full flex flex-col gap-4 items-center py-2 px-3">
-          <h1 className="font-semibold">Горячие предложения</h1>
-          {hotAnnoncements.slice(0, 16).map((el, keyid) => (
-            <HotSuggestCard data={el} key={keyid} />
-          ))}
-        </div>
-      </div>
+          <div className="w-full grid grid-cols-7 gap-4">
+            <ShownAnnoncements annoncements={annoncements} />
+
+            <div className="col-span-2 bg-white rounded-xl h-fit w-full flex flex-col gap-4 items-center py-2 px-3">
+              <h1 className="font-semibold">Горячие предложения</h1>
+              {hotAnnoncements.slice(0, 16).map((el, keyid) => (
+                <HotSuggestCard data={el} key={keyid} />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };
