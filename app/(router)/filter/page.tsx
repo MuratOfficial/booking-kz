@@ -129,7 +129,7 @@ const FilterPage = async ({
   return (
     <>
       {searchParams?.map === "on" && searchParams?.city ? (
-        <ScreenMap />
+        <ScreenMap annoncements={annoncements} />
       ) : (
         <>
           <Suspense

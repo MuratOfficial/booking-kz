@@ -77,7 +77,7 @@ export function ComboboxFilter({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0 rounded-xl">
+      <PopoverContent className="w-[300px] max-h-40  p-0 rounded-xl">
         <Command className="rounded-xl">
           <CommandInput placeholder={commandInputTitle} className="" />
           <CommandEmpty>Не найдено</CommandEmpty>

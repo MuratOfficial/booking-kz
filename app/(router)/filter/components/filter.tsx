@@ -42,6 +42,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useDebouncedCallback } from "use-debounce";
 import { Building } from "@prisma/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface FilterProps {
   allcount: number;
@@ -52,6 +53,7 @@ function Filter({ allcount, buildings }: FilterProps) {
   const pathname = usePathname();
   const { replace, push } = useRouter();
   const searchParams = useSearchParams();
+  const { toast } = useToast();
 
   const [categoryStrings, setCategoryStrings] = useState<string[]>([]);
   const [moreStrings, setMoreStrings] = useState<string[]>([]);
@@ -282,6 +284,70 @@ function Filter({ allcount, buildings }: FilterProps) {
     {
       value: "шымкент",
       label: "Шымкент",
+    },
+    {
+      value: "актобе",
+      label: "Актобе",
+    },
+    {
+      value: "актау",
+      label: "Актау",
+    },
+    {
+      value: "атырау",
+      label: "Атырау",
+    },
+    {
+      value: "караганда",
+      label: "Караганда",
+    },
+    {
+      value: "кызылорда",
+      label: "Кызылорда",
+    },
+    {
+      value: "талдыкорган",
+      label: "Талдыкорган",
+    },
+    {
+      value: "жезказган",
+      label: "Жезказган",
+    },
+    {
+      value: "экибастуз",
+      label: "Экибастуз",
+    },
+    {
+      value: "семей",
+      label: "Семей",
+    },
+    {
+      value: "усть-Каменогорск",
+      label: "Усть-Каменогорск",
+    },
+    {
+      value: "костанай",
+      label: "Костанай",
+    },
+    {
+      value: "уральск",
+      label: "Уральск",
+    },
+    {
+      value: "петропавловск",
+      label: "Петропавловск",
+    },
+    {
+      value: "туркестан",
+      label: "Туркестан",
+    },
+    {
+      value: "павлодар",
+      label: "Павлодар",
+    },
+    {
+      value: "кокшетау",
+      label: "Кокшетау",
     },
     {
       value: "актюбинская обл.",
@@ -1503,7 +1569,11 @@ function Filter({ allcount, buildings }: FilterProps) {
         <div className="flex flex-row gap-x-4 items-center">
           <button
             onClick={() => {
-              handleFilter("on", "map");
+              if (searchParams.has("city")) {
+                handleFilter("on", "map");
+              } else {
+                toast({ title: "Выберите город (область)" });
+              }
             }}
             className="flex flex-row gap-x-1 text-sm px-3.5 py-2.5 rounded-xl hover:border-slate-900 border-2 font-semibold text-neutral-50 items-center hover:text-slate-900 transition-all delay-75 duration-200"
           >

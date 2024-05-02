@@ -3,7 +3,7 @@ import React from "react";
 
 function PaymentBar() {
   return (
-    <div className="w-full py-4 px-2 rounded-3xl bg-gradient-to-l from-green-500 to-green-400 flex flex-col">
+    <div className="w-full py-4 px-4 rounded-3xl bg-gradient-to-l from-green-500 to-green-400 flex flex-col">
       <button className="flex flex-row gap-x-1 bg-green-700 items-center transition delay-75 duration-300 justify-center text-neutral-50 hover:bg-neutral-50 rounded-xl font-semibold p-2 hover:text-blue-500">
         <CreditCard className=" stroke-2" size={20} /> Пополнить
       </button>
