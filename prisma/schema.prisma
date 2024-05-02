@@ -220,3 +220,13 @@ model Subscription {
   icon         String        @default("1")
   annoncements Annoncement[]
 }
+
+model Refill {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String?
+  total     Int      @default(0)
+  bonusPerc Int?
+  bonus     Int?     @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

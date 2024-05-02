@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import SideNavAdmin from "../components/side-nav-admin";
 import {
   Archive,
+  Building2,
   CheckCircle2,
   Crown,
   Flame,
   HelpCircle,
   Plus,
+  Podcast,
   RefreshCw,
   WalletCards,
   Zap,
@@ -15,35 +17,25 @@ import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Платежи ",
-    default: "Платежи",
+    template: "%s | Пополнения ",
+    default: "Пополнения",
   },
-  description: " Обьявления аренды и продажи недвижимостей",
 };
 
-export default function PaymentsAdminLayout({
+export default function RefillAdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const annoncementAdminRoutes = [
+  const refillAdminRoutes = [
     {
-      path: "/admin/payments",
+      path: "/admin/refill",
       title: "Все",
       icon: <WalletCards size={17} />,
     },
-    { title: "Продление", icon: <RefreshCw size={17} /> },
-    {
-      title: "Модификаторы",
-      icon: <Zap size={17} />,
-    },
-    {
-      title: "Подписки",
-      icon: <Crown size={17} />,
-    },
 
     {
-      path: "/admin/payments/new",
+      path: "/admin/refill/new",
       title: "Добавить",
       icon: <Plus size={17} />,
       isButton: true,
@@ -53,7 +45,7 @@ export default function PaymentsAdminLayout({
   return (
     <div className="flex flex-row w-full h-full gap-2">
       <Suspense>
-        <SideNavAdmin links={annoncementAdminRoutes} />
+        <SideNavAdmin links={refillAdminRoutes} />
       </Suspense>
 
       {children}

@@ -292,7 +292,7 @@ function BigMap({
           onClick={() => router.push(`/annoncements/${data?.id}`)}
           className=" rounded-lg bg-blue-500 py-1.5 w-full text-sm font-semibold text-neutral-50 hover:bg-slate-800 transition delay-75 duration-150"
         >
-          Перейти обьявлению
+          Перейти к обьявлению
         </button>
       </div>
       <YMaps>

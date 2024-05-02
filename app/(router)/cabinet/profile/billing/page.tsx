@@ -7,6 +7,7 @@ import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import prismadb from "@/lib/prismadb";
+import { fetchRefill } from "@/lib/fetchRefill";
 
 export const metadata: Metadata = {
   title: "Счет и Платежи",
@@ -28,6 +29,8 @@ const BillingPage = async () => {
     userData = null;
   }
 
+  const refills = await fetchRefill();
+
   return (
     <div className="w-full grid grid-cols-4 gap-4 pb-4">
       <div className="w-full col-span-3 flex flex-col gap-2">
@@ -38,7 +41,7 @@ const BillingPage = async () => {
         <PaymentHistory data={paymentHistory} />
       </div>
       <div className="w-full ">
-        <PaymentBar />
+        <PaymentBar refills={refills} />
       </div>
     </div>
   );
