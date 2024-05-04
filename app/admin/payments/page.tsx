@@ -13,6 +13,7 @@ async function AdminPaymentsPage() {
     id: el.id,
     user: el.user.name || el.user.username,
     sum: parseFloat(el.sum).toFixed(2),
+    bonus: parseFloat(el?.bonus || "0").toFixed(2),
     status: el.status,
     createdAt: el.createdAt.toLocaleDateString(),
     service: el.transactionType,

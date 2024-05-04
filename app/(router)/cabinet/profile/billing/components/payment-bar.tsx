@@ -22,16 +22,21 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 
 const RefillSchema = z.object({
-  id: z.string().optional(),
+  sum: z.string().optional(),
+  bonus: z.string().optional(),
+  userId: z.string().optional(),
 });
 
 type RefillValue = z.infer<typeof RefillSchema>;
 
 interface PaymentBarProps {
   refills?: Refill[] | null;
+  userId?: string | null;
+  phone?: string | null;
+  email?: string | null;
 }
 
-function PaymentBar({ refills }: PaymentBarProps) {
+function PaymentBar({ refills, userId }: PaymentBarProps) {
   const [picked, setPicked] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const { toast } = useToast();
@@ -41,7 +46,7 @@ function PaymentBar({ refills }: PaymentBarProps) {
   const form = useForm<RefillValue>({
     resolver: zodResolver(RefillSchema),
     defaultValues: {
-      id: "",
+      userId: userId || "",
     },
   });
 
@@ -89,7 +94,11 @@ function PaymentBar({ refills }: PaymentBarProps) {
                   picked === el.id && "border-slate-800"
                 )}
                 key={ind}
-                onClick={() => setPicked(el.id)}
+                onClick={() => {
+                  setPicked(el.id);
+                  form.setValue("sum", el.total.toString());
+                  form.setValue("bonus", el?.bonus?.toString());
+                }}
               >
                 <div className="flex flex-row gap-x-1  items-center">
                   <p className="font-bold text-slate-700 text-lg">

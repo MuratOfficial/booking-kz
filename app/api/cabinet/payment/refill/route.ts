@@ -2,15 +2,27 @@ import { NextResponse } from "next/server";
 import hmacSHA512 from "crypto-js/hmac-sha512";
 
 import axios from "axios";
+import prismadb from "@/lib/prismadb";
 
 export async function POST(req: Request) {
-  const dataObject = req.body;
+  const dataObject = await req.json();
+
+  const { sum, bonus, userId, email, phone } = dataObject;
+
+  const payment = await prismadb.payment.create({
+    data: {
+      userId: userId,
+      sum: sum,
+      bonus: bonus,
+      transactionType: "refill",
+    },
+  });
 
   const dataJson = JSON.stringify({
-    amount: 15000,
+    amount: parseFloat(payment.sum),
     currency: "KZT",
-    order_id: "550e8511-e29b-41d5-a718-446655442051",
-    description: "test",
+    order_id: payment.id,
+    description: "refill",
     payment_type: "pay",
     payment_method: "ecom",
     items: [
@@ -18,17 +30,17 @@ export async function POST(req: Request) {
         merchant_id: "8133b22d-e91b-4176-a1b8-9b7cd0e07cf4",
         service_id: "e7146794-14bc-4e0c-8831-0234937fbc3f",
         merchant_name: "маркетплейс",
-        name: "test pay",
+        name: "refill",
 
         quantity: 1,
-        amount_one_pcs: 15000,
-        amount_sum: 15000,
+        amount_one_pcs: parseFloat(payment.sum),
+        amount_sum: parseFloat(payment.sum),
       },
     ],
-    user_id: "test",
-    email: "test@example.com",
-    phone: "+77777777777",
-    success_url: "http://etazhi.kz",
+    user_id: payment.userId,
+    email: email || "test@example.com",
+    phone: phone || "+77777777777",
+    success_url: "http://etazhi.kz/cabinet/profile/billing",
     // "failure_url"
     // :
     // http://example.com
@@ -40,10 +52,6 @@ export async function POST(req: Request) {
     recurrent_profile_lifetime: 0,
     lang: "ru",
   });
-
-  // if (!total) {
-  //   return new NextResponse("total is required", { status: 400 });
-  // }
 
   const reqData: any = Buffer.from(dataJson).toString("base64");
   const sign = hmacSHA512(reqData, process.env.ONEVISION_API_SECRET!);
@@ -70,6 +78,16 @@ export async function POST(req: Request) {
     const decodedData = JSON.parse(
       Buffer.from(data, "base64").toString("utf-8")
     );
+
+    await prismadb.payment.update({
+      where: {
+        id: payment.id,
+      },
+      data: {
+        paymentUrl: decodedData?.payment_page_url,
+        transactionId: decodedData?.payment_id.toString(),
+      },
+    });
 
     return Response.json(decodedData?.payment_page_url);
   } catch (error) {

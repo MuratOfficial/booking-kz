@@ -30,7 +30,12 @@ const BillingPage = async () => {
           <PaymentHistory data={userData?.payments} />
         </div>
         <div className="w-full ">
-          <PaymentBar refills={refills} />
+          <PaymentBar
+            refills={refills}
+            userId={userData?.id}
+            phone={userData?.phone}
+            email={userData?.email}
+          />
         </div>
       </div>
     </>

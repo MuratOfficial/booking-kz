@@ -97,12 +97,12 @@ function AdminPaymentForm({
       } else {
         await axios.post(`/api/admin/payments`, formData);
       }
-      if (formData.status === "success") {
-        await axios.patch(
-          `/api/admin/users/${formData.userId}/balance`,
-          formData
-        );
-      }
+      // if (formData.status === "success") {
+      //   await axios.patch(
+      //     `/api/admin/users/${formData.userId}/balance`,
+      //     formData
+      //   );
+      // }
 
       router.refresh();
       router.push(`/admin/payments`);
@@ -136,7 +136,7 @@ function AdminPaymentForm({
     },
     {
       value: "bonus",
-      label: "Бонус",
+      label: "Бонус (пополнение)",
     },
   ];
 

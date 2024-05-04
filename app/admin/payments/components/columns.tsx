@@ -28,6 +28,7 @@ import {
   KeyRound,
   MoreHorizontal,
   Newspaper,
+  PlusCircle,
   User,
   UserCircle,
   Wrench,
@@ -40,6 +41,7 @@ export type PaymentColumn = {
   id: string;
   user: string;
   sum: string;
+  bonus?: string;
   status: string;
   createdAt: string;
   service: string;
@@ -94,6 +96,17 @@ export const columns: ColumnDef<PaymentColumn>[] = [
     ),
   },
   {
+    accessorKey: "bonus",
+    header: "Бонус",
+    enableHiding: true,
+
+    cell: ({ row }) => (
+      <div className="flex flex-row gap-1 w-fit items-center rounded-full border border-green-500 py-0.5 px-2">
+        <p className="font-medium ">{row.getValue("bonus")} б</p>
+      </div>
+    ),
+  },
+  {
     accessorKey: "status",
     header: "Статус",
     cell: ({ row }) => (
@@ -141,7 +154,7 @@ export const columns: ColumnDef<PaymentColumn>[] = [
     header: "Транзакция",
     cell: ({ row }) => (
       <div className="capitalize flex flex-row gap-x-1 items-center">
-        {row.getValue("service") === "modification" && (
+        {row.getValue("service") === "modifier" && (
           <span className="flex flex-row gap-x-1 items-center">
             <Zap className="w-4" />
             Модификация
@@ -153,10 +166,22 @@ export const columns: ColumnDef<PaymentColumn>[] = [
             Пополнение
           </span>
         )}
+        {row.getValue("service") === "refill-manual" && (
+          <span className="flex flex-row gap-x-1 items-center">
+            <Coins className="w-4 " />
+            Пополнение
+          </span>
+        )}
         {row.getValue("service") === "subscription" && (
           <span className="flex flex-row gap-x-1 items-center">
             <Crown className="w-4 " />
             Подписка
+          </span>
+        )}
+        {row.getValue("service") === "bonus" && (
+          <span className="flex flex-row gap-x-1 items-center text-green-500">
+            <PlusCircle className="w-4" />
+            Бонус
           </span>
         )}
       </div>
