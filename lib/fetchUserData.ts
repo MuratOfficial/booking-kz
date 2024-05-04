@@ -11,6 +11,9 @@ export async function fetchUserData() {
           where: {
             id: userIdData.id,
           },
+          include: {
+            payments: true,
+          },
         })
       : null;
 

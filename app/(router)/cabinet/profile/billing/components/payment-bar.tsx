@@ -1,6 +1,6 @@
 "use client";
 import { Refill } from "@prisma/client";
-import { Coins, CreditCard } from "lucide-react";
+import { Coins, CreditCard, Loader } from "lucide-react";
 import React from "react";
 import {
   Dialog,
@@ -14,6 +14,18 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useParams, useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
+import axios from "axios";
+import { useForm } from "react-hook-form";
+
+const RefillSchema = z.object({
+  id: z.string().optional(),
+});
+
+type RefillValue = z.infer<typeof RefillSchema>;
 
 interface PaymentBarProps {
   refills?: Refill[] | null;
@@ -21,6 +33,41 @@ interface PaymentBarProps {
 
 function PaymentBar({ refills }: PaymentBarProps) {
   const [picked, setPicked] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const { toast } = useToast();
+
+  const router = useRouter();
+
+  const form = useForm<RefillValue>({
+    resolver: zodResolver(RefillSchema),
+    defaultValues: {
+      id: "",
+    },
+  });
+
+  async function onSubmit(formData: RefillValue) {
+    try {
+      setLoading(true);
+
+      const paymentUrl = await axios.post(
+        `/api/cabinet/payment/refill`,
+        formData
+      );
+
+      setTimeout(() => {
+        router.refresh();
+        toast({
+          title: "Идет переадресация...",
+        });
+      }, 500);
+
+      router.push(paymentUrl?.data);
+    } catch (error: any) {
+      toast({ description: "Что-то пошло не так...", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="w-full py-4 px-4 rounded-3xl bg-gradient-to-l from-green-500 to-green-400 flex flex-col">
@@ -64,7 +111,12 @@ function PaymentBar({ refills }: PaymentBarProps) {
                 Закрыть
               </Button>
             </DialogClose>
-            <Button>Подтвердить</Button>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <Button type="submit">
+                {loading && <Loader className="w-4 animate-spin mr-2" />}{" "}
+                Подтвердить
+              </Button>
+            </form>
           </DialogFooter>
         </DialogContent>
       </Dialog>

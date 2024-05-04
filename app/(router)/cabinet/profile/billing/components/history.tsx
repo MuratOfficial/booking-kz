@@ -4,18 +4,24 @@ import { Badge } from "@/components/ui/badge";
 
 import { CalendarDays, ExternalLink, FileText } from "lucide-react";
 import Link from "next/link";
+import { Payment } from "@prisma/client";
 
 interface PaymentHistoryProps {
-  data: {
-    date: Date;
-    payType: string;
-    link: string;
-    title: string;
-    payPrice: number;
-  }[];
+  data: Payment[] | undefined | [] | null;
 }
 
 function PaymentHistory({ data }: PaymentHistoryProps) {
+  const refills = data?.filter(
+    (item) =>
+      item.transactionType !== "subscription" &&
+      item.transactionType !== "modifier"
+  );
+  const spents = data?.filter(
+    (item) =>
+      item.transactionType === "subscription" ||
+      item.transactionType === "modifier"
+  );
+
   return (
     <div className="bg-white rounded-2xl w-full p-4 flex flex-col gap-2">
       <h3 className="font-bold text-2xl text-slate-800">История платежей</h3>
@@ -31,75 +37,91 @@ function PaymentHistory({ data }: PaymentHistoryProps) {
             Расходы
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="all" className="w-full px-2 flex flex-col gap-y-4">
-          {data.map((item, index) => (
-            <div
-              className="w-full flex flex-row items-center justify-between"
-              key={index}
-            >
-              <div className="w-full flex flex-col gap-1">
-                <div className="flex flex-row items-center gap-x-1 text-slate-500 text-xs">
-                  <CalendarDays size={14} />
-                  <p className="mr-1">{item.date.toLocaleDateString()}</p>
-                  {item.payType === "Продление" && (
-                    <Badge variant="outline" className="">
-                      {item.payType}
-                    </Badge>
-                  )}
-                  {item.payType === "Модификация" && (
-                    <Badge variant="default" className="">
-                      {item.payType}
-                    </Badge>
-                  )}
-                  {item.payType === "Пополнение" && (
-                    <Badge variant="secondary" className="text-green-500">
-                      {item.payType}
-                    </Badge>
-                  )}
-                  {item.payType === "Бонус" && (
-                    <Badge variant="default" className="bg-blue-500">
-                      {item.payType}
-                    </Badge>
+        <TabsContent
+          value="all"
+          className="w-full px-2 flex flex-col gap-y-4 items-center justify-center"
+        >
+          {data && data.length > 0 ? (
+            data?.map((item, index) => (
+              <div
+                className="w-full flex flex-row items-center justify-between"
+                key={index}
+              >
+                <div className="w-full flex flex-col gap-1">
+                  <div className="flex flex-row items-center gap-x-1 text-slate-500 text-xs">
+                    <CalendarDays size={14} />
+                    <p className="mr-1">
+                      {item.createdAt.toLocaleDateString()}
+                    </p>
+                    {item.transactionType === "subscription" && (
+                      <Badge variant="outline" className="">
+                        Подписка
+                      </Badge>
+                    )}
+                    {item.transactionType === "modifier" && (
+                      <Badge variant="default" className="">
+                        Модификация
+                      </Badge>
+                    )}
+                    {(item.transactionType === "refill" ||
+                      item.transactionType === "refill-manual") && (
+                      <Badge variant="secondary" className="text-green-500">
+                        Пополнение
+                      </Badge>
+                    )}
+                    {item.transactionType === "bonus" && (
+                      <Badge variant="default" className="bg-blue-500">
+                        Бонус
+                      </Badge>
+                    )}
+                  </div>
+                  {item.paymentUrl && (
+                    <Link
+                      href={item.paymentUrl}
+                      className="flex flex-row ml-2 items-center gap-x-1 text-sm text-slate-400 hover:text-blue-500"
+                    >
+                      Детали транзакций <FileText className="w-4" />
+                    </Link>
                   )}
                 </div>
-                <Link
-                  href={item.link}
-                  className="  hover:text-blue-600 text-slate-800 transition-all delay-100 duration-300 font-semibold  text-base text-left flex flex-row gap-x-1 items-center"
-                >
-                  <span className="line-clamp-2">{item.title}</span>
-                </Link>
+                <div className="flex flex-col justify-center items-end w-full">
+                  {item.transactionType === "refill" && (
+                    <p className="font-bold text-green-500 text-lg">
+                      +{item.sum} ед.
+                    </p>
+                  )}
+                  {item.transactionType === "refill-manual" && (
+                    <p className="font-bold text-green-500 text-lg">
+                      +{item.sum} ед.
+                    </p>
+                  )}
+                  {item.transactionType !== "bonus" && (
+                    <p className="font-bold text-green-500 text-lg">
+                      +{item.bonus} б.
+                    </p>
+                  )}
+                  {item.transactionType === "modifier" && (
+                    <p className="font-bold text-red-500 text-lg">
+                      -{item.sum} ед.
+                    </p>
+                  )}
+                  {item.transactionType === "subscription" && (
+                    <p className="font-bold text-red-500 text-lg">
+                      -{item.sum} ед.
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="flex flex-col justify-center items-end w-full">
-                {item.payPrice === 0 && (
-                  <p className="font-bold text-slate-700 text-lg">Бесплатно</p>
-                )}
-                {item.payPrice > 0 && item.payType === "Бонус" && (
-                  <p className="font-bold text-green-500 text-lg">
-                    +{item.payPrice} б.
-                  </p>
-                )}
-                {item.payPrice > 0 && item.payType !== "Бонус" && (
-                  <p className="font-bold text-green-500 text-lg">
-                    +{item.payPrice} ед.
-                  </p>
-                )}
-                {item.payPrice < 0 && (
-                  <p className="font-bold text-red-500 text-lg">
-                    {item.payPrice} ед.
-                  </p>
-                )}
-                <button className="flex flex-row items-center gap-x-1 text-[11px] text-slate-400 hover:text-blue-500">
-                  <FileText size={12} />
-                  Детали
-                </button>
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-sm font-medium text-slate-600 text-center p-8">
+              История платежей пуста.
+            </p>
+          )}
         </TabsContent>
         <TabsContent value="repl" className="w-full px-2 flex flex-col gap-y-4">
-          {data
-            .filter((el) => el.payPrice > 0)
-            .map((item, index) => (
+          {refills && refills.length > 0 ? (
+            refills?.map((item, index) => (
               <div
                 className="w-full flex flex-row items-center justify-between"
                 key={index}
@@ -107,68 +129,78 @@ function PaymentHistory({ data }: PaymentHistoryProps) {
                 <div className="w-full flex flex-col gap-1">
                   <div className="flex flex-row items-center gap-x-1 text-slate-500 text-xs">
                     <CalendarDays size={14} />
-                    <p className="mr-1">{item.date.toLocaleDateString()}</p>
-                    {item.payType === "Продление" && (
+                    <p className="mr-1">
+                      {item.createdAt.toLocaleDateString()}
+                    </p>
+                    {item.transactionType === "subscription" && (
                       <Badge variant="outline" className="">
-                        {item.payType}
+                        Подписка
                       </Badge>
                     )}
-                    {item.payType === "Модификация" && (
+                    {item.transactionType === "modifier" && (
                       <Badge variant="default" className="">
-                        {item.payType}
+                        Модификация
                       </Badge>
                     )}
-                    {item.payType === "Пополнение" && (
+                    {(item.transactionType === "refill" ||
+                      item.transactionType === "refill-manual") && (
                       <Badge variant="secondary" className="text-green-500">
-                        {item.payType}
+                        Пополнение
                       </Badge>
                     )}
-                    {item.payType === "Бонус" && (
+                    {item.transactionType === "bonus" && (
                       <Badge variant="default" className="bg-blue-500">
-                        {item.payType}
+                        Бонус
                       </Badge>
                     )}
                   </div>
-                  <Link
-                    href={item.link}
-                    className="  hover:text-blue-600 text-slate-800 transition-all delay-100 duration-300 font-semibold  text-base text-left flex flex-row gap-x-1 items-center"
-                  >
-                    <span className="line-clamp-2">{item.title}</span>
-                  </Link>
+                  {item.paymentUrl && (
+                    <Link
+                      href={item.paymentUrl}
+                      className="flex flex-row ml-2 items-center gap-x-1 text-sm text-slate-400 hover:text-blue-500"
+                    >
+                      Детали транзакций <FileText className="w-4" />
+                    </Link>
+                  )}
                 </div>
                 <div className="flex flex-col justify-center items-end w-full">
-                  {item.payPrice === 0 && (
-                    <p className="font-bold text-slate-700 text-lg">
-                      Бесплатно
-                    </p>
-                  )}
-                  {item.payPrice > 0 && item.payType === "Бонус" && (
+                  {item.transactionType === "refill" && (
                     <p className="font-bold text-green-500 text-lg">
-                      +{item.payPrice} б.
+                      +{item.sum} ед.
                     </p>
                   )}
-                  {item.payPrice > 0 && item.payType !== "Бонус" && (
+                  {item.transactionType === "refill-manual" && (
                     <p className="font-bold text-green-500 text-lg">
-                      +{item.payPrice} ед.
+                      +{item.sum} ед.
                     </p>
                   )}
-                  {item.payPrice < 0 && (
+                  {item.transactionType !== "bonus" && (
+                    <p className="font-bold text-green-500 text-lg">
+                      +{item.bonus} б.
+                    </p>
+                  )}
+                  {item.transactionType === "modifier" && (
                     <p className="font-bold text-red-500 text-lg">
-                      {item.payPrice} ед.
+                      -{item.sum} ед.
                     </p>
                   )}
-                  <button className="flex flex-row items-center gap-x-1 text-[11px] text-slate-400 hover:text-blue-500">
-                    <FileText size={12} />
-                    Детали
-                  </button>
+                  {item.transactionType === "subscription" && (
+                    <p className="font-bold text-red-500 text-lg">
+                      -{item.sum} ед.
+                    </p>
+                  )}
                 </div>
               </div>
-            ))}
+            ))
+          ) : (
+            <p className="text-sm font-medium text-slate-600 text-center p-8">
+              История пополнении пуста.
+            </p>
+          )}
         </TabsContent>
         <TabsContent value="exp" className="w-full px-2 flex flex-col gap-y-4">
-          {data
-            .filter((el) => el.payPrice < 0)
-            .map((item, index) => (
+          {spents && spents?.length > 0 ? (
+            spents?.map((item, index) => (
               <div
                 className="w-full flex flex-row items-center justify-between"
                 key={index}
@@ -176,63 +208,74 @@ function PaymentHistory({ data }: PaymentHistoryProps) {
                 <div className="w-full flex flex-col gap-1">
                   <div className="flex flex-row items-center gap-x-1 text-slate-500 text-xs">
                     <CalendarDays size={14} />
-                    <p className="mr-1">{item.date.toLocaleDateString()}</p>
-                    {item.payType === "Продление" && (
+                    <p className="mr-1">
+                      {item.createdAt.toLocaleDateString()}
+                    </p>
+                    {item.transactionType === "subscription" && (
                       <Badge variant="outline" className="">
-                        {item.payType}
+                        Подписка
                       </Badge>
                     )}
-                    {item.payType === "Модификация" && (
+                    {item.transactionType === "modifier" && (
                       <Badge variant="default" className="">
-                        {item.payType}
+                        Модификация
                       </Badge>
                     )}
-                    {item.payType === "Пополнение" && (
+                    {(item.transactionType === "refill" ||
+                      item.transactionType === "refill-manual") && (
                       <Badge variant="secondary" className="text-green-500">
-                        {item.payType}
+                        Пополнение
                       </Badge>
                     )}
-                    {item.payType === "Бонус" && (
+                    {item.transactionType === "bonus" && (
                       <Badge variant="default" className="bg-blue-500">
-                        {item.payType}
+                        Бонус
                       </Badge>
                     )}
                   </div>
-                  <Link
-                    href={item.link}
-                    className="  hover:text-blue-600 text-slate-800 transition-all delay-100 duration-300 font-semibold  text-base text-left flex flex-row gap-x-1 items-center"
-                  >
-                    <span className="line-clamp-2">{item.title}</span>
-                  </Link>
+                  {item.paymentUrl && (
+                    <Link
+                      href={item.paymentUrl}
+                      className="flex flex-row ml-2 items-center gap-x-1 text-sm text-slate-400 hover:text-blue-500"
+                    >
+                      Детали транзакций <FileText className="w-4" />
+                    </Link>
+                  )}
                 </div>
                 <div className="flex flex-col justify-center items-end w-full">
-                  {item.payPrice === 0 && (
-                    <p className="font-bold text-slate-700 text-lg">
-                      Бесплатно
-                    </p>
-                  )}
-                  {item.payPrice > 0 && item.payType === "Бонус" && (
+                  {item.transactionType === "refill" && (
                     <p className="font-bold text-green-500 text-lg">
-                      +{item.payPrice} б.
+                      +{item.sum} ед.
                     </p>
                   )}
-                  {item.payPrice > 0 && item.payType !== "Бонус" && (
+                  {item.transactionType === "refill-manual" && (
                     <p className="font-bold text-green-500 text-lg">
-                      +{item.payPrice} ед.
+                      +{item.sum} ед.
                     </p>
                   )}
-                  {item.payPrice < 0 && (
+                  {item.transactionType !== "bonus" && (
+                    <p className="font-bold text-green-500 text-lg">
+                      +{item.bonus} б.
+                    </p>
+                  )}
+                  {item.transactionType === "modifier" && (
                     <p className="font-bold text-red-500 text-lg">
-                      {item.payPrice} ед.
+                      -{item.sum} ед.
                     </p>
                   )}
-                  <button className="flex flex-row items-center gap-x-1 text-[11px] text-slate-400 hover:text-blue-500">
-                    <FileText size={12} />
-                    Детали
-                  </button>
+                  {item.transactionType === "subscription" && (
+                    <p className="font-bold text-red-500 text-lg">
+                      -{item.sum} ед.
+                    </p>
+                  )}
                 </div>
               </div>
-            ))}
+            ))
+          ) : (
+            <p className="text-sm font-medium text-slate-600 text-center p-8">
+              История расходов пуста.
+            </p>
+          )}
         </TabsContent>
       </Tabs>
     </div>

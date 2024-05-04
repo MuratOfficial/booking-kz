@@ -32,7 +32,6 @@ export default function PaymentsAdminLayout({
       title: "Все",
       icon: <WalletCards size={17} />,
     },
-    { title: "Продление", icon: <RefreshCw size={17} /> },
     {
       title: "Модификаторы",
       icon: <Zap size={17} />,

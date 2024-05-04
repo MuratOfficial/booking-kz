@@ -9,9 +9,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "@/components/ui/use-toast";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import axios from "axios";
 import {
   ActivityIcon,
+  AlertCircle,
   ArrowUpDown,
   CalendarDays,
   CheckCircle2Icon,
@@ -31,17 +34,16 @@ import {
   XCircle,
   Zap,
 } from "lucide-react";
+import Link from "next/link";
 
 export type PaymentColumn = {
   id: string;
   user: string;
-  cost: number;
-  status: "success" | "fail" | "pending";
+  sum: string;
+  status: string;
   createdAt: string;
-  service: "modification" | "adding" | "subscription" | "prolong";
+  service: string;
 };
-
-const columnHelper = createColumnHelper<PaymentColumn>();
 
 export const columns: ColumnDef<PaymentColumn>[] = [
   {
@@ -81,13 +83,13 @@ export const columns: ColumnDef<PaymentColumn>[] = [
     ),
   },
   {
-    accessorKey: "cost",
+    accessorKey: "sum",
     header: "Сумма",
     enableHiding: true,
 
     cell: ({ row }) => (
       <div className="flex flex-row gap-1 w-fit items-center rounded-full border border-slate-900 py-0.5 px-2">
-        <p className="font-medium ">{row.getValue("cost")} ₸</p>
+        <p className="font-medium ">{row.getValue("sum")} ₸</p>
       </div>
     ),
   },
@@ -102,9 +104,15 @@ export const columns: ColumnDef<PaymentColumn>[] = [
             Успешно
           </span>
         )}
+        {row.getValue("status") === "cancel" && (
+          <span className="flex flex-row gap-x-1 items-center">
+            <XCircle className="w-4 stroke-gray-600" />
+            Отмена
+          </span>
+        )}
         {row.getValue("status") === "fail" && (
           <span className="flex flex-row gap-x-1 items-center">
-            <XCircle className="w-4 stroke-red-500" />
+            <AlertCircle className="w-4 stroke-red-500" />
             Ошибка
           </span>
         )}
@@ -139,7 +147,7 @@ export const columns: ColumnDef<PaymentColumn>[] = [
             Модификация
           </span>
         )}
-        {row.getValue("service") === "adding" && (
+        {row.getValue("service") === "refill" && (
           <span className="flex flex-row gap-x-1 items-center">
             <Coins className="w-4 " />
             Пополнение
@@ -151,12 +159,6 @@ export const columns: ColumnDef<PaymentColumn>[] = [
             Подписка
           </span>
         )}
-        {row.getValue("service") === "prolong" && (
-          <span className="flex flex-row gap-x-1 items-center">
-            <History className="w-4 " />
-            Продление
-          </span>
-        )}
       </div>
     ),
   },
@@ -166,6 +168,17 @@ export const columns: ColumnDef<PaymentColumn>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const PaymentColumn = row.original;
+      const onDelete = async (id: string) => {
+        try {
+          await axios.delete(`/api/admin/payments/${id}`);
+          toast({ description: "Платеж удален", variant: "default" });
+        } catch (error) {
+          toast({
+            description: "Упс... что-то пошло не так(",
+            variant: "destructive",
+          });
+        }
+      };
 
       return (
         <DropdownMenu>
@@ -183,8 +196,14 @@ export const columns: ColumnDef<PaymentColumn>[] = [
               Скопировать ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Редактировать</DropdownMenuItem>
-            <DropdownMenuItem>Удалить</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/payments/${PaymentColumn.id}`}>
+                Редактировать
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(PaymentColumn.id)}>
+              Удалить
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
