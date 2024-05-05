@@ -21,7 +21,7 @@ const BillingPage = async () => {
 
   return (
     <>
-      <div className="w-full grid grid-cols-4 gap-4 pb-4">
+      <div className="w-full grid grid-cols-4 gap-4 pb-4 ">
         <div className="w-full col-span-3 flex flex-col gap-2">
           <Points
             total={userData?.totalBalance || "0"}
@@ -29,13 +29,15 @@ const BillingPage = async () => {
           />
           <PaymentHistory data={userData?.payments} />
         </div>
-        <div className="w-full ">
-          <PaymentBar
-            refills={refills}
-            userId={userData?.id}
-            phone={userData?.phone}
-            email={userData?.email}
-          />
+        <div className="min-h-screen">
+          <div className=" sticky top-[12%]">
+            <PaymentBar
+              refills={refills}
+              userId={userData?.id}
+              phone={userData?.phone}
+              email={userData?.email}
+            />
+          </div>
         </div>
       </div>
     </>

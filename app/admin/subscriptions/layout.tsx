@@ -32,7 +32,12 @@ export default function PaymentsAdminLayout({
       title: "Все",
       icon: <Podcast size={17} />,
     },
-
+    {
+      path: "/admin/subscriptions/modifiers",
+      title: "Модификаторы",
+      icon: <Flame size={17} />,
+      isButton: true,
+    },
     {
       path: "/admin/subscriptions/new",
       title: "Добавить",

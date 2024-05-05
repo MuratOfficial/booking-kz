@@ -92,6 +92,7 @@ model Annoncement {
   companySubscription String?
   stats               Stats?
   moderatorText       String?
+  subsStatus          String?
 }
 
 type Filter {
@@ -105,6 +106,7 @@ model Payment {
   sum             String   @default("0")
   bonus           String?
   status          String   @default("pending")
+  paymentType     String?
   annoncementId   String?
   paymentUrl      String?
   transactionId   String?
@@ -223,6 +225,16 @@ model Subscription {
   color        String        @default("16a34a")
   icon         String        @default("1")
   annoncements Annoncement[]
+}
+
+model ModifierType {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  modifier      String?
+  modifierDesc  String?
+  modifierPrice String? @default("0")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Refill {

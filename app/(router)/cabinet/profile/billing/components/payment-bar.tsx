@@ -25,6 +25,8 @@ const RefillSchema = z.object({
   sum: z.string().optional(),
   bonus: z.string().optional(),
   userId: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().optional(),
 });
 
 type RefillValue = z.infer<typeof RefillSchema>;
@@ -36,7 +38,7 @@ interface PaymentBarProps {
   email?: string | null;
 }
 
-function PaymentBar({ refills, userId }: PaymentBarProps) {
+function PaymentBar({ refills, userId, phone, email }: PaymentBarProps) {
   const [picked, setPicked] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const { toast } = useToast();
@@ -47,6 +49,8 @@ function PaymentBar({ refills, userId }: PaymentBarProps) {
     resolver: zodResolver(RefillSchema),
     defaultValues: {
       userId: userId || "",
+      phone: phone || "",
+      email: email || "",
     },
   });
 

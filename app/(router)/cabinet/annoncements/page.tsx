@@ -17,7 +17,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { fetchSubscriptions } from "@/lib/fetchUserData";
+import { fetchSubscriptions, fetchUserData } from "@/lib/fetchUserData";
 import LinksList from "./components/links-list";
 
 export const metadata: Metadata = {
@@ -33,15 +33,14 @@ const AnnoncementsPage = async ({
     phase?: string;
   };
 }) => {
-  const session = await getServerSession(authOptions);
-  const userIdData = JSON.parse(JSON.stringify(session))?.user;
+  const user = await fetchUserData();
 
   const annoncements = await prismadb.annoncement.findMany({
     orderBy: {
       createdAt: "desc",
     },
     where: {
-      userId: userIdData?.id,
+      userId: user?.id,
       serviceType: searchParams?.serviceType,
       phase: searchParams?.phase,
     },
@@ -57,7 +56,7 @@ const AnnoncementsPage = async ({
       createdAt: "desc",
     },
     where: {
-      userId: userIdData?.id,
+      userId: user?.id,
     },
     include: {
       testimonials: true,
@@ -66,10 +65,12 @@ const AnnoncementsPage = async ({
     },
   });
 
+  const modifiers = await prismadb.modifierType.findMany();
+
   const subs = await fetchSubscriptions();
 
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-2 min-h-screen">
       <LinksList
         allCount={annoncementsOfFilter.length}
         rentCount={
@@ -89,14 +90,34 @@ const AnnoncementsPage = async ({
       />
       {annoncements.length > 0 ? (
         <div className=" flex flex-col gap-8">
-          {annoncements.slice(0, 3).map((el, ind) => (
-            <MyAnnoncementCard data={el} key={ind} subs={subs} />
+          {annoncements.slice(0, 3).map((el) => (
+            <MyAnnoncementCard
+              data={el}
+              modifiers={modifiers}
+              key={el.id}
+              subs={subs}
+              userId={user?.id}
+              totalBalance={user?.totalBalance}
+              bonusBalance={user?.bonusBalance}
+              email={user?.email}
+              phone={user?.phone}
+            />
           ))}
           {annoncements.length > 3 && (
             <Collapsible className="">
               <CollapsibleContent className="flex flex-col gap-8">
                 {annoncements.slice(3).map((el, ind) => (
-                  <MyAnnoncementCard data={el} key={ind} subs={subs} />
+                  <MyAnnoncementCard
+                    data={el}
+                    key={el.id}
+                    modifiers={modifiers}
+                    subs={subs}
+                    userId={user?.id}
+                    totalBalance={user?.totalBalance}
+                    bonusBalance={user?.bonusBalance}
+                    email={user?.email}
+                    phone={user?.phone}
+                  />
                 ))}
               </CollapsibleContent>
               <CollapsibleTrigger asChild>

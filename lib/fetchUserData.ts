@@ -96,9 +96,22 @@ export async function fetchUserData() {
     let totalBonus = 0;
     if (refreshPayment) {
       refreshPayment.forEach((payment) => {
-        totalSum += parseFloat(payment.sum);
-        if (payment.bonus) {
-          totalBonus += parseFloat(payment.bonus);
+        if (
+          payment.transactionType === "refill" ||
+          payment.transactionType === "refill-manual" ||
+          payment.transactionType === "bonus"
+        ) {
+          totalSum += parseFloat(payment.sum);
+          if (payment.bonus) {
+            totalBonus += parseFloat(payment.bonus);
+          }
+        } else {
+          if (payment.paymentType !== "direct") {
+            totalSum -= parseFloat(payment.sum);
+            if (payment.bonus) {
+              totalBonus -= parseFloat(payment.bonus);
+            }
+          }
         }
       });
     }
@@ -112,7 +125,11 @@ export async function fetchUserData() {
         bonusBalance: totalBonus.toString(),
       },
       include: {
-        payments: true,
+        payments: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
       },
     });
 
