@@ -7,32 +7,60 @@ import prismadb from "@/lib/prismadb";
 export async function POST(req: Request) {
   const dataObject = await req.json();
 
-  const { sum, type, userId, email, phone, id, subsId, subsDays } = dataObject;
+  const { sum, type, userId, email, phone, id, days, modifierType } =
+    dataObject;
 
   let adddays: Date = new Date();
-  adddays.setDate(adddays.getDate() + subsDays);
+  adddays.setDate(adddays.getDate() + days);
+
+  const modType: string = modifierType;
+  const lowerModType = modType.toLowerCase();
 
   if (type === "wallet") {
     const payment = await prismadb.payment.create({
       data: {
         userId: userId,
         sum: sum,
-        transactionType: "subscription",
+        transactionType: "modifier",
         status: "success",
         annoncementId: id,
       },
     });
+    if (lowerModType.includes("ячие")) {
+      await prismadb.annoncement.update({
+        where: {
+          id: id,
+        },
+        data: {
+          hotModifierDate: adddays,
 
-    await prismadb.annoncement.update({
-      where: {
-        id: id,
-      },
-      data: {
-        subscriptionId: subsId,
-        companySubscription: adddays.toLocaleDateString(),
-        subsStatus: payment.id,
-      },
-    });
+          hotModifierPaidStatus: payment.id,
+        },
+      });
+    }
+    if (lowerModType.includes("топ")) {
+      await prismadb.annoncement.update({
+        where: {
+          id: id,
+        },
+        data: {
+          topModifierDate: adddays,
+          topModifierPaidStatus: payment.id,
+        },
+      });
+    }
+    if (lowerModType.includes("очно")) {
+      await prismadb.annoncement.update({
+        where: {
+          id: id,
+        },
+        data: {
+          hurryModifierDate: adddays,
+          hurryModifierPaidStatus: payment.id,
+        },
+      });
+    }
+
     return Response.json({});
   }
   if (type === "bonus") {
@@ -40,22 +68,46 @@ export async function POST(req: Request) {
       data: {
         userId: userId,
         bonus: sum,
-        transactionType: "subscription",
+        transactionType: "modifier",
         status: "success",
         annoncementId: id,
       },
     });
+    if (lowerModType.includes("ячие")) {
+      await prismadb.annoncement.update({
+        where: {
+          id: id,
+        },
+        data: {
+          hotModifierDate: adddays,
 
-    await prismadb.annoncement.update({
-      where: {
-        id: id,
-      },
-      data: {
-        subscriptionId: subsId,
-        companySubscription: adddays.toLocaleDateString(),
-        subsStatus: payment.id,
-      },
-    });
+          hotModifierPaidStatus: payment.id,
+        },
+      });
+    }
+    if (lowerModType.includes("топ")) {
+      await prismadb.annoncement.update({
+        where: {
+          id: id,
+        },
+        data: {
+          topModifierDate: adddays,
+          topModifierPaidStatus: payment.id,
+        },
+      });
+    }
+    if (lowerModType.includes("очно")) {
+      await prismadb.annoncement.update({
+        where: {
+          id: id,
+        },
+        data: {
+          hurryModifierDate: adddays,
+          hurryModifierPaidStatus: payment.id,
+        },
+      });
+    }
+
     return Response.json({});
   }
 
@@ -64,28 +116,52 @@ export async function POST(req: Request) {
       data: {
         userId: userId,
         sum: sum,
-        transactionType: "subscription",
+        transactionType: "modifier",
         paymentType: "direct",
         annoncementId: id,
       },
     });
 
-    await prismadb.annoncement.update({
-      where: {
-        id: id,
-      },
-      data: {
-        subscriptionId: subsId,
-        companySubscription: adddays.toLocaleDateString(),
-        subsStatus: payment.id,
-      },
-    });
+    if (lowerModType.includes("ячие")) {
+      await prismadb.annoncement.update({
+        where: {
+          id: id,
+        },
+        data: {
+          hotModifierDate: adddays,
+
+          hotModifierPaidStatus: payment.id,
+        },
+      });
+    }
+    if (lowerModType.includes("топ")) {
+      await prismadb.annoncement.update({
+        where: {
+          id: id,
+        },
+        data: {
+          topModifierDate: adddays,
+          topModifierPaidStatus: payment.id,
+        },
+      });
+    }
+    if (lowerModType.includes("очно")) {
+      await prismadb.annoncement.update({
+        where: {
+          id: id,
+        },
+        data: {
+          hurryModifierDate: adddays,
+          hurryModifierPaidStatus: payment.id,
+        },
+      });
+    }
 
     const dataJson = JSON.stringify({
       amount: parseFloat(payment.sum),
       currency: "KZT",
       order_id: payment.id,
-      description: "subscription",
+      description: "modifier",
       payment_type: "pay",
       payment_method: "ecom",
       items: [
@@ -93,7 +169,7 @@ export async function POST(req: Request) {
           merchant_id: "8133b22d-e91b-4176-a1b8-9b7cd0e07cf4",
           service_id: "e7146794-14bc-4e0c-8831-0234937fbc3f",
           merchant_name: "маркетплейс",
-          name: "subscription",
+          name: "modifier",
 
           quantity: 1,
           amount_one_pcs: parseFloat(payment.sum),

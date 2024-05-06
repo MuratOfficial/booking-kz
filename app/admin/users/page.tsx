@@ -4,13 +4,26 @@ import { UserColumn, columns } from "./components/columns";
 import prismadb from "@/lib/prismadb";
 import { annoncements } from "@/lib/externalData";
 
-const AdminUsersPage = async () => {
+const AdminUsersPage = async ({
+  searchParams,
+}: {
+  searchParams: {
+    filter?: string;
+  };
+}) => {
+  const currentDate = new Date();
+
   const users = await prismadb.user.findMany({
     orderBy: {
       createdAt: "desc",
     },
     include: {
       annoncements: true,
+    },
+    where: {
+      createdAt:
+        searchParams.filter === "Новые" ? { gte: currentDate } : undefined,
+      isVerified: searchParams.filter === "Не валидирован" ? false : true,
     },
   });
 

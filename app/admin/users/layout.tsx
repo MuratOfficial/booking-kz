@@ -37,23 +37,12 @@ export default function UsersAdminLayout({
     { title: "Новые", icon: "New" },
 
     {
-      title: "С подпиской",
-      icon: <Crown size={17} />,
-      color: "text-yellow-400",
-      colorHover: "hover:text-yellow-400 group-hover:text-yellow-400",
-    },
-    {
-      title: "Заблокированные",
+      title: "Не валидирован",
       icon: <Lock size={17} />,
       color: "text-slate-800",
       colorHover: "hover:text-slate-800 group-hover:text-slate-800",
     },
-    {
-      title: "С модификатором",
-      icon: <Zap size={17} />,
-      color: "text-sky-500",
-      colorHover: "hover:text-sky-500 group-hover:text-sky-500",
-    },
+
     {
       path: "/admin/users/new",
       title: "Добавить",

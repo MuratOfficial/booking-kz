@@ -62,37 +62,44 @@ model Annoncement {
   chats        Chat[]
   analytics    Analytics[]
 
-  isChecked           Boolean       @default(false)
-  fizOrBiz            String?       @default("fiz")
-  roomNumber          Int
-  floor               Int?
-  floorFrom           Int?
-  repairType          String?
-  roofHeight          String?
-  yearBuild           Int?
-  priceNego           Boolean?
-  description         String
-  comeIn              String?
-  comeOut             String?
-  additionalFilters   Filter[]
-  areaSq              Int
-  price               Int
-  images              Image[]
-  phase               String        @default("активно")
-  phone               String?
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
-  subscription        Subscription? @relation(fields: [subscriptionId], references: [id])
-  subscriptionId      String?       @db.ObjectId
-  categoryType        String
-  serviceType         String
-  serviceTypeExt      String?
-  subscriptionDate    DateTime?
-  modificators        Modificator?
-  companySubscription String?
-  stats               Stats?
-  moderatorText       String?
-  subsStatus          String?
+  isChecked               Boolean       @default(false)
+  fizOrBiz                String?       @default("fiz")
+  roomNumber              Int
+  floor                   Int?
+  floorFrom               Int?
+  repairType              String?
+  roofHeight              String?
+  yearBuild               Int?
+  priceNego               Boolean?
+  description             String
+  comeIn                  String?
+  comeOut                 String?
+  additionalFilters       Filter[]
+  areaSq                  Int
+  price                   Int
+  images                  Image[]
+  phase                   String        @default("активно")
+  phone                   String?
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+  subscription            Subscription? @relation(fields: [subscriptionId], references: [id])
+  subscriptionId          String?       @db.ObjectId
+  categoryType            String
+  serviceType             String
+  serviceTypeExt          String?
+  subscriptionDate        DateTime?
+  modificators            Modificator?
+  topModifierDate         DateTime?
+  hotModifierDate         DateTime?
+  hurryModifierDate       DateTime?
+  modifierPaidStatus      String?
+  topModifierPaidStatus   String?
+  hotModifierPaidStatus   String?
+  hurryModifierPaidStatus String?
+  companySubscription     String?
+  stats                   Stats?
+  moderatorText           String?
+  subsStatus              String?
 }
 
 type Filter {
@@ -228,10 +235,15 @@ model Subscription {
 }
 
 model ModifierType {
-  id            String  @id @default(auto()) @map("_id") @db.ObjectId
-  modifier      String?
-  modifierDesc  String?
-  modifierPrice String? @default("0")
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  modifier       String?
+  modifierDesc   String?
+  modifierDays   Int?    @default(1)
+  modifierPrice  String? @default("0")
+  modifierDays2  Int?
+  modifierPrice2 String?
+  modifierDays3  Int?
+  modifierPrice3 String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

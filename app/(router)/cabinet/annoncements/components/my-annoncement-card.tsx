@@ -15,6 +15,7 @@ import {
   Building2,
   Check,
   CheckCircle2,
+  Clock,
   Coins,
   Copy,
   CreditCard,
@@ -40,6 +41,7 @@ import {
   Annoncement,
   Building,
   ModifierType,
+  Payment,
   Subscription,
   Testimonial,
 } from "@prisma/client";
@@ -85,6 +87,7 @@ interface MyAnnoncementCardProps {
   phone?: string | null;
   email?: string | null;
   modifiers?: ModifierType[] | null;
+  payments?: Payment[] | null;
 }
 
 const SubsSchema = z.object({
@@ -109,6 +112,7 @@ function MyAnnoncementCard({
   phone,
   email,
   modifiers,
+  payments,
 }: MyAnnoncementCardProps) {
   const [api, setApi] = React.useState<CarouselApi>();
 
@@ -173,6 +177,8 @@ function MyAnnoncementCard({
 
     return { totalCount, mobileCount };
   }
+
+  const currentDate = new Date();
 
   const overallAnalyticsView = overallCount(data.analytics);
 
@@ -360,7 +366,7 @@ function MyAnnoncementCard({
                     />
                   </svg>
                   <span className="font-bold text-slate-900 group-hover:text-transparent   text-base transition delay-100 duration-300">
-                    {overallRanking}
+                    {overallRanking.toFixed(1)}
                   </span>
                 </span>
               )}
@@ -468,8 +474,10 @@ function MyAnnoncementCard({
                   </div>
                 </div>
                 <div className="flex flex-row gap-x-1 items-center justify-center">
-                  {data?.modificators?.hotModifier !== 0 &&
-                    data?.modificators?.hotModifier && (
+                  {data?.hotModifierDate &&
+                    payments?.find((el) => el.id === data.hotModifierPaidStatus)
+                      ?.status !== "pending" &&
+                    data?.hotModifierDate > currentDate && (
                       <svg
                         width="20px"
                         height="20px"
@@ -537,8 +545,10 @@ function MyAnnoncementCard({
                       </svg>
                     )}
 
-                  {data?.modificators?.topModifier !== 0 &&
-                    data?.modificators?.topModifier && (
+                  {data?.topModifierDate &&
+                    payments?.find((el) => el.id === data.topModifierPaidStatus)
+                      ?.status !== "pending" &&
+                    data?.topModifierDate > currentDate && (
                       <svg
                         width="20px"
                         height="20px"
@@ -652,8 +662,11 @@ function MyAnnoncementCard({
                         ></path>
                       </svg>
                     )}
-                  {data?.modificators?.hurryModifier !== 0 &&
-                    data?.modificators?.hurryModifier && (
+                  {data?.hurryModifierDate &&
+                    payments?.find(
+                      (el) => el.id === data.hurryModifierPaidStatus
+                    )?.status !== "pending" &&
+                    data?.hurryModifierDate > currentDate && (
                       <Zap className="w-4 text-sky-500" />
                     )}
                 </div>
@@ -733,12 +746,28 @@ function MyAnnoncementCard({
       <div className=" w-full grid grid-cols-5 gap-4 p-4">
         <div className="col-span-4 w-full grid-rows-4 grid gap-4">
           <Modifiers
+            topMod={
+              data.topModifierDate && data?.topModifierDate > currentDate
+                ? true
+                : false
+            }
+            hotMod={
+              data.hotModifierDate && data?.hotModifierDate > currentDate
+                ? true
+                : false
+            }
+            hurryMod={
+              data.hurryModifierDate && data?.hurryModifierDate > currentDate
+                ? true
+                : false
+            }
             data={modifiers}
             userId={userId}
             totalBalance={totalBalance}
             bonusBalance={bonusBalance}
             phone={phone}
             email={email}
+            annoncementId={data.id}
           />
           <div className=" row-span-3 grid grid-cols-2 w-full gap-4">
             {data.subscriptionId && (
@@ -793,16 +822,24 @@ function MyAnnoncementCard({
                   <p className="text-slate-500 text-xs font-medium">
                     Действует до: {data.companySubscription}
                   </p>
-                  <span
-                    className="text-white rounded-xl flex flex-row gap-x-2 items-center py-2 px-4  text-sm "
-                    style={{
-                      backgroundColor: `#${
-                        subs?.find((el) => el.id === data.subscriptionId)?.color
-                      }`,
-                    }}
-                  >
-                    Подключено <Check className="w-4" />
-                  </span>
+                  {payments?.find((el) => el.id === data.subsStatus)?.status ===
+                  "success" ? (
+                    <span
+                      className="text-white rounded-xl flex flex-row gap-x-2 items-center py-2 px-4  text-sm "
+                      style={{
+                        backgroundColor: `#${
+                          subs?.find((el) => el.id === data.subscriptionId)
+                            ?.color
+                        }`,
+                      }}
+                    >
+                      Подключено <Check className="w-4" />
+                    </span>
+                  ) : (
+                    <span className="text-white bg-slate-500 w-fit rounded-xl flex flex-row gap-x-2 items-center py-2 px-4  text-sm ">
+                      Оплата не подтверждена <Clock className="w-4" />
+                    </span>
+                  )}
                 </div>
               </div>
             )}

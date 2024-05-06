@@ -10,6 +10,7 @@ const AdminModifiersPage = async () => {
     id: el.id,
     name: el.modifier || "",
     price: el.modifierPrice || "",
+    day: el.modifierDays || 1,
   }));
   return (
     <div className=" min-h-screen flex flex-col w-4/5 pl-4 pr-6 py-2 text-slate-900">

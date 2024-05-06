@@ -58,7 +58,7 @@ async function processPendingPayments(
           },
         });
 
-        console.log(decodedData);
+        console.log("updated payments");
       } catch (error) {
         console.log("[refill_GET]", error);
       }

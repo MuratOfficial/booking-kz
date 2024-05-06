@@ -19,6 +19,7 @@ export type ModifierColumn = {
   id: string;
   name: string;
   price: string;
+  day?: number;
 };
 
 // const columnHelper = createColumnHelper<ModifierColumn>();
@@ -67,6 +68,17 @@ export const columns: ColumnDef<ModifierColumn>[] = [
     cell: ({ row }) => (
       <div className="flex flex-row gap-1 w-fit items-center rounded-full border border-slate-900 py-0.5 px-2">
         <p className="font-medium ">{row.getValue("price")} ₸</p>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "day",
+    header: "Дни",
+    enableHiding: true,
+
+    cell: ({ row }) => (
+      <div className="flex flex-row gap-1 w-fit items-center rounded-full  ">
+        <p className="font-medium ">{row.getValue("day")} дн.</p>
       </div>
     ),
   },

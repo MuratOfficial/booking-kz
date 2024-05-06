@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import prismadb from "./prismadb";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import { fetchUserData } from "./fetchUserData";
+import { Payment } from "@prisma/client";
 
 export async function fetchAnnoncement(id: string) {
   const user = await fetchUserData();
@@ -90,16 +91,16 @@ export async function fetchAnnoncement(id: string) {
 }
 
 export async function fetchHotModifierAnnoncementsSell() {
+  const currentDate = new Date();
   try {
     const annoncement = await prismadb.annoncement.findMany({
       where: {
         serviceType: "Продажа",
-        modificators: {
-          is: {
-            hotModifier: {
-              gt: 0,
-            },
-          },
+        phase: {
+          in: ["активно"],
+        },
+        hotModifierDate: {
+          gt: currentDate,
         },
       },
       include: {
@@ -115,16 +116,16 @@ export async function fetchHotModifierAnnoncementsSell() {
 }
 
 export async function fetchHotModifierAnnoncementsRent() {
+  const currentDate = new Date();
   try {
     const annoncement = await prismadb.annoncement.findMany({
       where: {
         serviceType: "Аренда",
-        modificators: {
-          is: {
-            hotModifier: {
-              gt: 0,
-            },
-          },
+        phase: {
+          in: ["активно"],
+        },
+        hotModifierDate: {
+          gt: currentDate,
         },
       },
       include: {

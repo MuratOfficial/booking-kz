@@ -101,6 +101,7 @@ const AnnoncementsPage = async ({
               bonusBalance={user?.bonusBalance}
               email={user?.email}
               phone={user?.phone}
+              payments={user?.payments}
             />
           ))}
           {annoncements.length > 3 && (
@@ -117,6 +118,7 @@ const AnnoncementsPage = async ({
                     bonusBalance={user?.bonusBalance}
                     email={user?.email}
                     phone={user?.phone}
+                    payments={user?.payments}
                   />
                 ))}
               </CollapsibleContent>

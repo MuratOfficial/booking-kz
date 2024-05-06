@@ -1,3 +1,4 @@
+"use client";
 import { ModifierType } from "@prisma/client";
 import {
   ArrowBigUp,
@@ -19,6 +20,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
@@ -31,25 +38,29 @@ import Link from "next/link";
 
 interface ModifiersProps {
   data?: ModifierType[] | null;
+  annoncementId?: string | undefined;
   userId?: string | undefined | null;
   totalBalance?: string | undefined | null;
   bonusBalance?: string | undefined | null;
   phone?: string | null;
   email?: string | null;
+  topMod?: boolean;
+  hotMod?: boolean;
+  hurryMod?: boolean;
 }
 
-const SubsSchema = z.object({
+const ModifierSchema = z.object({
   sum: z.string().optional(),
   type: z.string().optional(),
   userId: z.string().optional(),
   phone: z.string().optional(),
   email: z.string().optional(),
   id: z.string().optional(),
-  subsId: z.string().optional(),
-  subsDays: z.number().int().optional(),
+  days: z.number().int().optional(),
+  modifierType: z.string().optional(),
 });
 
-type SubsValue = z.infer<typeof SubsSchema>;
+type ModifierValue = z.infer<typeof ModifierSchema>;
 
 function Modifiers({
   data,
@@ -58,30 +69,34 @@ function Modifiers({
   bonusBalance,
   phone,
   email,
+  topMod,
+  hotMod,
+  hurryMod,
+  annoncementId,
 }: ModifiersProps) {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
   const { toast } = useToast();
 
-  const form = useForm<SubsValue>({
-    resolver: zodResolver(SubsSchema),
+  const form = useForm<ModifierValue>({
+    resolver: zodResolver(ModifierSchema),
     defaultValues: {
-      // userId: userId || "",
-      // phone: phone || "",
-      // email: email || "",
-      // id: data.id,
+      userId: userId || "",
+      phone: phone || "",
+      email: email || "",
+      id: annoncementId,
     },
   });
 
   const [open, setOpen] = React.useState(false);
   const [price, setPrice] = React.useState(0);
 
-  async function onSubmit(formData: SubsValue) {
+  async function onSubmit(formData: ModifierValue) {
     try {
       setLoading(true);
 
       const paymentUrl = await axios.post(
-        `/api/cabinet/payment/subs`,
+        `/api/cabinet/payment/modifier`,
         formData
       );
 
@@ -94,7 +109,7 @@ function Modifiers({
           router.push(paymentUrl?.data);
         } else {
           toast({
-            title: "Подписка успешно оформлена",
+            title: "Модификатор успешно добавлен",
           });
         }
       }, 500);
@@ -109,32 +124,324 @@ function Modifiers({
   const [picked, setPicked] = React.useState("");
   const [leftBalance, setLeftBalance] = React.useState(0);
   const [leftBonus, setLeftBonus] = React.useState(0);
+  const [modifierName, setModifierName] = React.useState("");
+  const [modifierDay, setModifierDay] = React.useState(0);
+
+  React.useEffect(() => {
+    form.setValue("days", modifierDay);
+    form.setValue("modifierType", modifierName);
+  }, [modifierDay, modifierName]);
 
   return (
     <>
       {" "}
       <div className=" grid grid-cols-3 gap-2">
-        <button
-          onClick={() => {
-            // setLeftBalance(
-            //   parseInt(totalBalance || "0") - el.price
-            // );
-            // setLeftBonus(parseInt(bonusBalance || "0") - el.price);
-            // form.setValue("subsId", el.id);
-            // form.setValue("subsDays", el.days);
-            // setPrice(el.price);
-            setOpen(true);
-          }}
-          className="rounded-full px-3 py-3 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-red-500 opacity-70 hover:opacity-100"
-        >
-          <Flame className="w-5" /> В Горячие
-        </button>
-        <button className="rounded-full px-3 py-3 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-amber-500 opacity-70 hover:opacity-100">
-          <ArrowBigUp className="w-5" /> В ТОП
-        </button>
-        <button className="rounded-full px-3 py-3 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-sky-500 opacity-70 hover:opacity-100">
-          <Zap className="w-5" /> Срочно
-        </button>
+        <Popover>
+          <PopoverTrigger
+            disabled={hotMod}
+            asChild
+            className="data-[state=open]:opacity-100 opacity-70 hover:opacity-100"
+          >
+            <button className="rounded-full px-3 py-3 text-sm   transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-red-500 ">
+              <Flame className="w-5" /> В Горячие
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="bg-red-500 p-0 w-fit rounded-xl text-neutral-50 text-sm font-medium">
+            <button
+              className="px-3 py-2.5 rounded-xl hover:bg-red-700"
+              onClick={() => {
+                if (
+                  data &&
+                  data[0].modifierPrice &&
+                  data[0].modifier &&
+                  data[0].modifierDays
+                ) {
+                  setLeftBalance(
+                    parseInt(totalBalance || "0") -
+                      parseInt(data[0]?.modifierPrice)
+                  );
+                  setLeftBonus(
+                    parseInt(bonusBalance || "0") -
+                      parseInt(data[0]?.modifierPrice)
+                  );
+                  setModifierName(data[0]?.modifier);
+                  setModifierDay(data[0]?.modifierDays);
+
+                  setPrice(parseInt(data[0]?.modifierPrice));
+                }
+
+                setOpen(true);
+              }}
+            >
+              {data && data[0].modifierDays} день
+            </button>
+            {data && data[0].modifierDays2 && data[0].modifierDays2 > 0 && (
+              <button
+                onClick={() => {
+                  if (
+                    data &&
+                    data[0].modifierPrice2 &&
+                    data[0].modifier &&
+                    data[0].modifierDays2
+                  ) {
+                    setLeftBalance(
+                      parseInt(totalBalance || "0") -
+                        parseInt(data[0]?.modifierPrice2)
+                    );
+                    setLeftBonus(
+                      parseInt(bonusBalance || "0") -
+                        parseInt(data[0]?.modifierPrice2)
+                    );
+                    setModifierName(data[0]?.modifier);
+                    setModifierDay(data[0]?.modifierDays2);
+
+                    setPrice(parseInt(data[0]?.modifierPrice2));
+                  }
+
+                  setOpen(true);
+                }}
+                className="px-3 py-2.5 rounded-xl hover:bg-red-700"
+              >
+                {data && data[0].modifierDays2} дней
+              </button>
+            )}
+            {data && data[0].modifierDays3 && data[0].modifierDays3 > 0 && (
+              <button
+                className="px-3 py-2.5 rounded-xl hover:bg-red-700"
+                onClick={() => {
+                  if (
+                    data &&
+                    data[0].modifierPrice3 &&
+                    data[0].modifier &&
+                    data[0].modifierDays3
+                  ) {
+                    setLeftBalance(
+                      parseInt(totalBalance || "0") -
+                        parseInt(data[0]?.modifierPrice3)
+                    );
+                    setLeftBonus(
+                      parseInt(bonusBalance || "0") -
+                        parseInt(data[0]?.modifierPrice3)
+                    );
+                    setModifierName(data[0]?.modifier);
+                    setModifierDay(data[0]?.modifierDays3);
+
+                    setPrice(parseInt(data[0]?.modifierPrice3));
+                  }
+
+                  setOpen(true);
+                }}
+              >
+                {data && data[0].modifierDays3} дней
+              </button>
+            )}
+          </PopoverContent>
+        </Popover>
+
+        <Popover>
+          <PopoverTrigger
+            asChild
+            disabled={topMod}
+            className="data-[state=open]:opacity-100 opacity-70 hover:opacity-100"
+          >
+            <button className="rounded-full px-3 py-3 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-amber-500 opacity-70 hover:opacity-100">
+              <ArrowBigUp className="w-5" /> В ТОП
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="bg-amber-500 p-0 w-fit rounded-xl text-neutral-50 text-sm font-medium">
+            <button
+              className="px-3 py-2.5 rounded-xl hover:bg-amber-700"
+              onClick={() => {
+                if (
+                  data &&
+                  data[1].modifierPrice &&
+                  data[1].modifier &&
+                  data[1].modifierDays
+                ) {
+                  setLeftBalance(
+                    parseInt(totalBalance || "0") -
+                      parseInt(data[1]?.modifierPrice)
+                  );
+                  setLeftBonus(
+                    parseInt(bonusBalance || "0") -
+                      parseInt(data[1]?.modifierPrice)
+                  );
+                  setModifierName(data[1]?.modifier);
+                  setModifierDay(data[1]?.modifierDays);
+
+                  setPrice(parseInt(data[1]?.modifierPrice));
+                }
+
+                setOpen(true);
+              }}
+            >
+              {data && data[1].modifierDays} день
+            </button>
+            {data && data[1].modifierDays2 && data[1].modifierDays2 > 0 && (
+              <button
+                className="px-3 py-2.5 rounded-xl hover:bg-amber-700"
+                onClick={() => {
+                  if (
+                    data &&
+                    data[1].modifierPrice3 &&
+                    data[1].modifier &&
+                    data[1].modifierDays3
+                  ) {
+                    setLeftBalance(
+                      parseInt(totalBalance || "0") -
+                        parseInt(data[1]?.modifierPrice3)
+                    );
+                    setLeftBonus(
+                      parseInt(bonusBalance || "0") -
+                        parseInt(data[1]?.modifierPrice3)
+                    );
+                    setModifierName(data[1]?.modifier);
+                    setModifierDay(data[1]?.modifierDays3);
+
+                    setPrice(parseInt(data[1]?.modifierPrice3));
+                  }
+
+                  setOpen(true);
+                }}
+              >
+                {data && data[1].modifierDays2} дней
+              </button>
+            )}
+            {data && data[1].modifierDays3 && data[1].modifierDays3 > 0 && (
+              <button
+                className="px-3 py-2.5 rounded-xl hover:bg-amber-700"
+                onClick={() => {
+                  if (
+                    data &&
+                    data[1].modifierPrice3 &&
+                    data[1].modifier &&
+                    data[1].modifierDays3
+                  ) {
+                    setLeftBalance(
+                      parseInt(totalBalance || "0") -
+                        parseInt(data[1]?.modifierPrice3)
+                    );
+                    setLeftBonus(
+                      parseInt(bonusBalance || "0") -
+                        parseInt(data[1]?.modifierPrice3)
+                    );
+                    setModifierName(data[1]?.modifier);
+                    setModifierDay(data[1]?.modifierDays3);
+
+                    setPrice(parseInt(data[1]?.modifierPrice3));
+                  }
+
+                  setOpen(true);
+                }}
+              >
+                {data && data[1].modifierDays3} дней
+              </button>
+            )}
+          </PopoverContent>
+        </Popover>
+
+        <Popover>
+          <PopoverTrigger
+            disabled={hurryMod}
+            asChild
+            className="data-[state=open]:opacity-100 opacity-70 hover:opacity-100"
+          >
+            <button className="rounded-full px-3 py-3 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-sky-500 opacity-70 hover:opacity-100">
+              <Zap className="w-5" /> Срочно
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="bg-sky-500 p-0 w-fit rounded-xl text-neutral-50 text-sm font-medium">
+            <button
+              className="px-3 py-2.5 rounded-xl hover:bg-sky-700"
+              onClick={() => {
+                if (
+                  data &&
+                  data[2].modifierPrice &&
+                  data[2].modifier &&
+                  data[2].modifierDays
+                ) {
+                  setLeftBalance(
+                    parseInt(totalBalance || "0") -
+                      parseInt(data[2]?.modifierPrice)
+                  );
+                  setLeftBonus(
+                    parseInt(bonusBalance || "0") -
+                      parseInt(data[2]?.modifierPrice)
+                  );
+                  setModifierName(data[2]?.modifier);
+                  setModifierDay(data[2]?.modifierDays);
+
+                  setPrice(parseInt(data[2]?.modifierPrice));
+                }
+
+                setOpen(true);
+              }}
+            >
+              {data && data[2].modifierDays} день
+            </button>
+            {data && data[2].modifierDays2 && data[2].modifierDays2 > 0 && (
+              <button
+                className="px-3 py-2.5 rounded-xl hover:bg-sky-700"
+                onClick={() => {
+                  if (
+                    data &&
+                    data[2].modifierPrice2 &&
+                    data[2].modifier &&
+                    data[2].modifierDays2
+                  ) {
+                    setLeftBalance(
+                      parseInt(totalBalance || "0") -
+                        parseInt(data[2]?.modifierPrice2)
+                    );
+                    setLeftBonus(
+                      parseInt(bonusBalance || "0") -
+                        parseInt(data[2]?.modifierPrice2)
+                    );
+                    setModifierName(data[2]?.modifier);
+                    setModifierDay(data[2]?.modifierDays2);
+
+                    setPrice(parseInt(data[2]?.modifierPrice2));
+                  }
+
+                  setOpen(true);
+                }}
+              >
+                {data && data[2].modifierDays2} дней
+              </button>
+            )}
+
+            {data && data[2].modifierDays3 && data[2].modifierDays3 > 0 && (
+              <button
+                className="px-3 py-2.5 rounded-xl hover:bg-sky-700"
+                onClick={() => {
+                  if (
+                    data &&
+                    data[2].modifierPrice3 &&
+                    data[2].modifier &&
+                    data[2].modifierDays3
+                  ) {
+                    setLeftBalance(
+                      parseInt(totalBalance || "0") -
+                        parseInt(data[2]?.modifierPrice3)
+                    );
+                    setLeftBonus(
+                      parseInt(bonusBalance || "0") -
+                        parseInt(data[2]?.modifierPrice3)
+                    );
+                    setModifierName(data[2]?.modifier);
+                    setModifierDay(data[2]?.modifierDays3);
+
+                    setPrice(parseInt(data[2]?.modifierPrice3));
+                  }
+
+                  setOpen(true);
+                }}
+              >
+                {data[2].modifierDays3} дней
+              </button>
+            )}
+          </PopoverContent>
+        </Popover>
       </div>
       <Dialog onOpenChange={setOpen} open={open}>
         <DialogContent className=" max-w-fit min-w-36 rounded-lg">
@@ -143,6 +450,9 @@ function Modifiers({
               Выберите способ оплаты
             </DialogTitle>
           </DialogHeader>
+          <p className="text-sm text-slate-600 font-medium items-center flex flex-row gap-x-1">
+            Модификатор - {modifierName} - {modifierDay} дн.
+          </p>
           <div className="w-full gap-4 grid grid-cols-3">
             <div
               className={cn(

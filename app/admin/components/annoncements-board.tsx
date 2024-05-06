@@ -3,10 +3,14 @@ import Image from "next/image";
 import React from "react";
 import AnnoncementBoardCard from "./annoncement-board-card";
 import { annoncements } from "@/lib/externalData";
+import prismadb from "@/lib/prismadb";
+import { Annoncement } from "@prisma/client";
 
-function AnnoncementsBoard() {
-  const annoncementBoardCards = annoncements.slice(0, 6);
+interface AnnoncementBoardProps {
+  annoncementBoardCards: Annoncement[] | null;
+}
 
+function AnnoncementsBoard({ annoncementBoardCards }: AnnoncementBoardProps) {
   return (
     <div className="col-span-2 h-full flex flex-col gap-2">
       <div className="flex flex-row justify-between items-center text-slate-600">
@@ -17,9 +21,9 @@ function AnnoncementsBoard() {
       </div>
 
       <div className="w-full h-full  bg-white rounded-xl p-4 flex flex-col gap-2">
-        {/* {annoncementBoardCards.map((el, ind) => (
+        {annoncementBoardCards?.map((el, ind) => (
           <AnnoncementBoardCard card={el} key={ind} />
-        ))} */}
+        ))}
       </div>
     </div>
   );

@@ -61,6 +61,11 @@ import { useParams, useRouter } from "next/navigation";
 const modifierFormSchema = z.object({
   name: z.string({ required_error: "Напишите название" }),
   price: z.string({ required_error: "Укажите стоимость" }),
+  day1: z.coerce.number().int().optional(),
+  price2: z.string({ required_error: "Укажите стоимость" }),
+  day2: z.coerce.number().int().optional(),
+  price3: z.string({ required_error: "Укажите стоимость" }),
+  day3: z.coerce.number().int().optional(),
 
   description: z.string().max(360, "Не Должно превышать 360 знаков").optional(),
 });
@@ -77,7 +82,11 @@ function AdminModifierForm({ initialData }: AdminModifierFormProps) {
     defaultValues: {
       price: initialData?.modifierPrice || "0",
       name: initialData?.modifier || "",
-
+      day1: initialData?.modifierDays || 0,
+      day2: initialData?.modifierDays2 || 0,
+      day3: initialData?.modifierDays3 || 0,
+      price2: initialData?.modifierPrice2 || "",
+      price3: initialData?.modifierPrice3 || "",
       description: initialData?.modifierDesc || "",
     },
   });
@@ -149,7 +158,132 @@ function AdminModifierForm({ initialData }: AdminModifierFormProps) {
               name="price"
               render={({ field }) => (
                 <FormItem className="flex flex-col ">
-                  <p className="text-base font-semibold">Стоимость</p>
+                  <p className="text-base font-semibold">Стоимость 1</p>
+                  <FormItem className="flex flex-col">
+                    <FormControl>
+                      <div className="flex flex-row gap-x-2 items-center relative w-fit">
+                        <Input
+                          className="w-44"
+                          type="number"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                        <p className="absolute right-2 text-sm font-medium text-slate-600">
+                          ₸
+                        </p>
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="day1"
+              render={({ field }) => (
+                <FormItem className="flex flex-col ">
+                  <p className="text-base font-semibold">Количество дней 1</p>
+                  <FormItem className="flex flex-col">
+                    <FormControl>
+                      <div className="flex flex-row gap-x-2 items-center relative w-fit">
+                        <Input
+                          className="w-44"
+                          type="number"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                        <p className="absolute right-2 text-sm font-medium text-slate-600">
+                          ₸
+                        </p>
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="price2"
+              render={({ field }) => (
+                <FormItem className="flex flex-col ">
+                  <p className="text-base font-semibold">Стоимость 2</p>
+                  <FormItem className="flex flex-col">
+                    <FormControl>
+                      <div className="flex flex-row gap-x-2 items-center relative w-fit">
+                        <Input
+                          className="w-44"
+                          type="number"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                        <p className="absolute right-2 text-sm font-medium text-slate-600">
+                          ₸
+                        </p>
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="day2"
+              render={({ field }) => (
+                <FormItem className="flex flex-col ">
+                  <p className="text-base font-semibold">Количество дней 2</p>
+                  <FormItem className="flex flex-col">
+                    <FormControl>
+                      <div className="flex flex-row gap-x-2 items-center relative w-fit">
+                        <Input
+                          className="w-44"
+                          type="number"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                        <p className="absolute right-2 text-sm font-medium text-slate-600">
+                          ₸
+                        </p>
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="price3"
+              render={({ field }) => (
+                <FormItem className="flex flex-col ">
+                  <p className="text-base font-semibold">Стоимость 3</p>
+                  <FormItem className="flex flex-col">
+                    <FormControl>
+                      <div className="flex flex-row gap-x-2 items-center relative w-fit">
+                        <Input
+                          className="w-44"
+                          type="number"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                        <p className="absolute right-2 text-sm font-medium text-slate-600">
+                          ₸
+                        </p>
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="day3"
+              render={({ field }) => (
+                <FormItem className="flex flex-col ">
+                  <p className="text-base font-semibold">Количество дней 3</p>
                   <FormItem className="flex flex-col">
                     <FormControl>
                       <div className="flex flex-row gap-x-2 items-center relative w-fit">

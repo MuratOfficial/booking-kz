@@ -3,10 +3,29 @@ import React from "react";
 import { PaymentColumn, columns } from "./components/columns";
 import prismadb from "@/lib/prismadb";
 
-async function AdminPaymentsPage() {
+async function AdminPaymentsPage({
+  searchParams,
+}: {
+  searchParams: {
+    filter?: string;
+  };
+}) {
   const payments = await prismadb.payment.findMany({
     include: {
       user: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    where: {
+      transactionType:
+        searchParams.filter === "Модификаторы"
+          ? "modifier"
+          : searchParams.filter === "Подписки"
+          ? "subscription"
+          : searchParams.filter === "Пополнение"
+          ? "refill"
+          : undefined,
     },
   });
   const data: PaymentColumn[] = payments.map((el) => ({

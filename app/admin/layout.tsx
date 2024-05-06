@@ -27,6 +27,7 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen flex flex-col justify-between">
       <AdminNav />
+
       {children}
       <AdminFooter />
     </div>

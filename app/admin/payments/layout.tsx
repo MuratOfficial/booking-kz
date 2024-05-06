@@ -3,6 +3,7 @@ import SideNavAdmin from "../components/side-nav-admin";
 import {
   Archive,
   CheckCircle2,
+  Coins,
   Crown,
   Flame,
   HelpCircle,
@@ -40,7 +41,10 @@ export default function PaymentsAdminLayout({
       title: "Подписки",
       icon: <Crown size={17} />,
     },
-
+    {
+      title: "Пополнение",
+      icon: <Coins size={17} />,
+    },
     {
       path: "/admin/payments/new",
       title: "Добавить",

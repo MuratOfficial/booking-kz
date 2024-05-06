@@ -3,13 +3,41 @@ import React from "react";
 import { AnnoncementColumn, columns } from "./components/columns";
 import prismadb from "@/lib/prismadb";
 
-const AdminAnnoncementsPage = async () => {
+const AdminAnnoncementsPage = async ({
+  searchParams,
+}: {
+  searchParams: {
+    filter?: string;
+  };
+}) => {
+  const currentDate = new Date();
+
   const annoncements = await prismadb.annoncement.findMany({
     orderBy: {
       createdAt: "desc",
     },
     include: {
       user: true,
+    },
+    where: {
+      createdAt:
+        searchParams.filter === "Новые" ? { gte: currentDate } : undefined,
+      phase:
+        searchParams.filter === "В архиве"
+          ? {
+              in: ["блокировано", "проверка"],
+            }
+          : searchParams.filter === "Не проверенные"
+          ? "проверка"
+          : searchParams.filter === "Проверенные"
+          ? "активно"
+          : undefined,
+      hotModifierDate:
+        searchParams.filter === "Горячие"
+          ? {
+              gte: currentDate,
+            }
+          : undefined,
     },
   });
 

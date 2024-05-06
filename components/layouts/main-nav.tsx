@@ -236,6 +236,7 @@ function MainNav({ userData }: MainNavProps) {
             onMouseOver={() => setOpenPopover("open1")}
             onMouseOut={() => setOpenPopover("")}
             onBlur={() => setOpenPopover("")}
+            onFocusOutside={() => setOpenPopover("")}
           >
             <ul className="w-full text-neutral-100">
               {menuList1.map((el, ind) => (
@@ -289,6 +290,7 @@ function MainNav({ userData }: MainNavProps) {
             onMouseOver={() => setOpenPopover("open2")}
             onMouseOut={() => setOpenPopover("")}
             // onBlur={() => setOpenPopover("")}
+            onFocusOutside={() => setOpenPopover("")}
           >
             <ul className="w-full text-neutral-100">
               {menuList2.map((el, ind) => (
@@ -380,7 +382,7 @@ function MainNav({ userData }: MainNavProps) {
             onMouseOver={() => setOpenPopover("open6")}
             onMouseLeave={() => setOpenPopover("")}
             // onBlur={() => setOpenPopover("")}
-          >
+onFocusOutside={() => setOpenPopover("")}          >
             <p className="text-neutral-100 text-sm font-semibold text-center">
               Авторизуйтесь чтобы увидеть{" "}
             </p>
@@ -425,6 +427,7 @@ function MainNav({ userData }: MainNavProps) {
             onMouseOver={() => setOpenPopover("open3")}
             onMouseOut={() => setOpenPopover("")}
             // onBlur={() => setOpenPopover("")}
+            onFocusOutside={() => setOpenPopover("")}
           >
             <p className="text-neutral-100 text-sm font-semibold text-center">
               Авторизуйтесь чтобы увидеть{" "}
@@ -485,6 +488,7 @@ function MainNav({ userData }: MainNavProps) {
             onMouseOver={() => setOpenPopover("open4")}
             onMouseOut={() => setOpenPopover("")}
             // onBlur={() => setOpenPopover("")}
+            onFocusOutside={() => setOpenPopover("")}
           >
             <p className="text-neutral-100 text-sm font-semibold text-center">
               Авторизуйтесь чтобы увидеть{" "}
@@ -534,6 +538,7 @@ function MainNav({ userData }: MainNavProps) {
             onMouseOver={() => setOpenPopover("open5")}
             onMouseLeave={() => setOpenPopover("")}
             // onBlur={() => setOpenPopover("")}
+            onFocusOutside={() => setOpenPopover("")}
           >
             <p className="text-neutral-100 text-sm font-semibold text-center">
               Авторизуйтесь чтобы увидеть{" "}
