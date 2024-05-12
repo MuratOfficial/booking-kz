@@ -390,6 +390,9 @@ const AnnoncementPage = async ({
               <p className="font-normal text-lg opacity-80">
                 {annoncement?.serviceTypeExt?.toLowerCase()}
               </p>
+              {annoncement?.priceNego && (
+                <p className="font-normal text-lg opacity-80">Торг есть</p>
+              )}
             </div>
             <p className="mt-4 font-medium">
               {annoncement?.roomNumber && (

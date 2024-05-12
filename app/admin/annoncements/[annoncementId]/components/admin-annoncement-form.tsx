@@ -1533,25 +1533,27 @@ function AdminAnnoncementForm({
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="priceNego"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row gap-x-2 items-center ">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        className="bg-slate-100 shadow-inner mt-2"
-                      />
-                    </FormControl>
-                    <p className="text-sm font-medium text-slate-700 ">
-                      Договорная
-                    </p>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
+              {serviceTypeState === "Продажа" && (
+                <FormField
+                  control={form.control}
+                  name="priceNego"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row gap-x-2 items-center ">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="bg-slate-100 shadow-inner mt-2"
+                        />
+                      </FormControl>
+                      <p className="text-sm font-medium text-slate-700 ">
+                        Торг есть
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">

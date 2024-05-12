@@ -661,6 +661,12 @@ function Filter({ allcount, buildings }: FilterProps) {
               ₸
             </span>
           </div>
+          {searchParams.get("serviceType") === "Продажа" && (
+            <div className="w-fit gap-2 flex flex-row items-center text-sm font-semibold">
+              <Checkbox className="bg-slate-100 shadow-inner " />
+              Торг
+            </div>
+          )}
         </div>
         <div className="flex flex-row items-center gap-2 flex-wrap">
           <div className="w-40 h-10 relative">
