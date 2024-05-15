@@ -128,30 +128,32 @@ const FilterPage = async ({
 
   return (
     <>
-      {searchParams?.map === "on" && searchParams?.city ? (
-        <ScreenMap annoncements={annoncements} />
-      ) : (
-        <>
-          <Suspense
-            fallback={
-              <Skeleton className=" w-full h-72 rounded-2xl bg-blue-300" />
-            }
-          >
-            <Filter allcount={annoncements.length} buildings={buildings} />
-          </Suspense>
+      <>
+        <Suspense
+          fallback={
+            <Skeleton className=" w-full h-72 rounded-2xl bg-blue-300" />
+          }
+        >
+          <Filter allcount={annoncements.length} buildings={buildings} />
+        </Suspense>
 
-          <div className="w-full grid grid-cols-7 gap-4">
-            <ShownAnnoncements annoncements={annoncements} />
-
-            <div className="col-span-2 bg-white rounded-xl h-fit w-full flex flex-col gap-4 items-center py-2 px-3">
-              <h1 className="font-semibold">Горячие предложения</h1>
-              {hotAnnoncements.slice(0, 16).map((el, keyid) => (
-                <HotSuggestCard data={el} key={keyid} />
-              ))}
-            </div>
+        <div className="w-full grid grid-cols-7 gap-4">
+          <div className="col-span-5">
+            {searchParams?.map === "on" && searchParams?.city ? (
+              <ScreenMap annoncements={annoncements} />
+            ) : (
+              <ShownAnnoncements annoncements={annoncements} />
+            )}
           </div>
-        </>
-      )}
+
+          <div className="col-span-2 bg-white rounded-xl h-fit w-full flex flex-col gap-4 items-center py-2 px-3">
+            <h1 className="font-semibold">Горячие предложения</h1>
+            {hotAnnoncements.slice(0, 16).map((el, keyid) => (
+              <HotSuggestCard data={el} key={keyid} />
+            ))}
+          </div>
+        </div>
+      </>
     </>
   );
 };

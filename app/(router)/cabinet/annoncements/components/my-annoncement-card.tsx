@@ -809,7 +809,7 @@ function MyAnnoncementCard({
       )}
 
       <div className=" w-full grid grid-cols-5 gap-4 p-4">
-        <div className="col-span-4 w-full grid-rows-4 grid gap-4">
+        <div className="col-span-4 w-full flex flex-col gap-4">
           <Modifiers
             topMod={
               data.topModifierDate && data?.topModifierDate > currentDate
@@ -842,7 +842,7 @@ function MyAnnoncementCard({
                     subs?.find((el) => el.id === data.subscriptionId)?.color
                   }`,
                 }}
-                className="border-2  rounded-xl flex flex-col justify-between px-4 py-2"
+                className="border-2 aspect-[16/7]  rounded-xl flex flex-col justify-between px-4 py-2"
               >
                 <div className="flex flex-row gap-x-2 justify-center items-center w-full">
                   <span
@@ -867,13 +867,13 @@ function MyAnnoncementCard({
                     {subs?.find((el) => el.id === data.subscriptionId)?.name}
                   </p>
                 </div>
-                <p className="text-slate-800 text-sm text-center font-medium">
+                <p className="text-slate-800 text-sm text-center font-medium line-clamp-5">
                   {
                     subs?.find((el) => el.id === data.subscriptionId)
                       ?.description
                   }
                 </p>
-                <div className="flex flex-row justify-between items-center ">
+                <div className="flex flex-row justify-between items-center flex-wrap gap-2 ">
                   <p
                     className=" font-semibold text-2xl"
                     style={{
@@ -914,7 +914,7 @@ function MyAnnoncementCard({
                   key={ind}
                   style={{ borderColor: `#${el.color}` }}
                   className={cn(
-                    "border-2  rounded-xl flex flex-col justify-between px-4 py-2"
+                    "border-2 aspect-[16/7]  rounded-xl flex flex-col justify-between px-4 py-2"
                   )}
                 >
                   <div className="flex flex-row gap-x-2 items-center justify-center">
@@ -925,7 +925,7 @@ function MyAnnoncementCard({
 
                     <p className=" font-semibold text-lg">{el.name}</p>
                   </div>
-                  <p className="text-slate-800 text-sm text-center font-medium">
+                  <p className="text-slate-800 text-sm text-center font-medium line-clamp-5">
                     {el.description}
                   </p>
                   <div className="flex flex-row justify-between items-center ">
@@ -1169,17 +1169,17 @@ function MyAnnoncementCard({
             </div> */}
           </div>
         </div>
-        <div className=" grid grid-rows-4 gap-2">
+        <div className=" flex flex-col gap-2">
           <NewPriceForm id={data.id} initialPrice={data.price} />
           <button
             onClick={() => router.push(`/cabinet/annoncements/${data.id}`)}
-            className=" rounded-xl px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200"
+            className=" rounded-xl px-3 py-4 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200"
           >
             Редактировать
           </button>
           <button
             onClick={() => router.push(`/cabinet/annoncements/${data.id}`)}
-            className=" rounded-xl px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200"
+            className=" rounded-xl px-3 py-4 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200"
           >
             Изменить фотографии
           </button>
@@ -1201,7 +1201,7 @@ function MyAnnoncementCard({
             <button
               type="submit"
               disabled
-              className="opacity-70 pointer-events-none rounded-xl px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200"
+              className="opacity-70 pointer-events-none rounded-xl px-3 py-4 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200"
             >
               В архив
             </button>

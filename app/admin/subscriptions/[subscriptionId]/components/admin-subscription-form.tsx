@@ -275,7 +275,6 @@ function AdminSubscriptionForm({ initialData }: AdminSubscriptionFormProps) {
                   <p className="text-base font-semibold">Иконка</p>
                   <FormControl>
                     <ToggleGroup
-                      onChange={field.onChange}
                       className="flex flex-row gap-2 flex-wrap"
                       type="single"
                       defaultValue={field.value}
@@ -285,6 +284,7 @@ function AdminSubscriptionForm({ initialData }: AdminSubscriptionFormProps) {
                           key={ind}
                           value={el.value}
                           className="text-sm h-12 border w-12"
+                          onClick={() => form.setValue("icon", el.value)}
                         >
                           {el.icon}
                         </ToggleGroupItem>
@@ -304,7 +304,6 @@ function AdminSubscriptionForm({ initialData }: AdminSubscriptionFormProps) {
                   <p className="text-base font-semibold">Цвет</p>
                   <FormControl>
                     <ToggleGroup
-                      onChange={field.onChange}
                       className="flex flex-row flex-wrap gap-2"
                       type="single"
                       defaultValue={field.value}
@@ -316,6 +315,7 @@ function AdminSubscriptionForm({ initialData }: AdminSubscriptionFormProps) {
                           className={cn(
                             `text-sm h-12 border w-12 items-center`
                           )}
+                          onClick={() => form.setValue("color", el)}
                         >
                           <span
                             style={{ backgroundColor: `#${el}` }}

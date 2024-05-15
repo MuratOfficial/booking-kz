@@ -59,7 +59,7 @@ function PhaseChangeButton({ phase, title, id }: PhaseFormValue) {
       <button
         disabled={loading}
         type="submit"
-        className=" rounded-xl w-full h-full flex flex-row items-center gap-x-2 px-3 py-1 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200"
+        className=" rounded-xl w-full h-full flex flex-row items-center gap-x-2 px-3 py-4 text-sm justify-center items-center uppercase flex flex-row gap-x-2 transition delay-75 duration-200  font-medium text-slate-500 border-2 hover:border-slate-800 hover:text-neutral-50 hover:bg-slate-800 border-slate-200"
       >
         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         {title}

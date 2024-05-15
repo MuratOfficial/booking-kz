@@ -142,7 +142,7 @@ function Modifiers({
             asChild
             className="data-[state=open]:opacity-100 opacity-70 hover:opacity-100"
           >
-            <button className="rounded-full px-3 py-3 text-sm   transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-red-500 ">
+            <button className="rounded-full px-5 py-4 text-sm   transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-red-500 ">
               <svg
                 width="20px"
                 height="20px"
@@ -213,7 +213,7 @@ function Modifiers({
           </PopoverTrigger>
           <PopoverContent className="bg-red-500 p-0 w-fit rounded-xl text-neutral-50 text-sm font-medium">
             <button
-              className="px-3 py-2.5 rounded-xl hover:bg-red-700"
+              className="px-5 py-2.5 rounded-xl hover:bg-red-700"
               onClick={() => {
                 if (
                   data &&
@@ -265,14 +265,14 @@ function Modifiers({
 
                   setOpen(true);
                 }}
-                className="px-3 py-2.5 rounded-xl hover:bg-red-700"
+                className="px-5 py-2.5 rounded-xl hover:bg-red-700"
               >
                 {data && data[0].modifierDays2} дней
               </button>
             )}
             {data && data[0].modifierDays3 && data[0].modifierDays3 > 0 && (
               <button
-                className="px-3 py-2.5 rounded-xl hover:bg-red-700"
+                className="px-5 py-2.5 rounded-xl hover:bg-red-700"
                 onClick={() => {
                   if (
                     data &&
@@ -309,7 +309,7 @@ function Modifiers({
             disabled={topMod}
             className="data-[state=open]:opacity-100 opacity-70 hover:opacity-100"
           >
-            <button className="rounded-full px-3 py-3 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-amber-500 opacity-70 hover:opacity-100">
+            <button className="rounded-full px-5 py-4 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-amber-500 opacity-70 hover:opacity-100">
               <svg
                 width="20px"
                 height="20px"
@@ -427,7 +427,7 @@ function Modifiers({
           </PopoverTrigger>
           <PopoverContent className="bg-amber-500 p-0 w-fit rounded-xl text-neutral-50 text-sm font-medium">
             <button
-              className="px-3 py-2.5 rounded-xl hover:bg-amber-700"
+              className="px-5 py-2.5 rounded-xl hover:bg-amber-700"
               onClick={() => {
                 if (
                   data &&
@@ -456,7 +456,7 @@ function Modifiers({
             </button>
             {data && data[1].modifierDays2 && data[1].modifierDays2 > 0 && (
               <button
-                className="px-3 py-2.5 rounded-xl hover:bg-amber-700"
+                className="px-5 py-2.5 rounded-xl hover:bg-amber-700"
                 onClick={() => {
                   if (
                     data &&
@@ -486,7 +486,7 @@ function Modifiers({
             )}
             {data && data[1].modifierDays3 && data[1].modifierDays3 > 0 && (
               <button
-                className="px-3 py-2.5 rounded-xl hover:bg-amber-700"
+                className="px-5 py-2.5 rounded-xl hover:bg-amber-700"
                 onClick={() => {
                   if (
                     data &&
@@ -523,7 +523,7 @@ function Modifiers({
             asChild
             className="data-[state=open]:opacity-100 opacity-70 hover:opacity-100"
           >
-            <button className="rounded-full px-3 py-3 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-sky-500 opacity-70 hover:opacity-100">
+            <button className="rounded-full px-5 py-4 text-sm  transition delay-75 duration-200 flex flex-row gap-x-2 items-center font-medium text-neutral-50 shadow-lg bg-sky-500 opacity-70 hover:opacity-100">
               <svg
                 height="20px"
                 width="20px"
@@ -595,7 +595,7 @@ function Modifiers({
           </PopoverTrigger>
           <PopoverContent className="bg-sky-500 p-0 w-fit rounded-xl text-neutral-50 text-sm font-medium">
             <button
-              className="px-3 py-2.5 rounded-xl hover:bg-sky-700"
+              className="px-5 py-2.5 rounded-xl hover:bg-sky-700"
               onClick={() => {
                 if (
                   data &&
@@ -624,7 +624,7 @@ function Modifiers({
             </button>
             {data && data[2].modifierDays2 && data[2].modifierDays2 > 0 && (
               <button
-                className="px-3 py-2.5 rounded-xl hover:bg-sky-700"
+                className="px-5 py-2.5 rounded-xl hover:bg-sky-700"
                 onClick={() => {
                   if (
                     data &&
@@ -655,7 +655,7 @@ function Modifiers({
 
             {data && data[2].modifierDays3 && data[2].modifierDays3 > 0 && (
               <button
-                className="px-3 py-2.5 rounded-xl hover:bg-sky-700"
+                className="px-5 py-2.5 rounded-xl hover:bg-sky-700"
                 onClick={() => {
                   if (
                     data &&
@@ -719,7 +719,7 @@ function Modifiers({
                 <Wallet className="w-5" /> Кошелек
               </p>
 
-              <div className="flex flex-col gap-1 py-2 px-3 text-sm font-medium rounded-xl bg-slate-100">
+              <div className="flex flex-col gap-1 py-2 px-5 text-sm font-medium rounded-xl bg-slate-100">
                 <p className=" text-slate-600">Текущая сумма</p>
                 <p className="font-semibold text-base text-yellow-400 text-center">
                   {totalBalance || 0} ед.
@@ -755,7 +755,7 @@ function Modifiers({
                 <Coins className="w-5" /> Бонусы
               </p>
 
-              <div className="flex flex-col gap-1 py-2 px-3 text-sm font-medium rounded-xl bg-slate-100">
+              <div className="flex flex-col gap-1 py-2 px-5 text-sm font-medium rounded-xl bg-slate-100">
                 <p className=" text-slate-600">Текущие бонусы</p>
                 <p className="font-semibold text-base text-green-400 text-center">
                   {bonusBalance || 0} б.

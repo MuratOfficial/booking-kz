@@ -81,59 +81,61 @@ export async function fetchUserData() {
         })
       : null;
 
-    const refreshPayment = user?.payments.filter(
-      (el) => el.status === "success"
-    );
+    if (user) {
+      const refreshPayment = user?.payments.filter(
+        (el) => el.status === "success"
+      );
 
-    const pendingPayments = user?.payments.filter(
-      (el) =>
-        el.status === "pending" && el.transactionId && el.transactionId !== ""
-    );
+      const pendingPayments = user?.payments.filter(
+        (el) =>
+          el.status === "pending" && el.transactionId && el.transactionId !== ""
+      );
 
-    processPendingPayments(pendingPayments);
+      processPendingPayments(pendingPayments);
 
-    let totalSum = 0;
-    let totalBonus = 0;
-    if (refreshPayment) {
-      refreshPayment.forEach((payment) => {
-        if (
-          payment.transactionType === "refill" ||
-          payment.transactionType === "refill-manual" ||
-          payment.transactionType === "bonus"
-        ) {
-          totalSum += parseFloat(payment.sum);
-          if (payment.bonus) {
-            totalBonus += parseFloat(payment.bonus);
-          }
-        } else {
-          if (payment.paymentType !== "direct") {
-            totalSum -= parseFloat(payment.sum);
+      let totalSum = 0;
+      let totalBonus = 0;
+      if (refreshPayment) {
+        refreshPayment.forEach((payment) => {
+          if (
+            payment.transactionType === "refill" ||
+            payment.transactionType === "refill-manual" ||
+            payment.transactionType === "bonus"
+          ) {
+            totalSum += parseFloat(payment.sum);
             if (payment.bonus) {
-              totalBonus -= parseFloat(payment.bonus);
+              totalBonus += parseFloat(payment.bonus);
+            }
+          } else {
+            if (payment.paymentType !== "direct") {
+              totalSum -= parseFloat(payment.sum);
+              if (payment.bonus) {
+                totalBonus -= parseFloat(payment.bonus);
+              }
             }
           }
-        }
-      });
-    }
+        });
+      }
 
-    const updatedUser = await prismadb.user.update({
-      where: {
-        id: user?.id,
-      },
-      data: {
-        totalBalance: totalSum.toString(),
-        bonusBalance: totalBonus.toString(),
-      },
-      include: {
-        payments: {
-          orderBy: {
-            createdAt: "desc",
+      const updatedUser = await prismadb.user.update({
+        where: {
+          id: user?.id,
+        },
+        data: {
+          totalBalance: totalSum.toString(),
+          bonusBalance: totalBonus.toString(),
+        },
+        include: {
+          payments: {
+            orderBy: {
+              createdAt: "desc",
+            },
           },
         },
-      },
-    });
+      });
 
-    return updatedUser;
+      return updatedUser;
+    }
   } catch (error) {
     console.error("Database Error:", error);
   }

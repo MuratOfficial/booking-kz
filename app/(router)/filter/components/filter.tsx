@@ -22,6 +22,7 @@ import {
   MapPin,
   Loader,
   Loader2,
+  List,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ComboboxFilter } from "./combobox-filter";
@@ -265,7 +266,7 @@ function Filter({ allcount, buildings }: FilterProps) {
     }
 
     replace(`${pathname}?${params.toString()}`);
-  }, 300);
+  }, 1000);
 
   const buildingsList = buildings?.map((el) => ({
     value: el.id,
@@ -1573,18 +1574,34 @@ function Filter({ allcount, buildings }: FilterProps) {
           </button>
         </div>
         <div className="flex flex-row gap-x-4 items-center">
-          <button
-            onClick={() => {
-              if (searchParams.has("city")) {
-                handleFilter("on", "map");
-              } else {
-                toast({ title: "Выберите город (область)" });
-              }
-            }}
-            className="flex flex-row gap-x-1 text-sm px-3.5 py-2.5 rounded-xl hover:border-slate-900 border-2 font-semibold text-neutral-50 items-center hover:text-slate-900 transition-all delay-75 duration-200"
-          >
-            <MapPin size={16} /> Смотреть на карте
-          </button>
+          {searchParams.get("map") === "on" ? (
+            <button
+              onClick={() => {
+                if (searchParams.has("city")) {
+                  handleFilter("on", "map");
+                } else {
+                  toast({ title: "Выберите город (область)" });
+                }
+              }}
+              className="flex flex-row gap-x-1 text-sm px-3.5 py-2.5 rounded-xl hover:border-slate-900 border-2 font-semibold text-neutral-50 items-center hover:text-slate-900 transition-all delay-75 duration-200"
+            >
+              <List size={16} /> Смотреть по списку
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                if (searchParams.has("city")) {
+                  handleFilter("on", "map");
+                } else {
+                  toast({ title: "Выберите город (область)" });
+                }
+              }}
+              className="flex flex-row gap-x-1 text-sm px-3.5 py-2.5 rounded-xl hover:border-slate-900 border-2 font-semibold text-neutral-50 items-center hover:text-slate-900 transition-all delay-75 duration-200"
+            >
+              <MapPin size={16} /> Смотреть на карте
+            </button>
+          )}
+
           <button className="flex flex-row  px-4 py-3 rounded-xl bg-slate-900 text-sm font-semibold text-neutral-50 items-center opacity-100 hover:opacity-80 transition-all delay-75 duration-200">
             Показать{" "}
             <span className="mx-1">
