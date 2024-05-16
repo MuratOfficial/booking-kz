@@ -95,6 +95,7 @@ function Filter({ allcount, buildings }: FilterProps) {
       params.delete("area");
       params.delete("address");
       params.delete("city");
+      params.delete("priceNego");
     } else {
       params.delete(param);
     }
@@ -204,6 +205,17 @@ function Filter({ allcount, buildings }: FilterProps) {
         params.delete("priceTo");
       }
     }
+    if (filter === "priceNego") {
+      if (term) {
+        if (params.has("priceNego", term)) {
+          params.delete("priceNego", term);
+        } else {
+          params.set("priceNego", term);
+        }
+      } else {
+        params.delete("priceNego");
+      }
+    }
     if (filter === "moreFloorTo") {
       if (term) {
         params.set("moreFloorTo", term);
@@ -266,7 +278,7 @@ function Filter({ allcount, buildings }: FilterProps) {
     }
 
     replace(`${pathname}?${params.toString()}`);
-  }, 1000);
+  }, 500);
 
   const buildingsList = buildings?.map((el) => ({
     value: el.id,
@@ -664,7 +676,12 @@ function Filter({ allcount, buildings }: FilterProps) {
           </div>
           {searchParams.get("serviceType") === "Продажа" && (
             <div className="w-fit gap-2 flex flex-row items-center text-sm font-semibold">
-              <Checkbox className="bg-slate-100 shadow-inner " />
+              <Checkbox
+                className="bg-slate-100 shadow-inner "
+                onCheckedChange={() => {
+                  handleFilter("true", "priceNego");
+                }}
+              />
               Торг
             </div>
           )}

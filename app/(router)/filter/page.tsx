@@ -18,6 +18,8 @@ import { Annoncement, Testimonial } from "@prisma/client";
 import { fetchUserData } from "@/lib/fetchUserData";
 import BigMap from "./components/big-map";
 import ScreenMap from "./components/screen-map";
+import FilteredAnnoncements from "./components/filtered-annoncements";
+import FilteredAnnFallback from "./components/filtered-ann-fallback";
 
 export async function generateMetadata({
   searchParams,
@@ -75,12 +77,14 @@ const FilterPage = async ({
     street?: string;
     building?: string;
     map?: string;
+    priceNego?: string;
+    serviceTypeExt?: string[];
   };
 }) => {
   const hotannoncementsrent = await fetchHotModifierAnnoncementsRent();
   const hotannoncementssell = await fetchHotModifierAnnoncementsSell();
 
-  const userData = await fetchUserData();
+  // const userData = await fetchUserData();
 
   const shuffle = (
     array: (Annoncement & { testimonials: Testimonial[] } & {
@@ -112,17 +116,19 @@ const FilterPage = async ({
     searchParams?.more,
     searchParams?.cityOrTown,
     searchParams?.street,
-    searchParams?.building
+    searchParams?.building,
+    searchParams?.priceNego,
+    searchParams?.serviceTypeExt
   );
 
-  const annoncements = nonfilteredannoncements.map((el) => ({
-    ...el,
-    isFavorite: userData?.favourites.find(
-      (item) => item.annoncementId === el.id
-    )
-      ? true
-      : false,
-  }));
+  // const annoncements = nonfilteredannoncements.map((el) => ({
+  //   ...el,
+  //   isFavorite: userData?.favourites.find(
+  //     (item) => item.annoncementId === el.id
+  //   )
+  //     ? true
+  //     : false,
+  // }));
 
   const buildings = await fetchBuildings(searchParams?.city);
 
@@ -134,15 +140,23 @@ const FilterPage = async ({
             <Skeleton className=" w-full h-72 rounded-2xl bg-blue-300" />
           }
         >
-          <Filter allcount={annoncements.length} buildings={buildings} />
+          <Filter
+            allcount={nonfilteredannoncements.length}
+            buildings={buildings}
+          />
         </Suspense>
 
         <div className="w-full grid grid-cols-7 gap-4">
           <div className="col-span-5">
             {searchParams?.map === "on" && searchParams?.city ? (
-              <ScreenMap annoncements={annoncements} />
+              <ScreenMap annoncements={nonfilteredannoncements} />
             ) : (
-              <ShownAnnoncements annoncements={annoncements} />
+              <Suspense
+                key={nonfilteredannoncements.length}
+                fallback={<FilteredAnnFallback />}
+              >
+                <FilteredAnnoncements searchParams={searchParams} />
+              </Suspense>
             )}
           </div>
 

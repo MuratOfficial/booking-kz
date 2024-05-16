@@ -15,7 +15,9 @@ export async function fetchFilteredAnnoncements(
   more?: string[],
   cityOrTown?: string,
   street?: string,
-  building?: string
+  building?: string,
+  priceNego?: string,
+  serviceTypeExt?: string[]
 ) {
   try {
     noStore();
@@ -69,6 +71,12 @@ export async function fetchFilteredAnnoncements(
           },
         },
         buildingId: building,
+        priceNego: priceNego === "true" ? true : undefined,
+        serviceTypeExt: Array.isArray(serviceTypeExt)
+          ? {
+              in: serviceTypeExt && [...serviceTypeExt],
+            }
+          : serviceTypeExt,
       },
       include: {
         testimonials: true,
