@@ -169,17 +169,7 @@ function Filter({ allcount, buildings }: FilterProps) {
         params.delete("roomNumber");
       }
     }
-    if (filter === "more") {
-      if (term) {
-        if (params.has("more", term)) {
-          params.delete("more", term);
-        } else {
-          params.append("more", term);
-        }
-      } else {
-        params.delete("more");
-      }
-    }
+
     if (filter === "serviceTypeExt") {
       if (term) {
         if (params.has("serviceTypeExt", term)) {
@@ -216,27 +206,7 @@ function Filter({ allcount, buildings }: FilterProps) {
         params.delete("priceNego");
       }
     }
-    if (filter === "moreFloorTo") {
-      if (term) {
-        params.set("moreFloorTo", term);
-      } else {
-        params.delete("moreFloorTo");
-      }
-    }
-    if (filter === "moreBed") {
-      if (term) {
-        params.set("moreBed", term);
-      } else {
-        params.delete("moreBed");
-      }
-    }
-    if (filter === "moreFloorFrom") {
-      if (term) {
-        params.set("moreFloorFrom", term);
-      } else {
-        params.delete("moreFloorFrom");
-      }
-    }
+
     if (filter === "areaSqFrom") {
       if (term) {
         params.set("areaSqFrom", term);
@@ -284,6 +254,16 @@ function Filter({ allcount, buildings }: FilterProps) {
     value: el.id,
     label: el.name,
   }));
+
+  const handleMoreFilter = (term: string, filter: string) => {
+    addOrRemoveMoreString(`${filter}=${term}`);
+
+    replace(`${pathname}?${moreStrings.join("&")}`);
+  };
+
+  const localeMoreParamsReplace = () => {
+    replace(`${pathname}?${moreStrings.join("&")}`);
+  };
 
   const citiesList = [
     {
@@ -532,13 +512,6 @@ function Filter({ allcount, buildings }: FilterProps) {
     },
   ];
 
-  const cities = [
-    { value: "астана", label: "Астана" },
-    { value: "алматы", label: "Алматы" },
-    { value: "караганда", label: "Караганда" },
-    { value: "шымкент", label: "Шымкент" },
-  ];
-
   return (
     <div className=" bg-gradient-to-br from-blue-500 to-blue-400 px-6 py-4 rounded-3xl w-full flex flex-col gap-4">
       {searchParams.get("serviceType") === "Аренда" && (
@@ -766,9 +739,13 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <RadioGroup
                         className="mt-2"
                         onValueChange={(e) => {
-                          handleFilter(e, "moreBed");
+                          handleMoreFilter(e, "moreBed");
                         }}
-                        // value={searchParams.get("moreBed") || ""}
+                        value={
+                          moreStrings.includes("moreBed")
+                            ? moreStrings.find((el) => el.includes("moreBed"))
+                            : ""
+                        }
                       >
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem
@@ -812,7 +789,7 @@ function Filter({ allcount, buildings }: FilterProps) {
                           type="number"
                           placeholder="с"
                           onChange={(e) => {
-                            handleFilter(e.target.value, "moreFloorFrom");
+                            handleMoreFilter(e.target.value, "moreFloorFrom");
                           }}
                           // value={searchParams.get("moreFloorFrom") || ""}
                         />{" "}
@@ -822,16 +799,15 @@ function Filter({ allcount, buildings }: FilterProps) {
                           type="number"
                           placeholder="по"
                           onChange={(e) => {
-                            handleFilter(e.target.value, "moreFloorTo");
+                            handleMoreFilter(e.target.value, "moreFloorTo");
                           }}
-                          // value={searchParams.get("moreFloorTo") || ""}
                         />
                       </div>
                       <div className="flex items-center space-x-2 mt-2">
                         <Checkbox
-                          // checked={searchParams.has("more", "Этаж:первый")}
+                          checked={moreStrings.includes("more=Этаж:первый")}
                           onCheckedChange={() =>
-                            handleFilter("Этаж:первый", "more")
+                            handleMoreFilter("Этаж:первый", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -841,9 +817,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "Этаж:не первый")}
+                          checked={moreStrings.includes("more=Этаж:не первый")}
                           onCheckedChange={() =>
-                            handleFilter("Этаж:не первый", "more")
+                            handleMoreFilter("Этаж:не первый", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -853,9 +829,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "Этаж:не цоколь")}
+                          checked={moreStrings.includes("more=Этаж:не цоколь")}
                           onCheckedChange={() =>
-                            handleFilter("Этаж:не цоколь", "more")
+                            handleMoreFilter("Этаж:не цоколь", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -865,9 +841,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "Этаж:последний")}
+                          checked={moreStrings.includes("more=Этаж:последний")}
                           onCheckedChange={() =>
-                            handleFilter("Этаж:последний", "more")
+                            handleMoreFilter("Этаж:последний", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -877,12 +853,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Этаж:не последний"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Этаж:не последний"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Этаж:не последний", "more")
+                            handleMoreFilter("Этаж:не последний", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -895,9 +870,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <p className="font-bold">Состояние ремонта</p>
                       <div className="flex items-center space-x-2 mt-2">
                         <Checkbox
-                          // checked={searchParams.has("more", "Ремонт:новое")}
+                          checked={moreStrings.includes("more=Ремонт:новое")}
                           onCheckedChange={() =>
-                            handleFilter("Ремонт:новое", "more")
+                            handleMoreFilter("Ремонт:новое", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -907,9 +882,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "Ремонт:среднее")}
+                          checked={moreStrings.includes("more=Ремонт:среднее")}
                           onCheckedChange={() =>
-                            handleFilter("Ремонт:среднее", "more")
+                            handleMoreFilter("Ремонт:среднее", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -922,9 +897,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "Ремонт:требуется")}
+                          checked={moreStrings.includes(
+                            "more=Ремонт:требуется"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Ремонт:требуется", "more")
+                            handleMoreFilter("Ремонт:требуется", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -937,9 +914,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "Без ремонта")}
+                          checked={moreStrings.includes("more=Без ремонта")}
                           onCheckedChange={() =>
-                            handleFilter("Без ремонта", "more")
+                            handleMoreFilter("Без ремонта", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -952,9 +929,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <p className="font-bold">Высота потолков</p>
                       <div className="flex items-center space-x-2 mt-2">
                         <Checkbox
-                          // checked={searchParams.has("more", "Низкие потолки")}
+                          checked={moreStrings.includes("more=Низкие потолки")}
                           onCheckedChange={() =>
-                            handleFilter("Низкие потолки", "more")
+                            handleMoreFilter("Низкие потолки", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -964,12 +941,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Стандартные потолки"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Стандартные потолки"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Стандартные потолки", "more")
+                            handleMoreFilter("Стандартные потолки", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -979,9 +955,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "Высокие потолки")}
+                          checked={moreStrings.includes("more=Высокие потолки")}
                           onCheckedChange={() =>
-                            handleFilter("Высокие потолки", "more")
+                            handleMoreFilter("Высокие потолки", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -997,9 +973,9 @@ function Filter({ allcount, buildings }: FilterProps) {
 
                       <div className="flex items-center space-x-2 mt-2">
                         <Checkbox
-                          // checked={searchParams.has("more", "Интернет wi-fi")}
+                          checked={moreStrings.includes("more=Интернет wi-fi")}
                           onCheckedChange={() =>
-                            handleFilter("Интернет wi-fi", "more")
+                            handleMoreFilter("Интернет wi-fi", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -1009,9 +985,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "Кондиционер")}
+                          checked={moreStrings.includes("more=Кондиционер")}
                           onCheckedChange={() =>
-                            handleFilter("Кондиционер", "more")
+                            handleMoreFilter("Кондиционер", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -1021,9 +997,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "SMART ТВ")}
+                          checked={moreStrings.includes("more=SMART ТВ")}
                           onCheckedChange={() =>
-                            handleFilter("SMART ТВ", "more")
+                            handleMoreFilter("SMART ТВ", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -1033,9 +1009,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "Телевизор")}
+                          checked={moreStrings.includes("more=Телевизор")}
                           onCheckedChange={() =>
-                            handleFilter("Телевизор", "more")
+                            handleMoreFilter("Телевизор", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -1045,9 +1021,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "Стир. машина")}
+                          checked={moreStrings.includes("more=Стир. машина")}
                           onCheckedChange={() =>
-                            handleFilter("Стир. машина", "more")
+                            handleMoreFilter("Стир. машина", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -1057,9 +1033,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "Микроволновка")}
+                          checked={moreStrings.includes("more=Микроволновка")}
                           onCheckedChange={() =>
-                            handleFilter("Микроволновка", "more")
+                            handleMoreFilter("Микроволновка", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -1069,9 +1045,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
-                          // checked={searchParams.has("more", "Электрочайник")}
+                          checked={moreStrings.includes("more=Электрочайник")}
                           onCheckedChange={() =>
-                            handleFilter("Электрочайник", "more")
+                            handleMoreFilter("Электрочайник", "more")
                           }
                           className="bg-slate-100 shadow-inner"
                         />
@@ -1082,12 +1058,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Посуда и принадлежности"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Посуда и принадлежности"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Посуда и принадлежности", "more")
+                            handleMoreFilter("Посуда и принадлежности", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1097,12 +1072,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Посудамоечная машина"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Посудамоечная машина"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Посудамоечная машина", "more")
+                            handleMoreFilter("Посудамоечная машина", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1112,12 +1086,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Утюг с гл. доской"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Утюг с гл. доской"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Утюг с гл. доской", "more")
+                            handleMoreFilter("Утюг с гл. доской", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1127,8 +1100,10 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Халаты")}
-                          onCheckedChange={() => handleFilter("Халаты", "more")}
+                          checked={moreStrings.includes("more=Халаты")}
+                          onCheckedChange={() =>
+                            handleMoreFilter("Халаты", "more")
+                          }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                           Халаты
@@ -1137,9 +1112,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Полотенца")}
+                          checked={moreStrings.includes("more=Полотенца")}
                           onCheckedChange={() =>
-                            handleFilter("Полотенца", "more")
+                            handleMoreFilter("Полотенца", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1149,8 +1124,10 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Фен")}
-                          onCheckedChange={() => handleFilter("Фен", "more")}
+                          checked={moreStrings.includes("more=Фен")}
+                          onCheckedChange={() =>
+                            handleMoreFilter("Фен", "more")
+                          }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                           Фен
@@ -1159,9 +1136,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Сушилка")}
+                          checked={moreStrings.includes("more=Сушилка")}
                           onCheckedChange={() =>
-                            handleFilter("Сушилка", "more")
+                            handleMoreFilter("Сушилка", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1171,9 +1148,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Балкон, лоджия")}
+                          checked={moreStrings.includes("more=Балкон, лоджия")}
                           onCheckedChange={() =>
-                            handleFilter("Балкон, лоджия", "more")
+                            handleMoreFilter("Балкон, лоджия", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1186,9 +1163,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-2">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Парковка")}
+                          checked={moreStrings.includes("more=Парковка")}
                           onCheckedChange={() =>
-                            handleFilter("Парковка", "more")
+                            handleMoreFilter("Парковка", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1198,9 +1175,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Беседка")}
+                          checked={moreStrings.includes("more=Беседка")}
                           onCheckedChange={() =>
-                            handleFilter("Беседка", "more")
+                            handleMoreFilter("Беседка", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1210,9 +1187,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Детс. площадка")}
+                          checked={moreStrings.includes("more=Детс. площадка")}
                           onCheckedChange={() =>
-                            handleFilter("Детс. площадка", "more")
+                            handleMoreFilter("Детс. площадка", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1222,9 +1199,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Видеонаблюдение")}
+                          checked={moreStrings.includes("more=Видеонаблюдение")}
                           onCheckedChange={() =>
-                            handleFilter("Видеонаблюдение", "more")
+                            handleMoreFilter("Видеонаблюдение", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1234,12 +1211,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Охраняемая территория"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Охраняемая территория"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Охраняемая территория", "more")
+                            handleMoreFilter("Охраняемая территория", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1254,12 +1230,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-2">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Вид из окна:на море"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Вид из окна:на море"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Вид из окна:на море", "more")
+                            handleMoreFilter("Вид из окна:на море", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1269,12 +1244,14 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Вид из окна:част. на море"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Вид из окна:част. на море"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Вид из окна:част. на море", "more")
+                            handleMoreFilter(
+                              "Вид из окна:част. на море",
+                              "more"
+                            )
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1284,12 +1261,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Вид из окна:на город"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Вид из окна:на город"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Вид из окна:на город", "more")
+                            handleMoreFilter("Вид из окна:на город", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1299,12 +1275,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Вид из окна:во двор"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Вид из окна:во двор"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Вид из окна:во двор", "more")
+                            handleMoreFilter("Вид из окна:во двор", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1317,12 +1292,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-2">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Санузел:раздельный"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Санузел:раздельный"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Санузел:раздельный", "more")
+                            handleMoreFilter("Санузел:раздельный", "more")
                           }
                         />
                         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -1332,12 +1306,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Санузел:совмещенный"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Санузел:совмещенный"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Санузел:совмещенный", "more")
+                            handleMoreFilter("Санузел:совмещенный", "more")
                           }
                         />
                         <label
@@ -1350,12 +1323,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Санузел:2 с/у и более"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Санузел:2 с/у и более"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Санузел:2 с/у и более", "more")
+                            handleMoreFilter("Санузел:2 с/у и более", "more")
                           }
                         />
                         <label
@@ -1368,8 +1340,10 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Ванна")}
-                          onCheckedChange={() => handleFilter("Ванна", "more")}
+                          checked={moreStrings.includes("more=Ванна")}
+                          onCheckedChange={() =>
+                            handleMoreFilter("Ванна", "more")
+                          }
                         />
                         <label
                           htmlFor="terms"
@@ -1381,12 +1355,14 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Санузел:душев. перегородка"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Санузел:душев. перегородка"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Санузел:душев. перегородка", "more")
+                            handleMoreFilter(
+                              "Санузел:душев. перегородка",
+                              "more"
+                            )
                           }
                         />
                         <label
@@ -1399,9 +1375,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Джакузи")}
+                          checked={moreStrings.includes("more=Джакузи")}
                           onCheckedChange={() =>
-                            handleFilter("Джакузи", "more")
+                            handleMoreFilter("Джакузи", "more")
                           }
                         />
                         <label
@@ -1414,8 +1390,10 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Бойлер")}
-                          onCheckedChange={() => handleFilter("Бойлер", "more")}
+                          checked={moreStrings.includes("more=Бойлер")}
+                          onCheckedChange={() =>
+                            handleMoreFilter("Бойлер", "more")
+                          }
                         />
                         <label
                           htmlFor="terms"
@@ -1427,9 +1405,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Гигиен. душ")}
+                          checked={moreStrings.includes("more=Гигиен. душ")}
                           onCheckedChange={() =>
-                            handleFilter("Гигиен. душ", "more")
+                            handleMoreFilter("Гигиен. душ", "more")
                           }
                         />
                         <label
@@ -1445,12 +1423,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-2">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Курение запрещено"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Курение запрещено"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Курение запрещено", "more")
+                            handleMoreFilter("Курение запрещено", "more")
                           }
                         />
                         <label
@@ -1463,12 +1440,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Курение разрешено"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Курение разрешено"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Курение разрешено", "more")
+                            handleMoreFilter("Курение разрешено", "more")
                           }
                         />
                         <label
@@ -1481,12 +1457,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Вечеринки разрешены"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Вечеринки разрешены"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Вечеринки разрешены", "more")
+                            handleMoreFilter("Вечеринки разрешены", "more")
                           }
                         />
                         <label
@@ -1499,9 +1474,9 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Можно с детьми")}
+                          checked={moreStrings.includes("more=Можно с детьми")}
                           onCheckedChange={() =>
-                            handleFilter("Можно с детьми", "more")
+                            handleMoreFilter("Можно с детьми", "more")
                           }
                         />
                         <label
@@ -1514,12 +1489,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Можно с животными"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Можно с животными"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Можно с животными", "more")
+                            handleMoreFilter("Можно с животными", "more")
                           }
                         />
                         <label
@@ -1535,8 +1509,10 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-2">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has("more", "Лифт")}
-                          onCheckedChange={() => handleFilter("Лифт", "more")}
+                          checked={moreStrings.includes("more=Лифт")}
+                          onCheckedChange={() =>
+                            handleMoreFilter("Лифт", "more")
+                          }
                         />
                         <label
                           htmlFor="terms"
@@ -1548,12 +1524,11 @@ function Filter({ allcount, buildings }: FilterProps) {
                       <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                           className="bg-slate-100 shadow-inner"
-                          // checked={searchParams.has(
-                          //   "more",
-                          //   "Доступ для инвалидов"
-                          // )}
+                          checked={moreStrings.includes(
+                            "more=Доступ для инвалидов"
+                          )}
                           onCheckedChange={() =>
-                            handleFilter("Доступ для инвалидов", "more")
+                            handleMoreFilter("Доступ для инвалидов", "more")
                           }
                         />
                         <label
@@ -1575,10 +1550,14 @@ function Filter({ allcount, buildings }: FilterProps) {
                   <X size={16} /> Сбросить
                 </button>
                 <button
-                  onClick={() => setDialogOpen(false)}
+                  onClick={() => {
+                    setDialogOpen(false);
+                    localeMoreParamsReplace();
+                    console.log(searchParams.toString());
+                  }}
                   className="flex flex-row px-4 py-3 rounded-xl bg-blue-500 text-sm font-semibold text-neutral-50 items-center opacity-100 hover:opacity-80 transition-all delay-75 duration-200"
                 >
-                  Показать {allcount} обьявления
+                  Показать обьявления
                 </button>
               </DialogFooter>
             </DialogContent>

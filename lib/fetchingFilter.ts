@@ -83,6 +83,12 @@ export async function fetchFilteredAnnoncements(
         analytics: true,
         buildingName: true,
       },
+      orderBy: [
+        {
+          topModifierDate: "desc",
+        },
+        { createdAt: "desc" },
+      ],
     });
 
     return annoncements;

@@ -103,6 +103,9 @@ const FilterPage = async ({
     ...hotannoncementssell,
   ]);
 
+  const shuffledHotRent = shuffle(hotannoncementsrent);
+  const shuffledHotSell = shuffle(hotannoncementssell);
+
   const nonfilteredannoncements = await fetchFilteredAnnoncements(
     searchParams?.serviceType,
     searchParams?.phase,
@@ -162,9 +165,17 @@ const FilterPage = async ({
 
           <div className="col-span-2 bg-white rounded-xl h-fit w-full flex flex-col gap-4 items-center py-2 px-3">
             <h1 className="font-semibold">Горячие предложения</h1>
-            {hotAnnoncements.slice(0, 16).map((el, keyid) => (
-              <HotSuggestCard data={el} key={keyid} />
-            ))}
+            {searchParams?.serviceType === "Продажа"
+              ? shuffledHotSell
+                  .slice(0, 16)
+                  .map((el, keyid) => <HotSuggestCard data={el} key={keyid} />)
+              : searchParams?.serviceType === "Аренда"
+              ? shuffledHotRent
+                  .slice(0, 16)
+                  .map((el, keyid) => <HotSuggestCard data={el} key={keyid} />)
+              : hotAnnoncements
+                  .slice(0, 16)
+                  .map((el, keyid) => <HotSuggestCard data={el} key={keyid} />)}
           </div>
         </div>
       </>

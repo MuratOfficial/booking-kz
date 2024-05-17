@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Metadata } from "next";
 import Link from "next/link";
 import SideMenuProfile from "./components/side-menu";
+import { fetchUserDataPaymentUpdate } from "@/lib/fetchUpdatedUserData";
 
 export const metadata: Metadata = {
   title: {

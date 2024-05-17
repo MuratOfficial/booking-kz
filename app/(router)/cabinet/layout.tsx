@@ -10,6 +10,7 @@ import {
 import LinksList from "./annoncements/components/links-list";
 import { fetchUserData } from "@/lib/fetchUserData";
 import prismadb from "@/lib/prismadb";
+import { fetchUserDataPaymentUpdate } from "@/lib/fetchUpdatedUserData";
 
 export const metadata: Metadata = {
   title: {
@@ -24,8 +25,7 @@ interface CabinetLayoutProps {
 }
 
 export default async function CabinetLayout({ children }: CabinetLayoutProps) {
-  const userIdData = await fetchUserData();
-
+  await fetchUserDataPaymentUpdate();
   return (
     <>
       <div className=" px-8 py-4 ">
