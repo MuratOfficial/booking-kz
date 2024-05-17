@@ -292,7 +292,16 @@ function MyAnnoncementCard({
         </div>
       </div>
       <div className="w-full rounded-xl hover:shadow-xl shadow-md transition delay-100 duration-300 ">
-        <div className="w-full   bg-white rounded-xl grid grid-cols-12">
+        <div
+          className="w-full   bg-white rounded-xl grid grid-cols-12"
+          style={{
+            backgroundColor: `${
+              data.hurryModifierDate && data?.hurryModifierDate > currentDate
+                ? "#fee2e2"
+                : "white"
+            }`,
+          }}
+        >
           <div className="  h-full flex items-center justify-center  col-span-3">
             <Carousel
               setApi={setApi}

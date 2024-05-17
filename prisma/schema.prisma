@@ -215,6 +215,8 @@ model Building {
   cityOrTown     String?
   townOrStreet   String?
   description    String?
+  city           City?         @relation(fields: [cityId], references: [id])
+  cityId         String?       @db.ObjectId
   images         Image[]
   floors         Int?
   coordinateX    String?
@@ -257,4 +259,27 @@ model Refill {
   bonus     Int?     @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model City {
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  cityOrDistrict String
+  cityOrTown     Town[]
+  addresses      Address[]
+  buildings      Building[]
+}
+
+model Town {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  city      City      @relation(fields: [cityId], references: [id])
+  cityId    String    @db.ObjectId
+  addresses Address[]
+}
+
+model Address {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  townId String @db.ObjectId
+  town   Town   @relation(fields: [townId], references: [id])
+  city   City   @relation(fields: [cityId], references: [id])
+  cityId String @db.ObjectId
 }

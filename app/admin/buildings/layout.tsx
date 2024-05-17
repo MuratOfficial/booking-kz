@@ -17,8 +17,8 @@ import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | ЖК ",
-    default: "ЖК",
+    template: "%s | Города ",
+    default: "Города",
   },
 };
 
@@ -30,13 +30,13 @@ export default function PaymentsAdminLayout({
   const subsAdminRoutes = [
     {
       path: "/admin/buildings",
-      title: "Все",
+      title: "Все ЖК",
       icon: <Building2 size={17} />,
     },
 
     {
       path: "/admin/buildings/new",
-      title: "Добавить",
+      title: "Добавить ЖК",
       icon: <Plus size={17} />,
       isButton: true,
     },

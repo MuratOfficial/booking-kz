@@ -192,7 +192,16 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
 
   return (
     <div className="w-full rounded-xl hover:shadow-xl transition delay-100 duration-300 ">
-      <div className="w-full   bg-white rounded-xl grid grid-cols-12">
+      <div
+        className="w-full   bg-white rounded-xl grid grid-cols-12"
+        style={{
+          backgroundColor: `${
+            data.hurryModifierDate && data?.hurryModifierDate > currentDate
+              ? "#fee2e2"
+              : "white"
+          }`,
+        }}
+      >
         <div className="  h-full flex items-center justify-center  col-span-4">
           <Carousel
             setApi={setApi}
@@ -559,7 +568,7 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
                       viewBox="0 0 512 512"
                       fill="#000000"
                     >
-                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                      <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
                       <g
                         id="SVGRepo_tracerCarrier"
                         strokeLinecap="round"
@@ -619,55 +628,6 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
                   )}
               </div>
             </div>
-
-            {/* <div className="flex flex-row  gap-2 w-full h-fit p-2 items-center">
-              <div className="flex flex-row  gap-2 w-full h-fit">
-                <button className="relative p-2 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-52 w-10 flex transition-[width] flex-row gap-x-1 items-center bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
-                  <HeartCrack className="stroke-slate-800" />
-                  <span className="text-slate-800 font-semibold transition-[width] line-clamp-1 group-hover/1:w-48 opacity-0 group-hover/1:opacity-100 w-0 text-sm absolute left-0 pl-8 overflow-hidden  duration-300 ease-in-out  transform">
-                    Убрать из Избранных
-                  </span>
-                </button>
-
-                <button className="relative p-2 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-44 w-10 flex transition-[width] flex-row gap-x-1 items-center bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
-                  <ClipboardPen className="stroke-blue-500" />
-                  <span className="text-blue-500 font-semibold transition-[width] line-clamp-1 group-hover/1:w-40 opacity-0 group-hover/1:opacity-100 w-0 text-sm absolute left-0 pl-8 overflow-hidden  duration-300 ease-in-out  transform">
-                    Сделать заметку
-                  </span>
-                </button>
-                <button className="relative p-2 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-44 w-10 flex transition-[width] flex-row gap-x-1 items-center bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
-                  <MessageCircle className="stroke-yellow-400" />
-                  <span className="text-yellow-400 font-semibold transition-[width] line-clamp-1 group-hover/1:w-40 opacity-0 group-hover/1:opacity-100 w-0 text-sm absolute left-0 pl-8 overflow-hidden  duration-300 ease-in-out  transform">
-                    Оставить отзыв
-                  </span>
-                </button>
-                <button className="relative p-2 overflow-hidden  rounded-full group/1 duration-300 ease-in-out hover:w-44 w-10 flex transition-[width] flex-row gap-x-1 items-center bg-slate-100  bg-opacity-50  transition delay-100 duration-300 hover:bg-opacity-80">
-                  <Share2 className="stroke-sky-400" />
-                  <span className="text-sky-400 font-semibold transition-[width] line-clamp-1 group-hover/1:w-40 opacity-0 group-hover/1:opacity-100 w-0 text-sm absolute left-0 pl-8 overflow-hidden  duration-300 ease-in-out  transform">
-                    Поделиться
-                  </span>
-                </button>
-              </div>
-
-              <HoverCard>
-                <HoverCardTrigger className="bg-slate-100 cursor-pointer flex flex-row gap-x-1 items-center text-slate-800 w-fit h-fit rounded-xl px-3 py-1 text-sm font-semibold">
-                  <ClipboardList size={19} /> Заметки
-                </HoverCardTrigger>
-                <HoverCardContent className="flex flex-col bg-slate-100 text-slate-800 shadow-xl">
-                  <div className="flex flex-row gap-x-1 items-center text-sm">
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    </p>
-                    <button className="p-1 rounded-full ">
-                      <Trash2
-                        size={16}
-                        className="hover:stroke-red-500 transition-all delay-75 duration-300 "
-                      />
-                    </button>
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
-            </div> */}
           </div>
           <Separator className="h-[80%] bg-slate-300" orientation="vertical" />
           <div className="flex flex-col gap-2 w-[30%] h-full py-2 px-2 justify-between">
