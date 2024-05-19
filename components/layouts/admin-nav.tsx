@@ -117,7 +117,7 @@ function AdminNav() {
           )}
           href="/admin/buildings"
         >
-          ЖК
+          Города и ЖК
         </Link>
         <Link
           className={cn(

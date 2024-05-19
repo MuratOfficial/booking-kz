@@ -67,7 +67,7 @@ const AdminAnnoncementsPage = async ({
     areaSq: false,
     phase: false,
     price: true,
-    user: true,
+    user: false,
   };
 
   return (

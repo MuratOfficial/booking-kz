@@ -3,7 +3,7 @@ import React from "react";
 import { BuildingsColumn, columns } from "./components/columns";
 import prismadb from "@/lib/prismadb";
 
-const AdminSubsPage = async () => {
+const AdminBuildingsPage = async () => {
   const buildings = await prismadb.building.findMany();
 
   const data: BuildingsColumn[] = buildings.map((el) => ({
@@ -21,4 +21,4 @@ const AdminSubsPage = async () => {
   );
 };
 
-export default AdminSubsPage;
+export default AdminBuildingsPage;

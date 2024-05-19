@@ -68,6 +68,11 @@ export const columns: ColumnDef<AnnoncementColumn>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "id",
+    header: "ID",
+    cell: ({ row }) => <div className="">{row.getValue("id")}</div>,
+  },
+  {
     accessorKey: "city",
     header: "Город",
     cell: ({ row }) => <div className="capitalize">{row.getValue("city")}</div>,

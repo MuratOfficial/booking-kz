@@ -7,6 +7,7 @@ import {
   Crown,
   Flame,
   HelpCircle,
+  Map,
   Plus,
   Podcast,
   RefreshCw,
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PaymentsAdminLayout({
+export default function BuildingsAdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -32,11 +33,24 @@ export default function PaymentsAdminLayout({
       path: "/admin/buildings",
       title: "Все ЖК",
       icon: <Building2 size={17} />,
+      isButton: true,
+    },
+    {
+      path: "/admin/buildings/cities",
+      title: "Города",
+      icon: <Map size={17} />,
+      isButton: true,
     },
 
     {
       path: "/admin/buildings/new",
       title: "Добавить ЖК",
+      icon: <Plus size={17} />,
+      isButton: true,
+    },
+    {
+      path: "/admin/buildings/cities/new",
+      title: "Добавить город",
       icon: <Plus size={17} />,
       isButton: true,
     },

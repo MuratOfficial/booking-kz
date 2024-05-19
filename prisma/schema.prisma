@@ -271,6 +271,7 @@ model City {
 
 model Town {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
   city      City      @relation(fields: [cityId], references: [id])
   cityId    String    @db.ObjectId
   addresses Address[]
@@ -278,6 +279,7 @@ model Town {
 
 model Address {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
   townId String @db.ObjectId
   town   Town   @relation(fields: [townId], references: [id])
   city   City   @relation(fields: [cityId], references: [id])

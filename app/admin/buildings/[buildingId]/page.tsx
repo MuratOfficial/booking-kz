@@ -2,7 +2,7 @@ import prismadb from "@/lib/prismadb";
 import React from "react";
 import AdminBuildingForm from "./components/admin-building-form";
 
-const AdminSubsPage = async ({
+const AdminBuildingPage = async ({
   params,
 }: {
   params: {
@@ -28,4 +28,4 @@ const AdminSubsPage = async ({
   );
 };
 
-export default AdminSubsPage;
+export default AdminBuildingPage;
