@@ -48,6 +48,18 @@ import { useParams, useRouter } from "next/navigation";
 
 const cityFormSchema = z.object({
   cityOrDistrict: z.string({ required_error: "Напишите название" }),
+  cityOrTown: z
+    .object({
+      name: z.string(),
+      addresses: z
+        .object({
+          name: z.string(),
+        })
+        .array()
+        .optional(),
+    })
+    .array()
+    .optional(),
 });
 
 type CityFormValues = z.infer<typeof cityFormSchema>;
@@ -55,8 +67,6 @@ type CityFormValues = z.infer<typeof cityFormSchema>;
 interface AdminCityFormProps {
   initialData:
     | (City & {
-        cityOrTown: Town[];
-        addresses: Address[];
         buildings: Building[];
       })
     | null;
@@ -67,6 +77,7 @@ function AdminCityForm({ initialData }: AdminCityFormProps) {
     resolver: zodResolver(cityFormSchema),
     defaultValues: {
       cityOrDistrict: initialData?.cityOrDistrict || "",
+      cityOrTown: initialData?.cityOrTown || [],
     },
   });
 
@@ -74,29 +85,79 @@ function AdminCityForm({ initialData }: AdminCityFormProps) {
   const params = useParams();
   const [loading, setLoading] = React.useState(false);
 
-  const [towns, setTowns] = React.useState<
-    { id: string; name: string; cityId: string }[]
-  >(initialData?.cityOrTown || []);
+  // const [towns, setTowns] = React.useState<string[]>(
+  //   initialData?.cityOrTown.map((el) => el.name) || []
+  // );
 
-  const [addresses, setAddresses] = React.useState<
-    {
-      id: string;
-      name: string;
-      townId: string;
-      cityId: string;
-    }[]
-  >(initialData?.addresses || []);
+  const [onTown, setOnTown] = React.useState(false);
+  const [onAddress, setOnAddress] = React.useState(false);
+  const [pickedTown, setPickedTown] = React.useState("");
+
+  const [inputValue, setInputValue] = React.useState<string>("");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const [towns, setTowns] = React.useState<Town[]>(
+    (initialData?.cityOrTown && [...initialData?.cityOrTown]) || []
+  );
+
+  const addTown = (newTown: Town) => {
+    setTowns((prevTowns) => [...prevTowns, newTown]);
+  };
+
+  const editTown = (index: number, updatedTown: Town) => {
+    const updatedTowns = [...towns];
+    updatedTowns[index] = updatedTown;
+    setTowns(updatedTowns);
+  };
+
+  const [onEditTown, setOnEditTown] = React.useState("");
+  const [onEditAddress, setOnEditAddress] = React.useState("");
+
+  const removeTown = (index: number) => {
+    const updatedTowns = towns.filter((_, i) => i !== index);
+    setTowns(updatedTowns);
+  };
+
+  const [townIndex, setTownIndex] = React.useState(0);
+
+  const addAddress = (townIndex: number, newAddress: Address) => {
+    const updatedTowns = [...towns];
+    updatedTowns[townIndex].addresses.push(newAddress);
+    setTowns(updatedTowns);
+  };
+
+  const editAddress = (
+    townIndex: number,
+    addressIndex: number,
+    updatedAddress: Address
+  ) => {
+    const updatedTowns = [...towns];
+    updatedTowns[townIndex].addresses[addressIndex] = updatedAddress;
+    setTowns(updatedTowns);
+  };
+
+  const removeAddress = (townIndex: number, addressIndex: number) => {
+    const updatedTowns = [...towns];
+    updatedTowns[townIndex].addresses = updatedTowns[
+      townIndex
+    ].addresses.filter((_, i) => i !== addressIndex);
+    setTowns(updatedTowns);
+  };
+
+  React.useEffect(() => {
+    form.setValue("cityOrTown", towns);
+  }, [towns]);
 
   async function onSubmit(formData: CityFormValues) {
     try {
       setLoading(true);
       if (initialData) {
-        await axios.patch(
-          `/api/admin/buildings/cities/${params.cityId}`,
-          formData
-        );
+        await axios.patch(`/api/admin/cities/${params.cityId}`, formData);
       } else {
-        await axios.post(`/api/admin/buildings/cities`, formData);
+        await axios.post(`/api/admin/cities`, formData);
       }
       router.refresh();
       router.push(`/admin/buildings/cities`);
@@ -144,55 +205,174 @@ function AdminCityForm({ initialData }: AdminCityFormProps) {
           </div>
           <div className="w-full flex flex-col gap-4 bg-white px-6 py-4 rounded-xl">
             <p className=" text-base font-semibold">Города (районы)</p>
-            <div className="w-full flex-row flex gap-2">
-              <div className="bg-blue-200 items-center flex flex-row gap-1 hover:bg-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium ">
-                <span className="mr-2">Test</span>{" "}
-                <button>
-                  <Pencil className="w-3 hover:text-red-500" />{" "}
+            <div className="w-full flex-row flex gap-2 flex-wrap">
+              {towns.map((el, index) => (
+                <div key={index}>
+                  {onEditTown === el.name ? (
+                    <div className=" flex flex-row gap-2 items-center">
+                      <input
+                        onChange={handleInputChange}
+                        defaultValue={el.name}
+                        type="text"
+                        className="text-blue-300 focus-visible:border-blue-300 hover:text-blue-500 items-center flex flex-row gap-1 hover:border-blue-500 border-2 border-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium "
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          editTown(index, { ...el, name: inputValue });
+                          setOnEditTown("");
+                        }}
+                        className=" bg-slate-100 rounded-lg py-1.5 px-2 font-medium text-blue-500 hover:bg-slate-300"
+                      >
+                        OK
+                      </button>
+                    </div>
+                  ) : (
+                    <div
+                      key={index}
+                      onClick={() => {
+                        setPickedTown(el.name), setTownIndex(index);
+                      }}
+                      className={cn(
+                        "bg-blue-100 cursor-pointer items-center flex flex-row gap-1 hover:bg-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium ",
+                        pickedTown === el.name && "bg-blue-300"
+                      )}
+                    >
+                      <span className="mr-2">{el.name}</span>{" "}
+                      <button
+                        onClick={() => setOnEditTown(el.name)}
+                        type="button"
+                      >
+                        <Pencil className="w-3 hover:text-red-500" />{" "}
+                      </button>
+                      <button onClick={() => removeTown(index)} type="button">
+                        <Trash2 className="w-3 hover:text-red-500" />{" "}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+              {!onTown && (
+                <button
+                  type="button"
+                  onClick={() => setOnTown(true)}
+                  className="text-blue-300 hover:text-blue-500 items-center flex flex-row gap-1 hover:border-blue-500 border-2 border-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium "
+                >
+                  + Добавить город
                 </button>
-                <button>
-                  <Trash2 className="w-3 hover:text-red-500" />{" "}
-                </button>
-              </div>
-              <div className="bg-blue-200 items-center flex flex-row gap-1 hover:bg-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium ">
-                <span className="mr-2">Test</span>{" "}
-                <button>
-                  <Pencil className="w-3 hover:text-red-500" />{" "}
-                </button>
-                <button>
-                  <Trash2 className="w-3 hover:text-red-500" />{" "}
-                </button>
-              </div>
-              <button className="text-blue-300 hover:text-blue-500 items-center flex flex-row gap-1 hover:border-blue-500 border-2 border-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium ">
-                + Добавить город
-              </button>
+              )}
+
+              {onTown && (
+                <div className=" flex flex-row gap-2 items-center">
+                  <input
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    type="text"
+                    className="text-blue-300 focus-visible:border-blue-300 hover:text-blue-500 items-center flex flex-row gap-1 hover:border-blue-500 border-2 border-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium "
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addTown({ name: inputValue, addresses: [] });
+                      setOnTown(false);
+                    }}
+                    className=" bg-slate-100 rounded-lg py-1.5 px-2 font-medium text-blue-500 hover:bg-slate-300"
+                  >
+                    OK
+                  </button>
+                </div>
+              )}
             </div>
           </div>
+
           <div className="w-full flex flex-col gap-4 bg-white px-6 py-4 rounded-xl">
             <p className=" text-base font-semibold">Мкр. и улицы</p>
-            <div className="w-full flex-row flex gap-2">
-              <div className="bg-blue-200 items-center flex flex-row gap-1 hover:bg-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium ">
-                <span className="mr-2">Test</span>{" "}
-                <button>
-                  <Pencil className="w-3 hover:text-red-500" />{" "}
-                </button>
-                <button>
-                  <Trash2 className="w-3 hover:text-red-500" />{" "}
-                </button>
+            {pickedTown ? (
+              <div className="w-full flex-row flex gap-2 flex-wrap">
+                {towns
+                  .filter((el) => el.name === pickedTown)[0]
+                  .addresses.map((el, index) => (
+                    <div key={index}>
+                      {onEditAddress === el.name ? (
+                        <div className=" flex flex-row gap-2 items-center">
+                          <input
+                            onChange={handleInputChange}
+                            defaultValue={el.name}
+                            type="text"
+                            className="text-blue-300 focus-visible:border-blue-300 hover:text-blue-500 items-center flex flex-row gap-1 hover:border-blue-500 border-2 border-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium "
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              editAddress(townIndex, index, {
+                                ...el,
+                                name: inputValue,
+                              });
+                              setOnEditAddress("");
+                            }}
+                            className=" bg-slate-100 rounded-lg py-1.5 px-2 font-medium text-blue-500 hover:bg-slate-300"
+                          >
+                            OK
+                          </button>
+                        </div>
+                      ) : (
+                        <div
+                          key={index}
+                          className={cn(
+                            "bg-blue-100  items-center flex flex-row gap-1 hover:bg-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium "
+                          )}
+                        >
+                          <span className="mr-2">{el.name}</span>{" "}
+                          <button
+                            onClick={() => setOnEditAddress(el.name)}
+                            type="button"
+                          >
+                            <Pencil className="w-3 hover:text-red-500" />{" "}
+                          </button>
+                          <button
+                            onClick={() => removeAddress(townIndex, index)}
+                            type="button"
+                          >
+                            <Trash2 className="w-3 hover:text-red-500" />{" "}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                {!onAddress && (
+                  <button
+                    type="button"
+                    onClick={() => setOnAddress(true)}
+                    className="text-blue-300 hover:text-blue-500 items-center flex flex-row gap-1 hover:border-blue-500 border-2 border-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium "
+                  >
+                    + Добавить мкр./улицу
+                  </button>
+                )}
+
+                {onAddress && (
+                  <div className=" flex flex-row gap-2 items-center">
+                    <input
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      type="text"
+                      className="text-blue-300 focus-visible:border-blue-300 hover:text-blue-500 items-center flex flex-row gap-1 hover:border-blue-500 border-2 border-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium "
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        addAddress(townIndex, { name: inputValue });
+                        setOnAddress(false);
+                      }}
+                      className=" bg-slate-100 rounded-lg py-1.5 px-2 font-medium text-blue-500 hover:bg-slate-300"
+                    >
+                      OK
+                    </button>
+                  </div>
+                )}
               </div>
-              <div className="bg-blue-200 items-center flex flex-row gap-1 hover:bg-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium ">
-                <span className="mr-2">Test</span>{" "}
-                <button>
-                  <Pencil className="w-3 hover:text-red-500" />{" "}
-                </button>
-                <button>
-                  <Trash2 className="w-3 hover:text-red-500" />{" "}
-                </button>
-              </div>
-              <button className="text-blue-300 hover:text-blue-500 items-center flex flex-row gap-1 hover:border-blue-500 border-2 border-blue-300 rounded-lg px-3.5 py-1.5 text-sm font-medium ">
-                + Добавить мкр. и улицу
-              </button>
-            </div>
+            ) : (
+              <p className="text-xs text-slate-500">Выберите город(район)</p>
+            )}
           </div>
 
           <Button

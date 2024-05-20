@@ -31,7 +31,7 @@ export default function BuildingsAdminLayout({
   const subsAdminRoutes = [
     {
       path: "/admin/buildings",
-      title: "Все ЖК",
+      title: "ЖК",
       icon: <Building2 size={17} />,
       isButton: true,
     },

@@ -27,9 +27,9 @@ const AdminAnnoncementPage = async ({
     },
   });
 
-  const buildings = await prismadb.building.findMany({
-    orderBy: {
-      createdAt: "desc",
+  const cities = await prismadb.city.findMany({
+    include: {
+      buildings: true,
     },
   });
 
@@ -38,7 +38,7 @@ const AdminAnnoncementPage = async ({
       <AdminAnnoncementForm
         initialData={annoncement}
         users={users}
-        buildings={buildings}
+        cities={cities}
       />
     </div>
   );

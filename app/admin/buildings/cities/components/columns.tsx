@@ -100,7 +100,7 @@ export const columns: ColumnDef<CitiesColumn>[] = [
       const CitiesColumn = row.original;
       const onDelete = async (id: string) => {
         try {
-          await axios.delete(`/api/admin/buildings/cities/${id}`);
+          await axios.delete(`/api/admin/cities/${id}`);
           toast({ description: "Город удален", variant: "default" });
         } catch (error) {
           toast({

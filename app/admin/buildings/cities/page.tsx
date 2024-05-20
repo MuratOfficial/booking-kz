@@ -6,8 +6,6 @@ import prismadb from "@/lib/prismadb";
 const AdminCitiesPage = async () => {
   const cities = await prismadb.city.findMany({
     include: {
-      cityOrTown: true,
-      addresses: true,
       buildings: true,
     },
   });
@@ -16,7 +14,7 @@ const AdminCitiesPage = async () => {
     id: el.id,
     name: el.cityOrDistrict,
     towns: el.cityOrTown.length || 0,
-    addresses: el.addresses.length || 0,
+    addresses: [...el.cityOrTown.map((el) => el.addresses)].length || 0,
     buildings: el.buildings.length || 0,
   }));
 

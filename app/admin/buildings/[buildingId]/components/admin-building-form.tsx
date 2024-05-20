@@ -33,7 +33,7 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { Textarea } from "@/components/ui/textarea";
-import { Building, Subscription } from "@prisma/client";
+import { Building, City, Subscription } from "@prisma/client";
 
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
@@ -67,9 +67,10 @@ type BuildingFormValues = z.infer<typeof buildingFormSchema>;
 
 interface AdminBuildingFormProps {
   initialData: Building | null;
+  cities: City[] | null;
 }
 
-function AdminBuildingForm({ initialData }: AdminBuildingFormProps) {
+function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
   const form = useForm<BuildingFormValues>({
     resolver: zodResolver(buildingFormSchema),
     defaultValues: {
@@ -98,153 +99,6 @@ function AdminBuildingForm({ initialData }: AdminBuildingFormProps) {
     {
       value: "Блочный",
       label: "Блочный",
-    },
-  ];
-
-  const cities = [
-    {
-      value: "Астана",
-      label: "Астана",
-    },
-    {
-      value: "Алматы",
-      label: "Алматы",
-    },
-    {
-      value: "Шымкент",
-      label: "Шымкент",
-    },
-    {
-      value: "Актобе",
-      label: "Актобе",
-    },
-    {
-      value: "Актау",
-      label: "Актау",
-    },
-    {
-      value: "Атырау",
-      label: "Атырау",
-    },
-    {
-      value: "Караганда",
-      label: "Караганда",
-    },
-    {
-      value: "Кызылорда",
-      label: "Кызылорда",
-    },
-    {
-      value: "Талдыкорган",
-      label: "Талдыкорган",
-    },
-    {
-      value: "Жезказган",
-      label: "Жезказган",
-    },
-    {
-      value: "Экибастуз",
-      label: "Экибастуз",
-    },
-    {
-      value: "Семей",
-      label: "Семей",
-    },
-    {
-      value: "Усть-Каменогорск",
-      label: "Усть-Каменогорск",
-    },
-    {
-      value: "Костанай",
-      label: "Костанай",
-    },
-    {
-      value: "Уральск",
-      label: "Уральск",
-    },
-    {
-      value: "Петропавловск",
-      label: "Петропавловск",
-    },
-    {
-      value: "Туркестан",
-      label: "Туркестан",
-    },
-    {
-      value: "Павлодар",
-      label: "Павлодар",
-    },
-    {
-      value: "Кокшетау",
-      label: "Кокшетау",
-    },
-    {
-      value: "Актюбинская обл.",
-      label: "Актюбинская обл.",
-    },
-    {
-      value: "Алматинская обл.",
-      label: "Алматинская обл.",
-    },
-    {
-      value: "Атырауская обл.",
-      label: "Атырауская обл.",
-    },
-    {
-      value: "Жамбылская обл.",
-      label: "Жамбылская обл.",
-    },
-    {
-      value: "Акмолинская обл.",
-      label: "Акмолинская обл.",
-    },
-    {
-      value: "Восточно-Казахстанская обл.",
-      label: "Восточно-Казахстанская обл.",
-    },
-    {
-      value: "Западно-Казахстанская обл.",
-      label: "Западно-Казахстанская обл.",
-    },
-    {
-      value: "Карагандинская обл.",
-      label: "Карагандинская обл.",
-    },
-    {
-      value: "Костанайская обл.",
-      label: "Костанайская обл.",
-    },
-    {
-      value: "Кызылординская обл.",
-      label: "Кызылординская обл.",
-    },
-    {
-      value: "Мангистауская обл.",
-      label: "Мангистауская обл.",
-    },
-    {
-      value: "Павлодарская обл.",
-      label: "Павлодарская обл.",
-    },
-    {
-      value: "Северо-Казахстанская обл.",
-      label: "Северо-Казахстанская обл.",
-    },
-    {
-      value: "Туркестанская обл.",
-      label: "Туркестанская обл.",
-    },
-    {
-      value: "Абайская обл.",
-      label: "Абайская обл.",
-    },
-    {
-      value: "Жетысуйская обл.",
-      label: "Жетысуйская обл.",
-    },
-    {
-      value: "Улытауская обл.",
-      label: "Улытауская обл.",
     },
   ];
 
@@ -521,8 +375,9 @@ function AdminBuildingForm({ initialData }: AdminBuildingFormProps) {
                         )}
                       >
                         {field.value ? (
-                          cities.find((city) => city.value === field.value)
-                            ?.label
+                          cities?.find(
+                            (city) => city.cityOrDistrict === field.value
+                          )?.cityOrDistrict
                         ) : (
                           <p className="line-clamp-1 text-slate-500">
                             Выберите город (область)
@@ -536,24 +391,27 @@ function AdminBuildingForm({ initialData }: AdminBuildingFormProps) {
                         <CommandInput placeholder="Найти..." />
                         <CommandEmpty>Не найдено.</CommandEmpty>
                         <CommandGroup>
-                          {cities.map((city) => (
+                          {cities?.map((city) => (
                             <CommandItem
-                              value={city.label}
-                              key={city.value}
+                              value={city.cityOrDistrict}
+                              key={city.cityOrDistrict}
                               onSelect={() => {
-                                form.setValue("cityOrDistrict", city.value);
-                                setCityOrDistrict(city.value);
+                                form.setValue(
+                                  "cityOrDistrict",
+                                  city.cityOrDistrict
+                                );
+                                setCityOrDistrict(city.cityOrDistrict);
                               }}
                             >
                               <Check
                                 className={cn(
                                   "mr-2 h-4 w-4",
-                                  city.value === field.value
+                                  city.cityOrDistrict === field.value
                                     ? "opacity-100"
                                     : "opacity-0"
                                 )}
                               />
-                              {city.label}
+                              {city.cityOrDistrict}
                             </CommandItem>
                           ))}
                         </CommandGroup>
@@ -573,15 +431,64 @@ function AdminBuildingForm({ initialData }: AdminBuildingFormProps) {
                     Город (Район)
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      className=" placeholder:opacity-50"
-                      placeholder="г. Костанай"
-                      onChange={(e) => {
-                        field.onChange(e.target.value);
-                        handleChange(e.target.value, "city");
-                      }}
-                      value={field.value}
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between  flex flex-row gap-x-1 items-center",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            cities
+                              ?.find(
+                                (city) => city.cityOrDistrict === cityOrDistrict
+                              )
+                              ?.cityOrTown.find((el) => el.name === townOrCity)
+                              ?.name
+                          ) : (
+                            <p className="line-clamp-1 text-slate-500">
+                              Выберите город (район)
+                            </p>
+                          )}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0 max-h-40">
+                        <Command>
+                          <CommandInput placeholder="Найти..." />
+                          <CommandEmpty>Не найдено.</CommandEmpty>
+                          <CommandGroup>
+                            {cities
+                              ?.find(
+                                (city) => city.cityOrDistrict === cityOrDistrict
+                              )
+                              ?.cityOrTown?.map((city) => (
+                                <CommandItem
+                                  value={city.name}
+                                  key={city.name}
+                                  onSelect={() => {
+                                    form.setValue("cityOrTown", city.name);
+                                    setTownOrCity(city.name);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      city.name === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {city.name}
+                                </CommandItem>
+                              ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </FormControl>
 
                   <FormDescription className="flex flex-row gap-x-1 items-center text-xs text-slate-400">
@@ -598,18 +505,70 @@ function AdminBuildingForm({ initialData }: AdminBuildingFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base font-semibold">
-                    Улица, мкр., номер дома
+                    Улица, мкр.
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      className=" placeholder:opacity-50"
-                      placeholder="16 мкр., 5 дом"
-                      onChange={(e) => {
-                        field.onChange(e.target.value);
-                        handleChange(e.target.value, "street");
-                      }}
-                      value={field.value}
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between  flex flex-row gap-x-1 items-center",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            cities
+                              ?.find(
+                                (city) => city.cityOrDistrict === cityOrDistrict
+                              )
+                              ?.cityOrTown.find((el) => el.name === townOrCity)
+                              ?.addresses.find(
+                                (el) => el.name === streetOrHouse
+                              )?.name
+                          ) : (
+                            <p className="line-clamp-1 text-slate-500">
+                              Выберите город (район)
+                            </p>
+                          )}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0 max-h-40">
+                        <Command>
+                          <CommandInput placeholder="Найти..." />
+                          <CommandEmpty>Не найдено.</CommandEmpty>
+                          <CommandGroup>
+                            {cities
+                              ?.find(
+                                (city) => city.cityOrDistrict === cityOrDistrict
+                              )
+                              ?.cityOrTown.find((el) => el.name === townOrCity)
+                              ?.addresses.map((city) => (
+                                <CommandItem
+                                  value={city.name}
+                                  key={city.name}
+                                  onSelect={() => {
+                                    form.setValue("townOrStreet", city.name);
+                                    setStreetOrHouse(city.name);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      city.name === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {city.name}
+                                </CommandItem>
+                              ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </FormControl>
 
                   <FormDescription className="flex flex-row gap-x-1 items-center text-xs text-slate-400">

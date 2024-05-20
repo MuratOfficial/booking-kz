@@ -19,8 +19,6 @@ const AdminCityPage = async ({
         id: params.cityId,
       },
       include: {
-        cityOrTown: true,
-        addresses: true,
         buildings: true,
       },
     });

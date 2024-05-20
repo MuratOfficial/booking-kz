@@ -21,9 +21,11 @@ const AdminBuildingPage = async ({
     });
   }
 
+  const cities = await prismadb.city.findMany();
+
   return (
     <div className="w-4/5 flex flex-col">
-      <AdminBuildingForm initialData={building} />
+      <AdminBuildingForm initialData={building} cities={cities} />
     </div>
   );
 };
