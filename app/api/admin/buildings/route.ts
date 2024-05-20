@@ -17,6 +17,7 @@ export async function POST(req: Request) {
       townOrStreet,
       floors,
       images,
+      cityId,
       coordinateX,
       coordinateY,
     } = body;
@@ -34,6 +35,7 @@ export async function POST(req: Request) {
         cityOrDistrict,
         cityOrTown,
         townOrStreet,
+        cityId,
         floors,
         images,
         coordinateX,

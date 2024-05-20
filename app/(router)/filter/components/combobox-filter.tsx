@@ -68,7 +68,7 @@ export function ComboboxFilter({
         >
           <span className="line-clamp-1 w-[240px]">
             {searchParams.getAll(filter).length > 0
-              ? data.find((item) =>
+              ? data?.find((item) =>
                   searchParams.getAll(filter).includes(item.value)
                 )?.label
               : buttonName}
@@ -82,7 +82,7 @@ export function ComboboxFilter({
           <CommandInput placeholder={commandInputTitle} className="" />
           <CommandEmpty>Не найдено</CommandEmpty>
           <CommandGroup>
-            {data.map((item) => (
+            {data?.map((item) => (
               <CommandItem
                 key={item.value}
                 value={item.value}

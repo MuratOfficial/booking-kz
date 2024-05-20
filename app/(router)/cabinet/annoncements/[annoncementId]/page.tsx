@@ -70,12 +70,19 @@ const AnnoncementPage = async ({
     userData = null;
   }
 
+  const cities = await prismadb.city.findMany({
+    include: {
+      buildings: true,
+    },
+  });
+
   return (
     <div className="w-full flex flex-col">
       <AnnoncementForm
         user={userData}
         initialData={annoncement}
         buildings={buildings}
+        cities={cities}
       />
     </div>
   );

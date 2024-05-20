@@ -55,6 +55,7 @@ const buildingFormSchema = z.object({
   type: z.string().optional(),
   cityOrDistrict: z.string({ required_error: "Укажите город" }),
   cityOrTown: z.string().optional(),
+  cityId: z.string().optional(),
   townOrStreet: z.string().optional(),
   floors: z.coerce.number().int().optional(),
   images: z.object({ url: z.string() }).array(),
@@ -80,6 +81,10 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
       buildingYear: initialData?.buildingYear || 2013,
       type: initialData?.type || "Монолитный",
       floors: initialData?.floors || 0,
+      townOrStreet: initialData?.townOrStreet || "",
+      cityOrDistrict: initialData?.cityOrDistrict || "",
+      cityOrTown: initialData?.cityOrTown || "",
+      cityId: initialData?.cityId || "",
     },
   });
 
@@ -115,14 +120,14 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
   const [pos2, setPos2] = React.useState<number | null>(null);
   const [zoom, setZoom] = React.useState<number | null>(null);
 
-  const handleChange = useDebouncedCallback((term: string, type: string) => {
-    if (type === "city") {
-      setTownOrCity(term);
-    }
-    if (type === "street") {
-      setStreetOrHouse(term);
-    }
-  }, 500);
+  // const handleChange = useDebouncedCallback((term: string, type: string) => {
+  //   if (type === "city") {
+  //     setTownOrCity(term);
+  //   }
+  //   if (type === "street") {
+  //     setStreetOrHouse(term);
+  //   }
+  // }, 500);
 
   React.useEffect(() => {
     if (townOrCity || streetOrHouse) {
@@ -164,6 +169,13 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
       router.push(`/admin/buildings`);
       toast({
         title: "Данные отправлены успешно",
+        // description: (
+        //   <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+        //     <code className="text-white">
+        //       {JSON.stringify(formData, null, 2)}
+        //     </code>
+        //   </pre>
+        // ),
       });
     } catch (error: any) {
       toast({ description: "Что-то пошло не так...", variant: "destructive" });
@@ -375,9 +387,7 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
                         )}
                       >
                         {field.value ? (
-                          cities?.find(
-                            (city) => city.cityOrDistrict === field.value
-                          )?.cityOrDistrict
+                          field.value
                         ) : (
                           <p className="line-clamp-1 text-slate-500">
                             Выберите город (область)
@@ -400,6 +410,7 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
                                   "cityOrDistrict",
                                   city.cityOrDistrict
                                 );
+                                form.setValue("cityId", city.id);
                                 setCityOrDistrict(city.cityOrDistrict);
                               }}
                             >
@@ -442,12 +453,7 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
                           )}
                         >
                           {field.value ? (
-                            cities
-                              ?.find(
-                                (city) => city.cityOrDistrict === cityOrDistrict
-                              )
-                              ?.cityOrTown.find((el) => el.name === townOrCity)
-                              ?.name
+                            field.value
                           ) : (
                             <p className="line-clamp-1 text-slate-500">
                               Выберите город (район)
@@ -519,17 +525,10 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
                           )}
                         >
                           {field.value ? (
-                            cities
-                              ?.find(
-                                (city) => city.cityOrDistrict === cityOrDistrict
-                              )
-                              ?.cityOrTown.find((el) => el.name === townOrCity)
-                              ?.addresses.find(
-                                (el) => el.name === streetOrHouse
-                              )?.name
+                            field.value
                           ) : (
                             <p className="line-clamp-1 text-slate-500">
-                              Выберите город (район)
+                              Выберите улицу/мкр.
                             </p>
                           )}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

@@ -38,6 +38,7 @@ export async function PATCH(
       floors,
       images,
       coordinateX,
+      cityId,
       coordinateY,
     } = body;
 
@@ -61,6 +62,7 @@ export async function PATCH(
         images,
         coordinateX,
         coordinateY,
+        cityId,
       },
     });
 

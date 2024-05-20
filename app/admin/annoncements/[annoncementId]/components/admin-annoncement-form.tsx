@@ -212,7 +212,7 @@ function AdminAnnoncementForm({
     if (initialData?.buildingId) {
       const building = cities
         .filter((el) => el?.cityOrDistrict === cityOrDistrict)[0]
-        .buildings.find((el) => el.id);
+        ?.buildings.find((el) => el.id);
       setCityOrDistrict(building?.cityOrDistrict || "");
       setTownOrCity(building?.cityOrTown || "");
       setStreetOrHouse(building?.townOrStreet || "");
@@ -2619,9 +2619,7 @@ function AdminAnnoncementForm({
                           )}
                         >
                           {field.value ? (
-                            cities?.find(
-                              (city) => city.cityOrDistrict === field.value
-                            )?.cityOrDistrict
+                            field.value
                           ) : (
                             <p className="line-clamp-1 text-slate-500">
                               Выберите город (область)
@@ -2686,14 +2684,7 @@ function AdminAnnoncementForm({
                             )}
                           >
                             {field.value ? (
-                              cities
-                                ?.find(
-                                  (city) =>
-                                    city.cityOrDistrict === cityOrDistrict
-                                )
-                                ?.cityOrTown.find(
-                                  (el) => el.name === townOrCity
-                                )?.name
+                              field.value
                             ) : (
                               <p className="line-clamp-1 text-slate-500">
                                 Выберите город (район)
@@ -2766,17 +2757,7 @@ function AdminAnnoncementForm({
                             )}
                           >
                             {field.value ? (
-                              cities
-                                ?.find(
-                                  (city) =>
-                                    city.cityOrDistrict === cityOrDistrict
-                                )
-                                ?.cityOrTown.find(
-                                  (el) => el.name === townOrCity
-                                )
-                                ?.addresses.find(
-                                  (el) => el.name === streetOrHouse
-                                )?.name
+                              field.value
                             ) : (
                               <p className="line-clamp-1 text-slate-500">
                                 Выберите город (район)
@@ -2853,7 +2834,7 @@ function AdminAnnoncementForm({
                               .filter(
                                 (el) => el?.cityOrDistrict === cityOrDistrict
                               )[0]
-                              .buildings.find(
+                              ?.buildings?.find(
                                 (building) => building.id === field.value
                               )?.name
                           ) : (

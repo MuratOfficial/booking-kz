@@ -5,6 +5,7 @@ import HotSuggestCard from "@/components/cards/hot-suggest-card";
 
 import {
   fetchBuildings,
+  fetchCities,
   fetchFilteredAnnoncements,
 } from "@/lib/fetchingFilter";
 import { Metadata } from "next";
@@ -133,7 +134,7 @@ const FilterPage = async ({
   //     : false,
   // }));
 
-  const buildings = await fetchBuildings(searchParams?.city);
+  const cities = await fetchCities();
 
   return (
     <>
@@ -143,10 +144,7 @@ const FilterPage = async ({
             <Skeleton className=" w-full h-72 rounded-2xl bg-blue-300" />
           }
         >
-          <Filter
-            allcount={nonfilteredannoncements.length}
-            buildings={buildings}
-          />
+          <Filter allcount={nonfilteredannoncements.length} cities={cities} />
         </Suspense>
 
         <div className="w-full grid grid-cols-7 gap-4">

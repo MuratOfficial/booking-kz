@@ -114,3 +114,18 @@ export async function fetchBuildings(city?: string) {
     throw new Error("Failed to fetch filtered Data");
   }
 }
+
+export async function fetchCities() {
+  try {
+    noStore();
+    const cities = await prismadb.city.findMany({
+      include: {
+        buildings: true,
+      },
+    });
+    return cities;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch filtered Data");
+  }
+}

@@ -42,15 +42,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useDebouncedCallback } from "use-debounce";
-import { Building } from "@prisma/client";
+import { Building, City } from "@prisma/client";
 import { useToast } from "@/components/ui/use-toast";
 
 interface FilterProps {
   allcount: number;
-  buildings?: Building[] | null | undefined;
+  cities: (City & { buildings: Building[] })[];
 }
 
-function Filter({ allcount, buildings }: FilterProps) {
+function Filter({ allcount, cities }: FilterProps) {
   const pathname = usePathname();
   const { replace, push } = useRouter();
   const searchParams = useSearchParams();
@@ -250,10 +250,14 @@ function Filter({ allcount, buildings }: FilterProps) {
     replace(`${pathname}?${params.toString()}`);
   }, 500);
 
-  const buildingsList = buildings?.map((el) => ({
-    value: el.id,
-    label: el.name,
-  }));
+  const buildingsList = cities
+    .filter(
+      (el) => el.cityOrDistrict.toLowerCase() === searchParams.get("city")
+    )[0]
+    ?.buildings?.map((el) => ({
+      value: el.id,
+      label: el.name,
+    }));
 
   const handleMoreFilter = (term: string, filter: string) => {
     addOrRemoveMoreString(`${filter}=${term}`);
@@ -265,152 +269,31 @@ function Filter({ allcount, buildings }: FilterProps) {
     replace(`${pathname}?${moreStrings.join("&")}`);
   };
 
-  const citiesList = [
-    {
-      value: "астана",
-      label: "Астана",
-    },
-    {
-      value: "алматы",
-      label: "Алматы",
-    },
-    {
-      value: "шымкент",
-      label: "Шымкент",
-    },
-    {
-      value: "актобе",
-      label: "Актобе",
-    },
-    {
-      value: "актау",
-      label: "Актау",
-    },
-    {
-      value: "атырау",
-      label: "Атырау",
-    },
-    {
-      value: "караганда",
-      label: "Караганда",
-    },
-    {
-      value: "кызылорда",
-      label: "Кызылорда",
-    },
-    {
-      value: "талдыкорган",
-      label: "Талдыкорган",
-    },
-    {
-      value: "жезказган",
-      label: "Жезказган",
-    },
-    {
-      value: "экибастуз",
-      label: "Экибастуз",
-    },
-    {
-      value: "семей",
-      label: "Семей",
-    },
-    {
-      value: "усть-Каменогорск",
-      label: "Усть-Каменогорск",
-    },
-    {
-      value: "костанай",
-      label: "Костанай",
-    },
-    {
-      value: "уральск",
-      label: "Уральск",
-    },
-    {
-      value: "петропавловск",
-      label: "Петропавловск",
-    },
-    {
-      value: "туркестан",
-      label: "Туркестан",
-    },
-    {
-      value: "павлодар",
-      label: "Павлодар",
-    },
-    {
-      value: "кокшетау",
-      label: "Кокшетау",
-    },
-    {
-      value: "актюбинская обл.",
-      label: "Актюбинская обл.",
-    },
-    {
-      value: "алматинская обл.",
-      label: "Алматинская обл.",
-    },
-    {
-      value: "атырауская обл.",
-      label: "Атырауская обл.",
-    },
-    {
-      value: "жамбылская обл.",
-      label: "Жамбылская обл.",
-    },
-    {
-      value: "акмолинская обл.",
-      label: "Акмолинская обл.",
-    },
-    {
-      value: "восточно-Казахстанская обл.",
-      label: "Восточно-Казахстанская обл.",
-    },
-    {
-      value: "западно-Казахстанская обл.",
-      label: "Западно-Казахстанская обл.",
-    },
-    {
-      value: "карагандинская обл.",
-      label: "Карагандинская обл.",
-    },
-    {
-      value: "костанайская обл.",
-      label: "Костанайская обл.",
-    },
-    {
-      value: "кызылординская обл.",
-      label: "Кызылординская обл.",
-    },
-    {
-      value: "мангистауская обл.",
-      label: "Мангистауская обл.",
-    },
-    {
-      value: "павлодарская обл.",
-      label: "Павлодарская обл.",
-    },
-    {
-      value: "северо-Казахстанская обл.",
-      label: "Северо-Казахстанская обл.",
-    },
-    {
-      value: "туркестанская обл.",
-      label: "Туркестанская обл.",
-    },
-    {
-      value: "абайская обл.",
-      label: "Абайская обл.",
-    },
-    {
-      value: "жетысуйская обл.",
-      label: "Жетысуйская обл.",
-    },
-    {
-      value: "улытауская обл.",
-      label: "Улытауская обл.",
-    },
-  ];
+  const citiesList = cities?.map((el) => ({
+    value: el.cityOrDistrict.toLowerCase(),
+    label: el.cityOrDistrict,
+  }));
+
+  const townList = cities
+    .filter(
+      (el) => el.cityOrDistrict.toLowerCase() === searchParams.get("city")
+    )[0]
+    ?.cityOrTown?.map((el) => ({
+      value: el.name.toLowerCase(),
+      label: el.name,
+    }));
+
+  const streetList = cities
+    .filter(
+      (el) => el.cityOrDistrict.toLowerCase() === searchParams.get("city")
+    )[0]
+    ?.cityOrTown?.filter(
+      (el) => el.name.toLowerCase() === searchParams.get("cityOrTown")
+    )[0]
+    ?.addresses?.map((el) => ({
+      value: el.name.toLowerCase(),
+      label: el.name,
+    }));
 
   const rentType = ["Посуточно", "Помесячно", "Почасовая"];
 
@@ -698,20 +581,18 @@ function Filter({ allcount, buildings }: FilterProps) {
           data={citiesList}
           filter="city"
         />
-        <Input
-          className="rounded-xl "
-          placeholder="Район (город)"
-          onChange={(e) => {
-            handleFilter(e.target.value, "cityOrTown");
-          }}
+        <ComboboxFilter
+          buttonName="Выберите город (район)"
+          commandInputTitle="Поиск города (района)"
+          data={townList || []}
+          filter="cityOrTown"
         />
 
-        <Input
-          className="rounded-xl "
-          placeholder="Улица (мкр.)"
-          onChange={(e) => {
-            handleFilter(e.target.value, "street");
-          }}
+        <ComboboxFilter
+          buttonName="Выберите улицу/мкр."
+          commandInputTitle="Поиск улицы/мкр."
+          data={streetList || []}
+          filter="street"
         />
         <ComboboxFilter
           buttonName="Все жилые комплексы"
