@@ -18,6 +18,18 @@ const config = {
       },
     },
     extend: {
+      screens: {
+        xs: "360px",
+        sm: "480px",
+
+        md: "768px",
+
+        lg: "1024px",
+
+        xl: "1280px",
+
+        "2xl": "1536px",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

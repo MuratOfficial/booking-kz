@@ -108,7 +108,7 @@ function HotCategoryGrid({ title, data, link }: HotCategoryGridProps) {
         </div>
       </div>
       {isLoaded ? (
-        <div className="w-full grid grid-cols-8 gap-2 ">
+        <div className="w-full grid lg:grid-cols-8 md:grid-cols-4 xs:grid-cols-2 gap-2 ">
           {annoncements &&
             annoncements.length > 0 &&
             annoncements
@@ -118,7 +118,7 @@ function HotCategoryGrid({ title, data, link }: HotCategoryGridProps) {
               ))}
         </div>
       ) : (
-        <div className="w-full grid grid-cols-8 gap-2 ">
+        <div className="w-full grid lg:grid-cols-8 md:grid-cols-4 xs:grid-cols-2 gap-2 ">
           {myArray.map((el, ind) => (
             <Skeleton
               className="rounded-xl aspect-[5/4] bg-slate-200"

@@ -21,8 +21,8 @@ const BillingPage = async () => {
 
   return (
     <>
-      <div className="w-full grid grid-cols-4 gap-4 pb-4 ">
-        <div className="w-full col-span-3 flex flex-col gap-2">
+      <div className="w-full grid md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4 ">
+        <div className="w-full lg:col-span-3 md:col-span-2 flex flex-col gap-2">
           <Points
             total={userData?.totalBalance || "0"}
             bonus={userData?.bonusBalance || "0"}

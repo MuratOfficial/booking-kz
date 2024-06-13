@@ -53,7 +53,7 @@ export async function fetchFilteredAnnoncements(
           lte: parseInt(areaSqTo || "999000"),
         },
         cityOrDistrict: {
-          contains: city?.slice(1),
+          endsWith: city?.slice(4),
         },
         cityOrTown: {
           contains: cityOrTown?.slice(1),

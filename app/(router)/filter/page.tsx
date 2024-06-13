@@ -147,7 +147,7 @@ const FilterPage = async ({
           <Filter allcount={nonfilteredannoncements.length} cities={cities} />
         </Suspense>
 
-        <div className="w-full grid grid-cols-7 gap-4">
+        <div className="w-full md:grid xs:flex flex-col lg:grid grid-cols-7 gap-4">
           <div className="col-span-5">
             {searchParams?.map === "on" && searchParams?.city ? (
               <ScreenMap annoncements={nonfilteredannoncements} />

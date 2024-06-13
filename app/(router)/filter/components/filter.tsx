@@ -396,7 +396,7 @@ function Filter({ allcount, cities }: FilterProps) {
   ];
 
   return (
-    <div className=" bg-gradient-to-br from-blue-500 to-blue-400 px-6 py-4 rounded-3xl w-full flex flex-col gap-4">
+    <div className=" bg-gradient-to-br from-blue-500 to-blue-400 px-6 py-4 xs:hidden md:hidden rounded-3xl w-full md:flex lg:flex flex-col gap-4">
       {searchParams.get("serviceType") === "Аренда" && (
         <div className="flex flex-row gap-2 ">
           {rentType.map((item, index) => (

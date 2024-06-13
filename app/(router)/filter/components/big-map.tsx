@@ -121,7 +121,7 @@ function BigMap({
     <div className="w-full h-full relative">
       <div
         className={cn(
-          "w-[360px] h-fit relative rounded-xl hidden flex-col p-4 gap-2 justify-between absolute z-20 bg-blue-50 top-4 right-4",
+          "xs:w-[260px] lg:w-[360px] h-fit relative rounded-xl hidden flex-col p-4 gap-2 justify-between absolute z-20 bg-blue-50 top-4 right-4",
           data && "flex"
         )}
       >

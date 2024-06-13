@@ -119,7 +119,7 @@ function AnnoncementCard({ data }: AnnoncementCardProps) {
                   <Image
                     src={img.url}
                     alt={`img+${index}`}
-                    width={240}
+                    width={380}
                     height={320}
                     className=" object-cover rounded-xl  aspect-[5/4] cursor-pointer "
                     onClick={() => router.push(`/annoncements/${data.id}`)}

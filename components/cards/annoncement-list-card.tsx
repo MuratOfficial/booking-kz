@@ -193,7 +193,7 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
   return (
     <div className="w-full rounded-xl hover:shadow-xl transition delay-100 duration-300 ">
       <div
-        className="w-full   bg-white rounded-xl grid grid-cols-12"
+        className="w-full   bg-white rounded-xl xs:flex flex-col lg:grid grid-cols-12"
         style={{
           backgroundColor: `${
             data.hurryModifierDate && data?.hurryModifierDate > currentDate
@@ -215,7 +215,7 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
                     alt={`img+${index}`}
                     width={900}
                     height={1200}
-                    className=" object-cover  h-[240px] rounded-l-xl"
+                    className=" object-cover  h-[240px] xs:rounded-t-xl lg:rounded-tr-none lg:rounded-l-xl"
                   />
                 </CarouselItem>
               ))}
@@ -310,19 +310,19 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
           </Carousel>
         </div>
         <div
-          className="w-full  col-span-8  flex flex-row items-center max-h-[240px] p-2 cursor-pointer"
+          className="w-full  col-span-8  flex xs:flex-col lg:flex-row items-center min-h-[240px] p-2 cursor-pointer"
           onClick={() => router.push(`/annoncements/${data.id}`)}
         >
-          <div className="flex flex-col gap-2 w-[70%] h-full py-2 px-3 justify-between">
+          <div className="flex flex-col gap-2 xs:w-full lg:w-[70%] h-full py-2 px-3 justify-between">
             <div className="col-span-3 flex flex-col gap-1 w-full">
               <div className="w-full flex flex-row justify-between items-center">
-                <div className="flex flex-col gap-1 w-full">
-                  <p className="  text-slate-900 group font-semibold text-lg text-left flex flex-row gap-x-1 items-center">
+                <div className="flex flex-col gap-1 w-full ">
+                  <p className=" text-justify  text-slate-900 group font-semibold text-lg text-left flex flex-row gap-x-1 items-center">
                     {data?.roomNumber}-комнатная {data.categoryType},{" "}
                     {data.areaSq} м², {data.floor}/{data.floorFrom} этаж{" "}
                   </p>
                   <div className="flex flex-row justify-between gap-x-4 flex-wrap">
-                    <p className=" text-slate-900/50 flex flex-row items-center gap-x-1 font-medium text-sm rounded-full  text-center w-fit">
+                    <p className="text-justify text-slate-900/50 flex flex-wrap flex-row items-center gap-x-1 font-medium text-sm rounded-full  text-center w-fit">
                       <MapPin className="stroke-red-500" size={12} />{" "}
                       {data?.cityOrDistrict && `${data?.cityOrDistrict}`}
                       {!data?.buildingName && (
@@ -342,7 +342,7 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
                 </div>
               </div>
             </div>
-            <p className="line-clamp-2 text-sm text-slate-900/90 mt-2">
+            <p className="line-clamp-2 text-justify text-sm text-slate-900/90 mt-2">
               {data?.description}
             </p>
             <div className="flex flex-row gap-x-1  items-center">
@@ -629,8 +629,12 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
               </div>
             </div>
           </div>
-          <Separator className="h-[80%] bg-slate-300" orientation="vertical" />
-          <div className="flex flex-col gap-2 w-[30%] h-full py-2 px-2 justify-between">
+          <Separator
+            className="h-[80%] bg-slate-300 lg:flex xs:hidden"
+            orientation="vertical"
+          />
+          <Separator className=" bg-slate-300 lg:hidden xs:flex" />
+          <div className="flex flex-col gap-2 xs:w-full lg:w-[30%] h-full py-2 px-2 justify-between">
             {data.serviceType === "Аренда" && (
               <>
                 <HoverCard>
@@ -721,7 +725,7 @@ function AnnoncementListCard({ data }: AnnoncementListCardProps) {
               )} */}
             </div>
 
-            <div className="flex flex-row gap-x-1 items-center justify-end self-end w-fit flex-wrap ">
+            <div className="flex flex-row gap-x-1 items-center justify-end self-end xs:w-full lg:w-fit flex-wrap ">
               <p className="w-fit  font-bold text-slate-900 text-lg leading-5">
                 {data.price.toLocaleString().replace(/,/g, " ")} ₸{" "}
               </p>

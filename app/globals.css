@@ -20,8 +20,10 @@ html {
   padding: 0;
   overflow-x: hidden;
   overflow-y: auto;
-} */
+}
 
-/* body {
-  overflow-y: hidden;
-} */
+ */
+
+body {
+  overflow-x: hidden;
+}
