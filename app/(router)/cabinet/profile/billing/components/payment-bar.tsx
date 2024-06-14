@@ -134,17 +134,20 @@ function PaymentBar({ refills, userId, phone, email }: PaymentBarProps) {
         </DialogContent>
       </Dialog>
 
-      <div className="w-full border-2 mt-4 flex flex-col items-center p-2 rounded-3xl">
-        <p className="text-slate-50 text-sm  flex flex-row gap-x-1 w-full font-semibold items-center justify-center">
-          <Coins size={16} className="stroke-2" />
-          Бонусы
-        </p>
-        <p className="text-slate-50 text-sm  flex flex-row gap-x-1 w-full font-semibold  items-center justify-center">
-          при пополнении
-        </p>
+      <div className="w-full border-2 mt-4 flex md:flex-row items-center gap-4 flex-wrap lg:flex-col items-center p-2 rounded-3xl">
+        <div className="flex-col flex items-center md:w-fit xs:w-full lg:w-full">
+          <p className="text-slate-50 text-sm  flex flex-row gap-x-1 w-full font-semibold items-center justify-center">
+            <Coins size={16} className="stroke-2" />
+            Бонусы
+          </p>
+          <p className="text-slate-50 text-sm  flex flex-row gap-x-1 w-full font-semibold  items-center justify-center">
+            при пополнении
+          </p>
+        </div>
+
         {refills?.map((el, key) => (
           <div
-            className="flex flex-col mt-2 w-full justify-center items-center"
+            className="flex flex-col mt-2 md:w-fit xs:w-full lg:w-full justify-center items-center"
             key={key}
           >
             <div className="flex flex-row gap-x-1  items-center">

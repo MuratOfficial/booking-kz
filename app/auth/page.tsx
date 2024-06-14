@@ -16,7 +16,7 @@ export default function AuthenticationPage() {
         <CarouselAuth />
       </div>
 
-      <div className="relative  bg-no-repeat bg-bottom bg-contain h-full xs:py-6 sm:py-4 lg:py-24 xs:px-2 sm:px-4 lg:px-12 ">
+      <div className="relative  bg-no-repeat bg-bottom bg-contain h-full xs:py-12 sm:py-4 lg:py-24 xs:px-2 sm:px-4 lg:px-12 ">
         <UserAuthForm />
       </div>
     </div>

@@ -270,7 +270,10 @@ function CarouselWithThumbs({ images, isChecked }: CarouselWithThumbsProps) {
       >
         <CarouselContent className="w-full -ml-2">
           {images?.map((thumb, index) => (
-            <CarouselItem key={index} className=" basis-[12%] pl-2">
+            <CarouselItem
+              key={index}
+              className="md:basis-[12%] xs:basis-[25%] lg:basis-[12%] pl-2"
+            >
               <Image
                 src={thumb.url}
                 alt={`img+${index}`}

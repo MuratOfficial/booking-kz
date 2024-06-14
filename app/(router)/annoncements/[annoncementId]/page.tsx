@@ -340,9 +340,9 @@ const AnnoncementPage = async ({
   });
 
   return (
-    <div className="py-4 px-16 min-h-screen flex flex-col gap-2 text-slate-900">
+    <div className="py-4 md:px-8 xs:px-4 lg:px-16 min-h-screen flex flex-col gap-2 text-slate-900">
       <HeaderButtons />
-      <div className="grid grid-cols-12 gap-4 w-full h-full">
+      <div className="md:grid xs:flex flex-col lg:grid grid-cols-12 gap-4 w-full h-full">
         <div className="col-span-8  w-full h-full gap-4 flex flex-col">
           <CarouselWithThumbs
             images={annoncement?.images}
@@ -370,7 +370,7 @@ const AnnoncementPage = async ({
         </div>
         <div className="col-span-4 w-full h-full ">
           <div className="bg-white rounded-xl w-full h-fit px-4 py-3 flex flex-col gap-2  sticky top-[10%]">
-            <div className="grid grid-cols-3 gap-2 items-center">
+            <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-2 items-center">
               <TestimonialsToButton
                 detail1={overallRanking}
                 detail2={annoncement?.testimonials.length || 0}
@@ -414,7 +414,7 @@ const AnnoncementPage = async ({
               <UserCheck2 className="w-5" />
               <p>{annoncement?.user.name || annoncement?.user.username}</p>
             </div>
-            <div className="grid grid-cols-2 w-full gap-2 mb-2">
+            <div className="grid md:grid-cols-1 lg:grid-cols-2 w-full gap-2 mb-2">
               <CallButton
                 phone={annoncement?.user?.phone}
                 id={annoncement?.id}
@@ -458,7 +458,7 @@ const AnnoncementPage = async ({
             <Separator />
             <div className="w-full flex flex-col gap-2">
               <p className="font-bold">Основные удобства</p>
-              <div className="w-full grid grid-cols-2 gap-2 ">
+              <div className="w-full lg:grid md:flex flex-col grid-cols-2 gap-2 ">
                 {filteredArray.slice(0, 8).map((el, ind) => (
                   <span
                     className="flex flex-row items-center gap-x-2 font-semibold text-xs"
@@ -469,7 +469,7 @@ const AnnoncementPage = async ({
                 ))}
                 {filteredArray.length !== 0 && (
                   <Collapsible className="col-span-2 ">
-                    <CollapsibleContent className="w-full grid grid-cols-2 gap-2 ">
+                    <CollapsibleContent className="w-full grid md:grid-cols-1 lg:grid-cols-2 gap-2 ">
                       {filteredArray.slice(8).map((el, ind) => (
                         <span
                           className="flex flex-row items-center gap-x-2 font-semibold text-xs"

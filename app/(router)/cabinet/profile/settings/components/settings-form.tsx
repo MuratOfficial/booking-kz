@@ -83,7 +83,7 @@ export function SettingsForm({ initialData }: SettingsFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full grid grid-cols-3 gap-6"
+        className="w-full md:grid lg:grid xs:flex xs:flex-col md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         <FormField
           control={form.control}

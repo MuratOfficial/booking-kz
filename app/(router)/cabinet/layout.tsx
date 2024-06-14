@@ -28,7 +28,7 @@ export default async function CabinetLayout({ children }: CabinetLayoutProps) {
   await fetchUserDataPaymentUpdate();
   return (
     <>
-      <div className=" px-8 py-4 ">
+      <div className=" md:px-8 xs:px-2 lg:px-8 py-4 ">
         <div className="flex flex-col gap-y-4">
           <div className="w-full items-center flex flex-col">{children}</div>
         </div>

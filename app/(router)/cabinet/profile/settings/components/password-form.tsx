@@ -72,7 +72,7 @@ export function PasswordForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full grid grid-cols-2 gap-6"
+        className="w-full md:grid lg:grid lg:grid-cols-2 gap-6 xs:flex xs:flex-col md:grid-cols-2 "
       >
         <FormField
           control={form.control}

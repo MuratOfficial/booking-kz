@@ -9,7 +9,7 @@ interface PointsProps {
 
 function Points({ total, bonus }: PointsProps) {
   return (
-    <div className="w-full rounded-2xl  bg-white gap-4  p-4 grid grid-cols-2">
+    <div className="w-full rounded-2xl  bg-white gap-4  p-4 xs:grid-cols-1 grid grid-cols-2">
       <div className="h-fit text-slate-800 flex flex-col gap-4 border border-slate-300 shadow-md rounded-xl p-6 items-start ">
         <div className="w-full flex flex-row justify-between ">
           <p className="text-base font-medium text-slate-700">Общая сумма</p>

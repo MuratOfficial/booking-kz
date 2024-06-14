@@ -10,7 +10,7 @@ interface AnnoncementMapProps {
 
 function AnnoncementMap({ coordinate1, coordinate2 }: AnnoncementMapProps) {
   return (
-    <div className="w-full rounded-xl bg-white flex flex-col gap-2 text-slate-900 h-full px-4 py-3">
+    <div className="w-full rounded-xl bg-white flex flex-col gap-2 text-slate-900 h-full px-4 py-3 overflow-x-hidden">
       <Element name="mapbottom">
         <p className="font-semibold text-lg text-left w-fit">
           Расположение на карте
@@ -19,6 +19,7 @@ function AnnoncementMap({ coordinate1, coordinate2 }: AnnoncementMapProps) {
 
       <YandexMap
         width={740}
+        height={540}
         zoom={16}
         coordinate1={coordinate1}
         coordinate2={coordinate2}
