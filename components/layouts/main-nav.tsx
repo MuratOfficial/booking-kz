@@ -57,6 +57,7 @@ import {
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { Annoncement, Chat, Message, User } from "@prisma/client";
+import MobileNav from "./mobile-nav";
 
 interface MainNavProps {
   userData:
@@ -192,8 +193,8 @@ function MainNav({ userData }: MainNavProps) {
   ];
 
   return (
-    <nav className="w-full bg-slate-900 px-4 grid grid-cols-8 items-center sticky top-0 z-40">
-      <div className="flex col-span-3 flex-row items-center gap-x-4 ">
+    <nav className="w-full bg-slate-900 px-4 grid xs:grid-cols-3 lg:grid-cols-8 items-center sticky top-0 z-40">
+      <div className="lg:flex xs:hidden col-span-3 flex-row items-center gap-x-4 ">
         <Link href="/" className=" -mt-1">
           <Image
             src="/etazhi.png"
@@ -310,7 +311,7 @@ function MainNav({ userData }: MainNavProps) {
           </PopoverContent>
         </Popover>
       </div>
-      <div className="flex col-span-2 flex-row items-center gap-x-4 justify-center ">
+      <div className="lg:flex xs:hidden   col-span-2 flex-row items-center gap-x-4 justify-center ">
         <Link
           href="/cabinet/annoncements/new"
           className="font-semibold flex flex-row items-center gap-x-1 h-full bg-blue-500 rounded-xl text-neutral-50 text-sm transition delay-150 duration-500 py-3 px-4 hover:text-blue-500 hover:bg-neutral-50"
@@ -332,7 +333,7 @@ function MainNav({ userData }: MainNavProps) {
           Разместить обьявление
         </Link>
       </div>
-      <div className="flex col-span-3 flex-row items-center  gap-x-2 justify-end">
+      <div className="lg:flex xs:hidden  col-span-3 flex-row items-center  gap-x-2 justify-end">
         {userData && (
           <>
             <Link
@@ -695,6 +696,7 @@ onFocusOutside={() => setOpenPopover("")}          >
           </Link>
         )}
       </div>
+      <MobileNav userData={userData} />
     </nav>
   );
 }
