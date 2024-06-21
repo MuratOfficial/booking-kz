@@ -54,6 +54,9 @@ import {
   Circle,
   BellDot,
   Menu,
+  Heart,
+  MessageCircle,
+  Newspaper,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -175,6 +178,49 @@ function MobileNav({ userData }: MobileNavProps) {
     },
   ];
 
+  const [drClose, setDrClose] = React.useState(false);
+
+  const handleClose = () => {
+    if (drClose) {
+      setDrClose(false);
+    } else {
+      setDrClose(true);
+    }
+  };
+
+  const menuList3 = [
+    {
+      name: "Избранные",
+      icon: <Heart size={19} />,
+      path: "/cabinet/favorites",
+    },
+    {
+      name: "Оповещения",
+      icon: <Bell size={19} />,
+      path: "/cabinet/profile/notifications",
+    },
+    {
+      name: "Сообщения",
+      icon: <MessageCircle size={19} />,
+      path: "/cabinet/chats",
+    },
+    {
+      name: "Счет и платежи",
+      icon: <CreditCard size={19} />,
+      path: "/cabinet/profile/billing",
+    },
+    {
+      name: "Мои обьявления",
+      icon: <Newspaper size={19} />,
+      path: "/cabinet/annoncements",
+    },
+    {
+      name: "Настройки",
+      icon: <Settings size={19} />,
+      path: "/cabinet/profile/settings",
+    },
+  ];
+
   return (
     <div className="w-full bg-slate-900 p-2 gap-2 xs:grid grid-cols-6 lg:hidden col-span-3  items-center sticky top-0 z-40">
       <Link href="/" className=" -mt-1 col-span-3">
@@ -224,11 +270,10 @@ function MobileNav({ userData }: MobileNavProps) {
                   <span
                     className={cn(
                       "font-bold flex cursor-pointer flex-row items-center gap-1 text-slate-900  transition delay-150 duration-500 p-2 hover:text-blue-500 hover: border-b-2 border-transparent",
-                      isOpenPopover === "open1" && "text-blue-500 ",
+
                       searchParams.get("serviceType") === "Продажа" &&
                         "text-blue-500 "
                     )}
-                    onClick={() => router.push("/filter?serviceType=Продажа")}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -253,11 +298,11 @@ function MobileNav({ userData }: MobileNavProps) {
                       <li
                         key={ind}
                         className="p-2 text-left cursor-pointer  font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
-                        onClick={() =>
+                        onClick={() => {
                           router.push(
                             `/filter?serviceType=Продажа&categoryType=${el.name}`
-                          )
-                        }
+                          );
+                        }}
                       >
                         {el.icon} {el.name}
                       </li>
@@ -272,12 +317,10 @@ function MobileNav({ userData }: MobileNavProps) {
                   <span
                     className={cn(
                       "font-bold flex cursor-pointer flex-row items-center gap-1 text-slate-900  transition delay-150 duration-500 p-2 hover:text-blue-500 hover: border-b-2 border-transparent",
-                      isOpenPopover === "open2" && "text-blue-500 ",
 
                       searchParams.get("serviceType") === "Аренда" &&
                         "text-blue-500 "
                     )}
-                    onClick={() => router.push("/filter?serviceType=Аренда")}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -297,19 +340,94 @@ function MobileNav({ userData }: MobileNavProps) {
                   </span>
                 </AccordionTrigger>
                 <AccordionContent>
-                  Yes. It adheres to the WAI-ARIA design pattern.
+                  <ul className="w-full text-slate-900">
+                    {menuList2.map((el, ind) => (
+                      <li
+                        key={ind}
+                        className="p-2 text-left cursor-pointer  font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
+                        onClick={() =>
+                          router.push(
+                            `/filter?serviceType=Продажа&categoryType=${el.name}`
+                          )
+                        }
+                      >
+                        {el.icon} {el.name}
+                      </li>
+                    ))}
+                  </ul>
                 </AccordionContent>
               </AccordionItem>
+              <Separator />
+              {userData && (
+                <AccordionItem value="item-3">
+                  <AccordionTrigger>
+                    {" "}
+                    <span
+                      className={cn(
+                        "font-bold flex cursor-pointer flex-row items-center gap-1 text-slate-900  transition delay-150 duration-500 p-2 hover:text-blue-500 hover: border-b-2 border-transparent",
+                        pathname.startsWith("/cabinet") && "text-blue-500 "
+                      )}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                        />
+                      </svg>
+                      Мой кабинет
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="w-full text-slate-900">
+                      <Link
+                        href="/cabinet/profile/billing"
+                        className="text-slate-500 text-sm p-2"
+                      >
+                        <span className="font-medium">Баланс:</span>
+                        <span className="text-yellow-400 font-semibold ml-2">
+                          {userData?.totalBalance || "0"} ед.
+                        </span>
+                      </Link>
+
+                      {menuList3.map((el, ind) => (
+                        <li
+                          key={ind}
+                          className="p-2 text-left cursor-pointer  font-semibold flex flex-row gap-x-2 hover:bg-blue-500 rounded-xl w-full transition delay-100 duration-300"
+                          onClick={() => router.push(el.path)}
+                        >
+                          {el.icon} {el.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+
               <Separator />
             </Accordion>
           </div>
           <DrawerFooter className="w-full items-center flex">
-            {!userData && (
+            {!userData ? (
               <Button
                 onClick={() => router.push("/auth")}
                 className="w-full rounded-xl bg-blue-500 text-base"
               >
                 Войти/Зарегистрироваться
+              </Button>
+            ) : (
+              <Button
+                onClick={() => signOut()}
+                className="w-full rounded-xl bg-slate-900 text-base"
+              >
+                Выйти
               </Button>
             )}
 
