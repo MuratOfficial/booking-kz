@@ -1,13 +1,14 @@
 import Image from "next/image";
 import React from "react";
 
-import { Check, CheckCheck } from "lucide-react";
+import { ArrowLeft, Check, CheckCheck } from "lucide-react";
 import { fetchChat, fetchChatUsers } from "@/lib/fetchChats";
 import { fetchAnnoncement } from "@/lib/fetchAnnoncement";
 import DropdownChatButtons from "./components/dropdown-chat-button";
 import SendMessageButton from "./components/send-message";
 import { fetchUserData } from "@/lib/fetchUserData";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Link from "next/link";
 
 export async function generateMetadata({
   params,
@@ -40,6 +41,9 @@ const ChatPage = async ({
     <div className="grid grid-rows-9 h-full w-full ">
       <div className="border-b-2 border-slate-300 px-4 py-2 flex flex-row justify-between items-center">
         <div className="flex flex-row gap-x-4 h-fit w-60 items-center">
+          <Link href="/cabinet/chats" className="xs:flex md:hidden lg:hidden">
+            <ArrowLeft className="w-4" />
+          </Link>
           <Image
             src={annoncement?.images[0].url || ""}
             alt="chat thumb"

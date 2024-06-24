@@ -5,6 +5,7 @@ import { fetchUserChats } from "@/lib/fetchChats";
 import { Headset, Loader } from "lucide-react";
 import { fetchUserData } from "@/lib/fetchUserData";
 import Link from "next/link";
+import MobileChat from "./components/mobile-chat";
 
 export const metadata: Metadata = {
   title: {
@@ -51,7 +52,7 @@ export default async function ChatsLayout({ children }: ChatsLayoutProps) {
             Написать в поддержку
           </Link>
         </div>
-        <div className="w-full h-[720px] shadow-2xl rounded-3xl mt-2 grid grid-cols-3">
+        <div className="w-full h-[720px] shadow-2xl rounded-3xl mt-2 md:grid xs:hidden lg:grid grid-cols-3">
           <div className=" w-full h-full   rounded-l-3xl border-y-2 border-l-2 bg-slate-200 border-slate-300 py-3 pl-4">
             <ChatList chats={chatList} userId={user?.id} />
           </div>
@@ -67,6 +68,9 @@ export default async function ChatsLayout({ children }: ChatsLayoutProps) {
             </Suspense>
           </div>
         </div>
+        <MobileChat chats={chatList} userId={user?.id}>
+          {children}
+        </MobileChat>
       </div>
     </>
   );
