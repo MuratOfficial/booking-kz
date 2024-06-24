@@ -135,7 +135,7 @@ function Modifiers({
   return (
     <>
       {" "}
-      <div className=" grid grid-cols-3 gap-2">
+      <div className="md:grid xs:flex flex-col lg:grid grid-cols-3 gap-2">
         <Popover>
           <PopoverTrigger
             disabled={hotMod}
@@ -533,7 +533,7 @@ function Modifiers({
                 viewBox="0 0 512 512"
                 fill="#000000"
               >
-                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
                 <g
                   id="SVGRepo_tracerCarrier"
                   strokeLinecap="round"

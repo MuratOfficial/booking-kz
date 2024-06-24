@@ -215,11 +215,14 @@ function PaymentHistory({ data }: PaymentHistoryProps) {
             </p>
           )}
         </TabsContent>
-        <TabsContent value="repl" className="w-full px-2 flex flex-col gap-y-4">
+        <TabsContent
+          value="repl"
+          className="w-full px-2 flex flex-col gap-y-4 items-center justify-center"
+        >
           {refills && refills.length > 0 ? (
             refills?.map((item, index) => (
               <div
-                className="w-full flex flex-row items-center justify-between border-b pb-1"
+                className="w-full flex md:flex-row xs:flex-col lg:flex-row items-center justify-between border-b pb-1"
                 key={index}
               >
                 <div className="w-full flex flex-col gap-1">
@@ -279,7 +282,7 @@ function PaymentHistory({ data }: PaymentHistoryProps) {
                     </div>
                   </div>
                   <div className="flex flex-row gap-2 items-center justify-start">
-                    <div className="flex flex-row gap-x-1 w-full  items-center text-sm font-medium text-slate-600">
+                    <div className="flex flex-row flex-wrap gap-x-1 w-full  items-center text-sm font-medium text-slate-600">
                       {(item.transactionType === "refill" ||
                         item.transactionType === "refill-manual" ||
                         item.transactionType === "bonus") && (
@@ -295,14 +298,14 @@ function PaymentHistory({ data }: PaymentHistoryProps) {
                       )}
                       {(item.transactionType === "modifier" ||
                         item.transactionType === "subscription") && (
-                        <p className="flex flex-row">
+                        <p className="flex flex-row flex-wrap">
                           Покупка
                           {item.transactionType === "modifier" &&
                             " модификаций"}
                           {item.transactionType === "subscription" &&
                             " подписки"}{" "}
                           {item.annoncementId && (
-                            <span className="flex flex-row ml-1">
+                            <span className="flex flex-row flex-wrap ml-1">
                               для обьявления №
                               <Link
                                 href={`/annoncements/${item.annoncementId}`}
@@ -327,7 +330,7 @@ function PaymentHistory({ data }: PaymentHistoryProps) {
                     </Link>
                   )}
                 </div>
-                <div className="flex flex-col justify-center items-end min-w-60">
+                <div className="flex flex-col justify-center items-end md:min-w-60 xs:min-w-full lg:min-w-60">
                   {item.transactionType === "refill" && (
                     <>
                       <p className="font-bold text-green-500 text-lg">
@@ -386,7 +389,7 @@ function PaymentHistory({ data }: PaymentHistoryProps) {
           {spents && spents?.length > 0 ? (
             spents?.map((item, index) => (
               <div
-                className="w-full flex flex-row items-center justify-between border-b pb-1"
+                className="w-full flex md:flex-row xs:flex-col lg:flex-row items-center justify-between border-b pb-1"
                 key={index}
               >
                 <div className="w-full flex flex-col gap-1">
@@ -446,7 +449,7 @@ function PaymentHistory({ data }: PaymentHistoryProps) {
                     </div>
                   </div>
                   <div className="flex flex-row gap-2 items-center justify-start">
-                    <div className="flex flex-row gap-x-1 w-full  items-center text-sm font-medium text-slate-600">
+                    <div className="flex flex-row flex-wrap gap-x-1 w-full  items-center text-sm font-medium text-slate-600">
                       {(item.transactionType === "refill" ||
                         item.transactionType === "refill-manual" ||
                         item.transactionType === "bonus") && (
@@ -462,14 +465,14 @@ function PaymentHistory({ data }: PaymentHistoryProps) {
                       )}
                       {(item.transactionType === "modifier" ||
                         item.transactionType === "subscription") && (
-                        <p className="flex flex-row">
+                        <p className="flex flex-row flex-wrap">
                           Покупка
                           {item.transactionType === "modifier" &&
                             " модификаций"}
                           {item.transactionType === "subscription" &&
                             " подписки"}{" "}
                           {item.annoncementId && (
-                            <span className="flex flex-row ml-1">
+                            <span className="flex flex-row flex-wrap ml-1">
                               для обьявления №
                               <Link
                                 href={`/annoncements/${item.annoncementId}`}
@@ -494,7 +497,7 @@ function PaymentHistory({ data }: PaymentHistoryProps) {
                     </Link>
                   )}
                 </div>
-                <div className="flex flex-col justify-center items-end min-w-60">
+                <div className="flex flex-col justify-center items-end md:min-w-60 xs:min-w-full lg:min-w-60">
                   {item.transactionType === "refill" && (
                     <>
                       <p className="font-bold text-green-500 text-lg">

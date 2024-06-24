@@ -268,7 +268,7 @@ function MyAnnoncementCard({
 
   return (
     <div className="flex flex-col w-full bg-white bg-opacity-40 backdrop-blur-sm rounded-xl ">
-      <div className="flex flex-row items-center justify-between px-4 pt-2 pb-1">
+      <div className="flex flex-row flex-wrap items-center justify-between px-4 pt-2 pb-1">
         <div className="flex flex-row gap-x-4 items-center ">
           <p className="text-slate-400 text-xs uppercase">
             {data.serviceType} {data?.serviceTypeExt} {data.categoryType}
@@ -302,10 +302,10 @@ function MyAnnoncementCard({
             }`,
           }}
         >
-          <div className="  h-full flex items-center justify-center  col-span-3">
+          <div className="  h-full flex items-center xs:col-span-12 justify-center md:col-span-5 lg:col-span-3">
             <Carousel
               setApi={setApi}
-              className="w-full group h-[240px] relative rounded-xl items-center flex justify-center"
+              className="w-full group h-[240px] relative xs:rounded-t-xl lg:rounded-tr-none lg:rounded-l-xl items-center flex justify-center"
             >
               <CarouselContent>
                 {data.images.map((img, index) => (
@@ -315,7 +315,7 @@ function MyAnnoncementCard({
                       alt={`img+${index}`}
                       width={900}
                       height={1200}
-                      className=" object-cover  h-[240px] rounded-l-xl"
+                      className=" object-cover  h-[240px] xs:rounded-t-xl lg:rounded-tr-none lg:rounded-l-xl"
                     />
                   </CarouselItem>
                 ))}
@@ -408,8 +408,8 @@ function MyAnnoncementCard({
               </span>
             </Carousel>
           </div>
-          <div className="w-full  col-span-9  flex flex-row items-center max-h-[240px] p-2 ">
-            <div className="flex flex-col gap-2 w-[60%] h-full py-2 px-3 justify-between">
+          <div className="w-full md:col-span-7 xs:col-span-12 lg:col-span-5  flex flex-row items-center max-h-[240px] p-2 ">
+            <div className="flex flex-col gap-2  h-full py-2 px-3 justify-between">
               <div className="col-span-3 flex flex-col gap-1 w-full">
                 <div className="w-full flex flex-row justify-between items-center">
                   <div className="flex flex-col gap-1 w-full">
@@ -438,7 +438,7 @@ function MyAnnoncementCard({
                   </div>
                 </div>
               </div>
-              <p className="line-clamp-2 text-sm text-slate-900/90 mt-2">
+              <p className="line-clamp-2 hyphens-auto text-sm break-all w-full text-clip text-slate-900/90 mt-2">
                 {data?.description}
               </p>
               <div className="flex flex-row justify-between">
@@ -685,7 +685,7 @@ function MyAnnoncementCard({
                         viewBox="0 0 512 512"
                         fill="#000000"
                       >
-                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
                         <g
                           id="SVGRepo_tracerCarrier"
                           strokeLinecap="round"
@@ -802,12 +802,12 @@ function MyAnnoncementCard({
               </div> */}
             </div>
             <Separator
-              className="h-[85%] bg-slate-300"
+              className="h-[85%] bg-slate-300 lg:flex md:hidden xs:hidden"
               orientation="vertical"
             />
-            <div className="flex flex-col gap-2 w-[40%] h-full py-2 px-2 justify-between">
-              <Graphics data={data.analytics || []} />
-            </div>
+          </div>
+          <div className="flex flex-col gap-2 lg:col-span-4 xs:col-span-12 md:col-span-12  h-full py-2 px-2 justify-between">
+            <Graphics data={data.analytics || []} />
           </div>
         </div>
       </div>
@@ -818,7 +818,7 @@ function MyAnnoncementCard({
       )}
 
       <div className=" w-full grid grid-cols-5 gap-4 p-4">
-        <div className="col-span-4 w-full flex flex-col gap-4">
+        <div className="lg:col-span-4 xs:col-span-5 md:col-span-5 w-full flex flex-col gap-4">
           <Modifiers
             topMod={
               data.topModifierDate && data?.topModifierDate > currentDate
@@ -843,7 +843,7 @@ function MyAnnoncementCard({
             email={email}
             annoncementId={data.id}
           />
-          <div className=" row-span-3 grid grid-cols-2 w-full gap-4">
+          <div className=" row-span-3 md:grid flex flex-col lg:grid grid-cols-2 w-full gap-4">
             {data.subscriptionId && (
               <div
                 style={{
@@ -1178,7 +1178,7 @@ function MyAnnoncementCard({
             </div> */}
           </div>
         </div>
-        <div className=" flex flex-col gap-2">
+        <div className=" flex md:flex-row lg:col-span-1 xs:flex-col xs:col-span-5 md:col-span-5 lg:flex-col gap-2">
           <NewPriceForm id={data.id} initialPrice={data.price} />
           <button
             onClick={() => router.push(`/cabinet/annoncements/${data.id}`)}

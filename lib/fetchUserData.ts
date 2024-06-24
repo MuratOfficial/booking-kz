@@ -6,9 +6,9 @@ import axios from "axios";
 import { HmacSHA512 } from "crypto-js";
 
 export async function fetchUserData() {
+  const session = await getServerSession(authOptions);
+  const userIdData = JSON.parse(JSON.stringify(session))?.user;
   try {
-    const session = await getServerSession(authOptions);
-    const userIdData = JSON.parse(JSON.stringify(session))?.user;
     const user = userIdData
       ? await prismadb?.user?.findUnique({
           where: {

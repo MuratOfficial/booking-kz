@@ -129,7 +129,7 @@ export function NewTestimonialForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full grid grid-cols-3 gap-6 text-slate-800"
+        className="w-full md:grid xs:flex flex-col overflow-y-auto lg:grid grid-cols-3 md:gap-6 xs:gap-2 lg:gap-6 text-slate-800"
       >
         <FormField
           control={form.control}

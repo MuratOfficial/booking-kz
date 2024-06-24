@@ -361,6 +361,7 @@ const AnnoncementPage = async ({
                 parseFloat(annoncement?.coordinateX)) ||
               undefined
             }
+            zoom={17}
             coordinate2={
               (annoncement?.coordinateY &&
                 parseFloat(annoncement?.coordinateY)) ||

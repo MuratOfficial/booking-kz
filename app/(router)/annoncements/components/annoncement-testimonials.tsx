@@ -15,6 +15,7 @@ import {
   DialogClose,
   DialogContent,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { NewTestimonialForm } from "./new-testimonial-form";
@@ -96,7 +97,7 @@ function AnnoncementTestimonials({
 
   return (
     <div className="w-full rounded-xl bg-white flex flex-col gap-2 text-slate-900 h-full px-4 pt-3 pb-6">
-      <div className="flex flex-row gap-x-2 items-center justify-between">
+      <div className="flex md:flex-row xs:flex-col lg:flex-row gap-x-2 items-center justify-between">
         <Element name="testimonials">
           {serviceType === "Аренда" ? (
             <p className="font-semibold text-lg text-left w-fit">
@@ -142,7 +143,7 @@ function AnnoncementTestimonials({
         )}
       </div>
       {serviceType === "Аренда" && (
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="lg:grid md:grid xs:flex flex-col grid-cols-2 gap-4 mt-4">
           {rating.map((el, index) => (
             <div
               className="grid grid-cols-2 gap-2 font-semibold text-sm"
@@ -226,7 +227,9 @@ function AnnoncementTestimonials({
             </DialogTrigger>
             <DialogContent className="rounded-xl py-4">
               <DialogHeader className="font-bold text-xl text-slate-800">
-                {serviceType === "Аренда" ? "Оценка и отзыв" : "Комментарий"}
+                <DialogTitle>
+                  {serviceType === "Аренда" ? "Оценка и отзыв" : "Комментарий"}
+                </DialogTitle>
               </DialogHeader>
               {serviceType === "Аренда" ? (
                 <NewTestimonialForm setOpen={handleChildClose} />

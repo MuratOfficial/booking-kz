@@ -127,11 +127,15 @@ export default function Graphics({ data }: GraphicsProps) {
         </div>
       </div>
       <Chart
+        responsive={[
+          {
+            breakpoint: 1048,
+          },
+        ]}
         options={options}
         series={series}
         height="190"
         type="line"
-        width="350"
       />
     </div>
   );

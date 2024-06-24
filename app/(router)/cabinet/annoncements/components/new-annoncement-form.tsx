@@ -503,23 +503,8 @@ function AnnoncementForm({
     },
   ];
 
-  const phases = [
-    {
-      value: "активно",
-      label: "активно",
-    },
-    {
-      value: "проверка",
-      label: "проверка",
-    },
-    {
-      value: "блокировано",
-      label: "блокировано",
-    },
-  ];
-
   return (
-    <div className="w-full flex flex-col gap-2 text-slate-900  pl-4 pr-6">
+    <div className="w-full flex flex-col gap-2 text-slate-900 md:px-4 xs:px-2 lg:px-4">
       <h1 className="text-2xl font-semibold ml-4">
         {initialData ? `Обьявление ID ${initialData.id}` : "Новое обьявление"}
       </h1>
@@ -529,7 +514,7 @@ function AnnoncementForm({
           className="flex flex-col gap-6 w-full"
         >
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl py-4 px-6">
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid md:grid-cols-2 xs:grid-cols-1 lg:grid-cols-4 gap-4">
               <FormField
                 control={form.control}
                 name="serviceType"
@@ -884,14 +869,14 @@ function AnnoncementForm({
                 )}
               />
             </div>
-            <p className="flex flex-row gap-x-1 items-center text-xs text-slate-400">
+            <p className="flex md:flex-row xs:flex-col lg:flex-row gap-x-1 items-center text-xs text-slate-400">
               <Info className="w-3" />
               Загрузите фотографии чтобы получить больше просмотров. Нажмите на{" "}
               <Wand className="h-3 w-3" /> чтобы сделать фото главным.
             </p>
           </div>
-          <div className="w-full flex flex-row items-center justify-between gap-8">
-            <div className="flex flex-row items-start justify-between px-6 py-4 rounded-xl gap-8 bg-white w-full">
+          <div className="w-full flex md:flex-col xs:flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="flex md:flex-row xs:flex-col lg:flex-row items-start justify-between px-6 py-4 rounded-xl gap-8 bg-white w-full">
               <div className="flex flex-col gap-2  justify-between w-fit">
                 <FormField
                   control={form.control}
@@ -1069,7 +1054,7 @@ function AnnoncementForm({
             </div>
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">
-            <div className="grid grid-cols-3 justify-between gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 justify-between gap-4">
               <FormField
                 control={form.control}
                 name="repairType"
@@ -1229,7 +1214,7 @@ function AnnoncementForm({
               Укажите правила заселения, если таковы имеются
             </p>
             <p className="text-base font-semibold">Правила заселения</p>
-            <div className="flex flex-row gap-2 items-center">
+            <div className="flex md:flex-col xs:flex-col lg:flex-row gap-2 items-center">
               <p className="text-sm text-slate-600">Время заселения</p>
               <FormField
                 control={form.control}
@@ -1333,7 +1318,7 @@ function AnnoncementForm({
                 )}
               />
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-3 xs:grid-cols-1 lg:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
                 name={`additionalFilters.${0}.value`}
@@ -1480,7 +1465,7 @@ function AnnoncementForm({
               Отметьте имеющиеся удобства, чтобы привлечь больше просмотров
             </p>
             <p className="text-base font-semibold">Удобства</p>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-3 xs:grid-cols-1 lg:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
                 name={`additionalFilters.${6}.value`}
@@ -1824,7 +1809,7 @@ function AnnoncementForm({
               />
             </div>
             <p className="text-base font-semibold mt-4">На территории</p>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-3 xs:grid-cols-1 lg:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
                 name={`additionalFilters.${21}.value`}
@@ -1942,7 +1927,7 @@ function AnnoncementForm({
               />{" "}
             </div>
             <p className="text-base font-semibold mt-4">Вид из окна</p>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid md:grid-cols-3 xs:grid-cols-1 lg:grid-cols-4  gap-4">
               <FormField
                 control={form.control}
                 name={`additionalFilters.${26}.value`}
@@ -2037,7 +2022,7 @@ function AnnoncementForm({
               />
             </div>{" "}
             <p className="text-base font-semibold mt-4">Санузел</p>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid md:grid-cols-3 xs:grid-cols-1 lg:grid-cols-4 gap-4">
               <FormField
                 control={form.control}
                 name={`additionalFilters.${30}.value`}
@@ -2220,7 +2205,7 @@ function AnnoncementForm({
               />
             </div>
             <p className="text-base font-semibold mt-4">Дополнительно</p>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid md:grid-cols-3 xs:grid-cols-1 lg:grid-cols-4 gap-4">
               <FormField
                 control={form.control}
                 name={`additionalFilters.${38}.value`}
@@ -2266,7 +2251,7 @@ function AnnoncementForm({
             </div>
           </div>
           <div className="w-full grid grid-cols-3 gap-6 ">
-            <div className="col-span-2 gap-6 grid-cols-2 grid bg-white rounded-xl py-4 px-6">
+            <div className="md:col-span-3 xs:col-span-3 lg:col-span-2 gap-6 grid-cols-2 grid bg-white rounded-xl py-4 px-6">
               <FormField
                 control={form.control}
                 name="phone"
@@ -2298,7 +2283,7 @@ function AnnoncementForm({
                 </p>
               </div>
             </div>
-            <div className="w-full flex text-slate-50 flex-col items-center justify-between py-4 px-6 rounded-xl bg-slate-800">
+            <div className="w-full xs:col-span-3 flex md:col-span-2 lg:col-span-1 text-slate-50 flex-col items-center justify-between py-4 px-6 rounded-xl bg-slate-800">
               <div className="flex flex-col  items-center text-sm">
                 <p className="font-semibold">Дата и время создания</p>
                 <p suppressHydrationWarning>
@@ -2320,7 +2305,7 @@ function AnnoncementForm({
             </div>
           </div>
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
               <FormField
                 control={form.control}
                 name="cityOrDistrict"
@@ -2607,7 +2592,7 @@ function AnnoncementForm({
               />
             </div>
           </div>
-          <div className="w-full flex flex-col gap-2 bg-white rounded-xl px-6 py-4">
+          <div className="w-full flex flex-col gap-2 overflow-x-auto bg-white rounded-xl px-6 py-4">
             <p className="text-base font-semibold">Расположение на карте</p>
             <YandexMap
               width={1120}

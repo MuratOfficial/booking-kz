@@ -64,9 +64,9 @@ async function processPendingPayments(
 }
 
 export async function fetchUserDataPaymentUpdate() {
+  const session = await getServerSession(authOptions);
+  const userIdData = JSON.parse(JSON.stringify(session))?.user;
   try {
-    const session = await getServerSession(authOptions);
-    const userIdData = JSON.parse(JSON.stringify(session))?.user;
     const user = userIdData
       ? await prismadb?.user?.findUnique({
           where: {

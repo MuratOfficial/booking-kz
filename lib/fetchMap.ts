@@ -84,9 +84,9 @@ interface ResponseData {
 export async function fetchMap(
   text: string
 ): Promise<{ pos1: number; pos2: number } | null> {
+  const encodedText = encodeURIComponent(text);
+  const apiKey = process.env.YANDEX_API;
   try {
-    const encodedText = encodeURIComponent(text);
-    const apiKey = process.env.YANDEX_API;
     if (!apiKey) {
       throw new Error("Yandex API key is missing in environment variables.");
     }
