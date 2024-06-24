@@ -90,7 +90,7 @@ function PaymentBar({ refills, userId, phone, email }: PaymentBarProps) {
           <DialogHeader>
             <DialogTitle>Выберите сумму пополнения</DialogTitle>
           </DialogHeader>
-          <div className="w-full gap-4 grid grid-cols-2">
+          <div className="w-full gap-4 grid md:grid-cols-2 xs:grid-cols-1 lg:grid-cols-2">
             {refills?.map((el, ind) => (
               <div
                 className={cn(

@@ -21,7 +21,13 @@ import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const priceFormSchema = z.object({
   price: z.coerce.number({ required_error: "Укажите цену" }).int(),
@@ -80,6 +86,10 @@ export function NewPriceForm({ id, initialPrice }: NewPriceFormProps) {
         </button>
       </DialogTrigger>
       <DialogContent className="w-[280px] rounded-xl">
+        <DialogTitle>
+          <p className="text-base font-semibold">Цена</p>
+          <DialogDescription></DialogDescription>
+        </DialogTitle>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -90,7 +100,6 @@ export function NewPriceForm({ id, initialPrice }: NewPriceFormProps) {
               name="price"
               render={({ field }) => (
                 <FormItem className="flex flex-col ">
-                  <p className="text-base font-semibold">Цена</p>
                   <FormItem className="flex flex-col">
                     <FormControl>
                       <div className="flex flex-row gap-x-2 items-center relative w-fit">

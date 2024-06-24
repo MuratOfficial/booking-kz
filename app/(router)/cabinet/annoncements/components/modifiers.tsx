@@ -687,16 +687,17 @@ function Modifiers({
         </Popover>
       </div>
       <Dialog onOpenChange={setOpen} open={open}>
-        <DialogContent className=" max-w-fit min-w-36 rounded-lg">
+        <DialogContent className=" md:max-w-full lg:h-fit md:h-fit xs:h-screen xs:max-w-full overflow-y-auto lg:max-w-fit min-w-36 rounded-lg">
           <DialogHeader>
             <DialogTitle className="text-slate-800 text-xl font-semibold">
               Выберите способ оплаты
             </DialogTitle>
+            <DialogDescription></DialogDescription>
           </DialogHeader>
           <p className="text-sm text-slate-600 font-medium items-center flex flex-row gap-x-1">
             Модификатор - {modifierName} - {modifierDay} дн.
           </p>
-          <div className="w-full gap-4 grid grid-cols-3">
+          <div className="w-full md:gap-4 xs:gap-2 lg:gap-4 grid md:grid-cols-3 xs:grid-cols-1 lg:grid-cols-3">
             <div
               className={cn(
                 "flex flex-col gap-2 relative p-4 w-full opacity-75 hover:opacity-100 justify-center items-center border-2 cursor-pointer hover:border-slate-800 border-slate-100 rounded-xl",
