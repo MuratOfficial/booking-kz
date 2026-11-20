@@ -2,13 +2,14 @@ import prismadb from "@/lib/prismadb";
 import React from "react";
 import AdminBuildingForm from "./components/admin-building-form";
 
-const AdminBuildingPage = async ({
-  params,
-}: {
-  params: {
-    buildingId: string;
-  };
-}) => {
+const AdminBuildingPage = async (
+  props: {
+    params: Promise<{
+      buildingId: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   let building;
 
   if (params.buildingId === "new") {

@@ -10,6 +10,7 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
+  CommandList,
   CommandItem,
 } from "@/components/ui/command";
 import {
@@ -80,14 +81,15 @@ export function ComboboxFilter({
       <PopoverContent className="w-[300px] max-h-40  p-0 rounded-xl">
         <Command className="rounded-xl">
           <CommandInput placeholder={commandInputTitle} className="" />
+          <CommandList>
           <CommandEmpty>Не найдено</CommandEmpty>
           <CommandGroup>
             {data?.map((item) => (
               <CommandItem
                 key={item.value}
                 value={item.value}
-                onSelect={(currentValue) => {
-                  handleFilter(currentValue, filter);
+                onSelect={() => {
+                  handleFilter(item.value, filter);
                   setOpen(false);
                 }}
               >
@@ -103,6 +105,7 @@ export function ComboboxFilter({
               </CommandItem>
             ))}
           </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>

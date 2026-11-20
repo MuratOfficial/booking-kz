@@ -22,24 +22,25 @@ import ScreenMap from "./components/screen-map";
 import FilteredAnnoncements from "./components/filtered-annoncements";
 import FilteredAnnFallback from "./components/filtered-ann-fallback";
 
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams?: {
-    serviceType?: string;
-    phase?: string;
-    categoryType?: string[];
-    roomNumber?: string[];
-    priceFrom?: string;
-    priceTo?: string;
-    areaSqFrom?: string;
-    areaSqTo?: string;
-    city?: string;
-    more?: string[];
-    cityOrTown?: string;
-    street?: string;
-  };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    searchParams?: Promise<{
+      serviceType?: string;
+      phase?: string;
+      categoryType?: string[];
+      roomNumber?: string[];
+      priceFrom?: string;
+      priceTo?: string;
+      areaSqFrom?: string;
+      areaSqTo?: string;
+      city?: string;
+      more?: string[];
+      cityOrTown?: string;
+      street?: string;
+    }>;
+  }
+): Promise<Metadata> {
+  const searchParams = await props.searchParams;
   const annoncements = await fetchFilteredAnnoncements(
     searchParams?.serviceType,
     searchParams?.phase,
@@ -60,28 +61,29 @@ export async function generateMetadata({
   };
 }
 
-const FilterPage = async ({
-  searchParams,
-}: {
-  searchParams?: {
-    serviceType?: string;
-    phase?: string;
-    categoryType?: string[];
-    roomNumber?: string[];
-    priceFrom?: string;
-    priceTo?: string;
-    areaSqFrom?: string;
-    areaSqTo?: string;
-    city?: string;
-    more?: string[];
-    cityOrTown?: string;
-    street?: string;
-    building?: string;
-    map?: string;
-    priceNego?: string;
-    serviceTypeExt?: string[];
-  };
-}) => {
+const FilterPage = async (
+  props: {
+    searchParams?: Promise<{
+      serviceType?: string;
+      phase?: string;
+      categoryType?: string[];
+      roomNumber?: string[];
+      priceFrom?: string;
+      priceTo?: string;
+      areaSqFrom?: string;
+      areaSqTo?: string;
+      city?: string;
+      more?: string[];
+      cityOrTown?: string;
+      street?: string;
+      building?: string;
+      map?: string;
+      priceNego?: string;
+      serviceTypeExt?: string[];
+    }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
   const hotannoncementsrent = await fetchHotModifierAnnoncementsRent();
   const hotannoncementssell = await fetchHotModifierAnnoncementsSell();
 

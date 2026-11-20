@@ -3,10 +3,8 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { requireAdmin } from "@/lib/auth-guard";
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { buildingId: string } }
-) {
+export async function DELETE(req: Request, props: { params: Promise<{ buildingId: string }> }) {
+  const params = await props.params;
   try {
     const { error: authError } = await requireAdmin();
     if (authError) return authError;
@@ -24,10 +22,8 @@ export async function DELETE(
   }
 }
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { buildingId: string } }
-) {
+export async function PATCH(req: Request, props: { params: Promise<{ buildingId: string }> }) {
+  const params = await props.params;
   try {
     const { error: authError } = await requireAdmin();
     if (authError) return authError;

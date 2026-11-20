@@ -2,13 +2,14 @@ import prismadb from "@/lib/prismadb";
 import React from "react";
 import { AdminUserForm } from "./components/admin-user-form";
 
-async function AdminUserPage({
-  params,
-}: {
-  params: {
-    userId: string;
-  };
-}) {
+async function AdminUserPage(
+  props: {
+    params: Promise<{
+      userId: string;
+    }>;
+  }
+) {
+  const params = await props.params;
   let user;
 
   if (params.userId === "new") {

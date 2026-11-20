@@ -24,7 +24,8 @@ export async function generateMetadata() {
   };
 }
 
-const SupportChatPage = async ({ params }: { params: { userId: string } }) => {
+const SupportChatPage = async (props: { params: Promise<{ userId: string }> }) => {
+  const params = await props.params;
   const chat = await fetchSupportChat(params.userId);
 
   const user = await fetchUserData();

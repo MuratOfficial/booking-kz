@@ -41,6 +41,7 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
+  CommandList,
   CommandItem,
 } from "@/components/ui/command";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -569,6 +570,7 @@ function AdminAnnoncementForm({
                       <PopoverContent className="w-[280px] p-0">
                         <Command>
                           <CommandInput placeholder="Искать польз..." />
+                          <CommandList>
                           <CommandEmpty>Не найдено польз.</CommandEmpty>
                           <CommandGroup>
                             {users?.map((user) => (
@@ -591,6 +593,7 @@ function AdminAnnoncementForm({
                               </CommandItem>
                             ))}
                           </CommandGroup>
+                          </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>
@@ -717,6 +720,7 @@ function AdminAnnoncementForm({
                       </PopoverTrigger>
                       <PopoverContent className="w-[280px] p-0">
                         <Command>
+                          <CommandList>
                           <CommandGroup>
                             {phases.map((phase) => (
                               <CommandItem
@@ -739,6 +743,7 @@ function AdminAnnoncementForm({
                               </CommandItem>
                             ))}
                           </CommandGroup>
+                          </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>
@@ -889,6 +894,7 @@ function AdminAnnoncementForm({
                       </PopoverTrigger>
                       <PopoverContent className="w-[280px] p-0">
                         <Command>
+                          <CommandList>
                           <CommandGroup>
                             {services.map((service) => (
                               <CommandItem
@@ -911,6 +917,7 @@ function AdminAnnoncementForm({
                               </CommandItem>
                             ))}
                           </CommandGroup>
+                          </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>
@@ -951,6 +958,7 @@ function AdminAnnoncementForm({
                         </PopoverTrigger>
                         <PopoverContent className="w-[280px] p-0">
                           <Command>
+                            <CommandList>
                             <CommandGroup>
                               {menuList1.map((item) => (
                                 <CommandItem
@@ -972,6 +980,7 @@ function AdminAnnoncementForm({
                                 </CommandItem>
                               ))}
                             </CommandGroup>
+                            </CommandList>
                           </Command>
                         </PopoverContent>
                       </Popover>
@@ -1014,6 +1023,7 @@ function AdminAnnoncementForm({
                           </PopoverTrigger>
                           <PopoverContent className="w-[280px] p-0">
                             <Command>
+                              <CommandList>
                               <CommandGroup>
                                 {menuList2.map((item) => (
                                   <CommandItem
@@ -1035,6 +1045,7 @@ function AdminAnnoncementForm({
                                   </CommandItem>
                                 ))}
                               </CommandGroup>
+                              </CommandList>
                             </Command>
                           </PopoverContent>
                         </Popover>
@@ -1070,6 +1081,7 @@ function AdminAnnoncementForm({
                           </PopoverTrigger>
                           <PopoverContent className="w-[280px] p-0">
                             <Command>
+                              <CommandList>
                               <CommandGroup>
                                 <CommandItem
                                   value="Посуточно"
@@ -1132,6 +1144,7 @@ function AdminAnnoncementForm({
                                   Помесячно
                                 </CommandItem>
                               </CommandGroup>
+                              </CommandList>
                             </Command>
                           </PopoverContent>
                         </Popover>
@@ -1171,6 +1184,7 @@ function AdminAnnoncementForm({
                       </PopoverTrigger>
                       <PopoverContent className="w-[280px] p-0">
                         <Command>
+                          <CommandList>
                           <CommandGroup>
                             {fizbiz.map((service) => (
                               <CommandItem
@@ -1192,6 +1206,7 @@ function AdminAnnoncementForm({
                               </CommandItem>
                             ))}
                           </CommandGroup>
+                          </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>
@@ -1440,6 +1455,7 @@ function AdminAnnoncementForm({
                       </PopoverTrigger>
                       <PopoverContent className="w-[280px] p-0">
                         <Command>
+                          <CommandList>
                           <CommandGroup>
                             {repairTypes.map((repair) => (
                               <CommandItem
@@ -1461,6 +1477,7 @@ function AdminAnnoncementForm({
                               </CommandItem>
                             ))}
                           </CommandGroup>
+                          </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>
@@ -1494,6 +1511,7 @@ function AdminAnnoncementForm({
                       </PopoverTrigger>
                       <PopoverContent className="w-[280px] p-0">
                         <Command>
+                          <CommandList>
                           <CommandGroup>
                             {roofHeight.map((item) => (
                               <CommandItem
@@ -1515,6 +1533,7 @@ function AdminAnnoncementForm({
                               </CommandItem>
                             ))}
                           </CommandGroup>
+                          </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>
@@ -1593,6 +1612,7 @@ function AdminAnnoncementForm({
                         </PopoverTrigger>
                         <PopoverContent className="w-[280px] p-0 h-[280px] overflow-y-auto ">
                           <Command>
+                            <CommandList>
                             <CommandGroup className=" overflow-auto">
                               {comeTime.map((item) => (
                                 <CommandItem
@@ -1614,6 +1634,7 @@ function AdminAnnoncementForm({
                                 </CommandItem>
                               ))}
                             </CommandGroup>
+                            </CommandList>
                           </Command>
                         </PopoverContent>
                       </Popover>
@@ -1644,6 +1665,7 @@ function AdminAnnoncementForm({
                         </PopoverTrigger>
                         <PopoverContent className="w-[280px] p-0 h-[280px] overflow-y-auto ">
                           <Command>
+                            <CommandList>
                             <CommandGroup className=" overflow-auto">
                               {outTime.map((item) => (
                                 <CommandItem
@@ -1665,6 +1687,7 @@ function AdminAnnoncementForm({
                                 </CommandItem>
                               ))}
                             </CommandGroup>
+                            </CommandList>
                           </Command>
                         </PopoverContent>
                       </Popover>
@@ -2632,6 +2655,7 @@ function AdminAnnoncementForm({
                       <PopoverContent className="w-full p-0 max-h-40">
                         <Command>
                           <CommandInput placeholder="Найти..." />
+                          <CommandList>
                           <CommandEmpty>Не найдено.</CommandEmpty>
                           <CommandGroup>
                             {cities?.map((city) => (
@@ -2658,6 +2682,7 @@ function AdminAnnoncementForm({
                               </CommandItem>
                             ))}
                           </CommandGroup>
+                          </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>
@@ -2697,6 +2722,7 @@ function AdminAnnoncementForm({
                         <PopoverContent className="w-full p-0 max-h-40">
                           <Command>
                             <CommandInput placeholder="Найти..." />
+                            <CommandList>
                             <CommandEmpty>Не найдено.</CommandEmpty>
                             <CommandGroup>
                               {cities
@@ -2725,6 +2751,7 @@ function AdminAnnoncementForm({
                                   </CommandItem>
                                 ))}
                             </CommandGroup>
+                            </CommandList>
                           </Command>
                         </PopoverContent>
                       </Popover>
@@ -2770,6 +2797,7 @@ function AdminAnnoncementForm({
                         <PopoverContent className="w-full p-0 max-h-40">
                           <Command>
                             <CommandInput placeholder="Найти..." />
+                            <CommandList>
                             <CommandEmpty>Не найдено.</CommandEmpty>
                             <CommandGroup>
                               {cities
@@ -2801,6 +2829,7 @@ function AdminAnnoncementForm({
                                   </CommandItem>
                                 ))}
                             </CommandGroup>
+                            </CommandList>
                           </Command>
                         </PopoverContent>
                       </Popover>
@@ -2849,6 +2878,7 @@ function AdminAnnoncementForm({
                       <PopoverContent className="w-[280px] p-0">
                         <Command>
                           <CommandInput placeholder="Искать ЖК..." />
+                          <CommandList>
                           <CommandEmpty>Не найдено.</CommandEmpty>
                           <CommandGroup>
                             {cities
@@ -2880,6 +2910,7 @@ function AdminAnnoncementForm({
                                 </CommandItem>
                               ))}
                           </CommandGroup>
+                          </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>

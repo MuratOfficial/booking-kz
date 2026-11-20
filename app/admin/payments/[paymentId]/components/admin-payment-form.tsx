@@ -30,6 +30,7 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
+  CommandList,
   CommandItem,
 } from "@/components/ui/command";
 import { Textarea } from "@/components/ui/textarea";
@@ -197,6 +198,7 @@ function AdminPaymentForm({
                     <PopoverContent className="w-[280px] p-0">
                       <Command>
                         <CommandInput placeholder="Искать польз..." />
+                        <CommandList>
                         <CommandEmpty>Не найдено польз.</CommandEmpty>
                         <CommandGroup>
                           {users?.map((user) => (
@@ -219,6 +221,7 @@ function AdminPaymentForm({
                             </CommandItem>
                           ))}
                         </CommandGroup>
+                        </CommandList>
                       </Command>
                     </PopoverContent>
                   </Popover>
@@ -257,6 +260,7 @@ function AdminPaymentForm({
                     </PopoverTrigger>
                     <PopoverContent className="w-[280px] p-0">
                       <Command>
+                        <CommandList>
                         <CommandGroup>
                           {services.map((service) => (
                             <CommandItem
@@ -279,6 +283,7 @@ function AdminPaymentForm({
                             </CommandItem>
                           ))}
                         </CommandGroup>
+                        </CommandList>
                       </Command>
                     </PopoverContent>
                   </Popover>
@@ -362,6 +367,7 @@ function AdminPaymentForm({
                     <PopoverContent className="w-[280px] p-0">
                       <Command>
                         <CommandInput placeholder="Искать пополнение..." />
+                        <CommandList>
                         <CommandEmpty>Не найдено.</CommandEmpty>
                         <CommandGroup>
                           {refills?.map((item) => (
@@ -386,6 +392,7 @@ function AdminPaymentForm({
                             </CommandItem>
                           ))}
                         </CommandGroup>
+                        </CommandList>
                       </Command>
                     </PopoverContent>
                   </Popover>
@@ -492,6 +499,7 @@ function AdminPaymentForm({
                     <PopoverContent className="w-[280px] p-0">
                       <Command>
                         <CommandInput placeholder="Искать пополнение..." />
+                        <CommandList>
                         <CommandEmpty>Не найдено.</CommandEmpty>
                         <CommandGroup>
                           {subscriptions?.map((item) => (
@@ -515,6 +523,7 @@ function AdminPaymentForm({
                             </CommandItem>
                           ))}
                         </CommandGroup>
+                        </CommandList>
                       </Command>
                     </PopoverContent>
                   </Popover>
@@ -599,6 +608,7 @@ function AdminPaymentForm({
                     </PopoverTrigger>
                     <PopoverContent className="w-[280px] p-0">
                       <Command>
+                        <CommandList>
                         <CommandGroup>
                           {statuses.map((status) => (
                             <CommandItem
@@ -620,6 +630,7 @@ function AdminPaymentForm({
                             </CommandItem>
                           ))}
                         </CommandGroup>
+                        </CommandList>
                       </Command>
                     </PopoverContent>
                   </Popover>

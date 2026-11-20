@@ -3,13 +3,14 @@ import React from "react";
 import { AnnoncementColumn, columns } from "./components/columns";
 import prismadb from "@/lib/prismadb";
 
-const AdminAnnoncementsPage = async ({
-  searchParams,
-}: {
-  searchParams: {
-    filter?: string;
-  };
-}) => {
+const AdminAnnoncementsPage = async (
+  props: {
+    searchParams: Promise<{
+      filter?: string;
+    }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
   const currentDate = new Date();
 
   const annoncements = await prismadb.annoncement.findMany({

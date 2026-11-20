@@ -3,10 +3,8 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { requireAnnoncementOwner } from "@/lib/auth-guard";
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { annoncementId: string } }
-) {
+export async function DELETE(req: Request, props: { params: Promise<{ annoncementId: string }> }) {
+  const params = await props.params;
   try {
     const { error } = await requireAnnoncementOwner(params.annoncementId);
     if (error) return error;
@@ -24,10 +22,8 @@ export async function DELETE(
   }
 }
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { annoncementId: string } }
-) {
+export async function PATCH(req: Request, props: { params: Promise<{ annoncementId: string }> }) {
+  const params = await props.params;
   try {
     const { annoncement: existing, error } = await requireAnnoncementOwner(
       params.annoncementId

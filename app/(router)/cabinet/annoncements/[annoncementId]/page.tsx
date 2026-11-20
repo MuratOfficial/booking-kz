@@ -5,13 +5,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import { Metadata } from "next";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: {
-    annoncementId: string;
-  };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{
+      annoncementId: string;
+    }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   // read route params
   let annoncement;
 
@@ -30,13 +31,14 @@ export async function generateMetadata({
   };
 }
 
-const AnnoncementPage = async ({
-  params,
-}: {
-  params: {
-    annoncementId: string;
-  };
-}) => {
+const AnnoncementPage = async (
+  props: {
+    params: Promise<{
+      annoncementId: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   let annoncement;
 
   if (params.annoncementId === "new") {

@@ -4,10 +4,8 @@ import prismadb from "@/lib/prismadb";
 import { requireAdmin } from "@/lib/auth-guard";
 import { hash } from "bcrypt";
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { annoncementId: string } }
-) {
+export async function DELETE(req: Request, props: { params: Promise<{ annoncementId: string }> }) {
+  const params = await props.params;
   try {
     const { error: authError } = await requireAdmin();
     if (authError) return authError;
@@ -39,10 +37,8 @@ export async function DELETE(
   }
 }
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { annoncementId: string } }
-) {
+export async function PATCH(req: Request, props: { params: Promise<{ annoncementId: string }> }) {
+  const params = await props.params;
   try {
     const { error: authError } = await requireAdmin();
     if (authError) return authError;

@@ -4,14 +4,8 @@ import Image from "next/image";
 import { Metadata } from "next";
 import prismadb from "@/lib/prismadb";
 import { getServerSession } from "next-auth";
-import dynamic from "next/dynamic";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
-const MyAnnoncementCard = dynamic(
-  () => import("./components/my-annoncement-card"),
-  {
-    ssr: false,
-  }
-);
+import MyAnnoncementCard from "./components/my-annoncement-card-lazy";
 import {
   Collapsible,
   CollapsibleContent,
@@ -25,14 +19,15 @@ export const metadata: Metadata = {
   description: "etazhi.kz | etazhi.kz",
 };
 
-const AnnoncementsPage = async ({
-  searchParams,
-}: {
-  searchParams?: {
-    serviceType?: string;
-    phase?: string;
-  };
-}) => {
+const AnnoncementsPage = async (
+  props: {
+    searchParams?: Promise<{
+      serviceType?: string;
+      phase?: string;
+    }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
   const user = await fetchUserData();
 
   const annoncements = await prismadb.annoncement.findMany({

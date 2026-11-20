@@ -4,13 +4,14 @@ import { UserColumn, columns } from "./components/columns";
 import prismadb from "@/lib/prismadb";
 import { annoncements } from "@/lib/externalData";
 
-const AdminUsersPage = async ({
-  searchParams,
-}: {
-  searchParams: {
-    filter?: string;
-  };
-}) => {
+const AdminUsersPage = async (
+  props: {
+    searchParams: Promise<{
+      filter?: string;
+    }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
   const currentDate = new Date();
 
   const users = await prismadb.user.findMany({

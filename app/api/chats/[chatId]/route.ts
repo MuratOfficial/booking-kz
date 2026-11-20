@@ -37,10 +37,8 @@ async function loadChatForUser(chatId: string) {
   return { user, chat, error: null };
 }
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { chatId: string } }
-) {
+export async function DELETE(req: Request, props: { params: Promise<{ chatId: string }> }) {
+  const params = await props.params;
   try {
     const { chat, error } = await loadChatForUser(params.chatId);
     if (error) return error;
@@ -59,10 +57,8 @@ export async function DELETE(
   }
 }
 
-export async function POST(
-  req: Request,
-  { params }: { params: { chatId: string } }
-) {
+export async function POST(req: Request, props: { params: Promise<{ chatId: string }> }) {
+  const params = await props.params;
   try {
     const { user, chat, error } = await loadChatForUser(params.chatId);
     if (error) return error;

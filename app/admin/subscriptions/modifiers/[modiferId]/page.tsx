@@ -2,13 +2,14 @@ import prismadb from "@/lib/prismadb";
 import React from "react";
 import AdminmodifierForm from "./components/admin-modifier-form";
 
-const AdminModifierPage = async ({
-  params,
-}: {
-  params: {
-    modiferId: string;
-  };
-}) => {
+const AdminModifierPage = async (
+  props: {
+    params: Promise<{
+      modiferId: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   let modifier;
 
   if (params.modiferId === "new") {

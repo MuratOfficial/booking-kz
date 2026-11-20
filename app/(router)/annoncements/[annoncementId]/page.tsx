@@ -73,11 +73,12 @@ import { fetchUserChats } from "@/lib/fetchChats";
 import CallButton from "../components/call-button";
 import Image from "next/image";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { annoncementId: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ annoncementId: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const annoncement = await fetchAnnoncement(params.annoncementId);
 
   return {
@@ -90,11 +91,12 @@ export async function generateMetadata({
   };
 }
 
-const AnnoncementPage = async ({
-  params,
-}: {
-  params: { annoncementId: string };
-}) => {
+const AnnoncementPage = async (
+  props: {
+    params: Promise<{ annoncementId: string }>;
+  }
+) => {
+  const params = await props.params;
   const annoncement = await fetchAnnoncement(params.annoncementId);
 
   const userChats = await fetchUserChats();

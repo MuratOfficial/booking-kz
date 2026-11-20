@@ -2,13 +2,14 @@ import prismadb from "@/lib/prismadb";
 import React from "react";
 import AdminAnnoncementForm from "./components/admin-annoncement-form";
 
-const AdminAnnoncementPage = async ({
-  params,
-}: {
-  params: {
-    annoncementId: string;
-  };
-}) => {
+const AdminAnnoncementPage = async (
+  props: {
+    params: Promise<{
+      annoncementId: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   let annoncement;
 
   if (params.annoncementId === "new") {

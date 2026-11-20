@@ -2,13 +2,14 @@ import prismadb from "@/lib/prismadb";
 import React from "react";
 import AdminRefillForm from "./components/admin-refill-form";
 
-const AdminRefillPage = async ({
-  params,
-}: {
-  params: {
-    refillId: string;
-  };
-}) => {
+const AdminRefillPage = async (
+  props: {
+    params: Promise<{
+      refillId: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   let refill;
 
   if (params.refillId === "new") {

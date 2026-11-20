@@ -25,7 +25,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
+import {
+  Command,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
@@ -306,6 +311,7 @@ export function AdminUserForm({ initialData }: AdminUserFormProps) {
                       </PopoverTrigger>
                       <PopoverContent className="w-[280px] p-0">
                         <Command>
+                          <CommandList>
                           <CommandGroup>
                             {statuses.map((status) => (
                               <CommandItem
@@ -328,6 +334,7 @@ export function AdminUserForm({ initialData }: AdminUserFormProps) {
                               </CommandItem>
                             ))}
                           </CommandGroup>
+                          </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>
@@ -412,6 +419,7 @@ export function AdminUserForm({ initialData }: AdminUserFormProps) {
                     </PopoverTrigger>
                     <PopoverContent className="w-[280px] p-0">
                       <Command>
+                        <CommandList>
                         <CommandGroup>
                           {accessTypes.map((status) => (
                             <CommandItem
@@ -434,6 +442,7 @@ export function AdminUserForm({ initialData }: AdminUserFormProps) {
                             </CommandItem>
                           ))}
                         </CommandGroup>
+                        </CommandList>
                       </Command>
                     </PopoverContent>
                   </Popover>

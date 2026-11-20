@@ -3,10 +3,8 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { fetchUserData } from "@/lib/fetchUserData";
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { annoncementId: string } }
-) {
+export async function PATCH(req: Request, props: { params: Promise<{ annoncementId: string }> }) {
+  const params = await props.params;
   const user = await fetchUserData();
   try {
     const body = await req.json();

@@ -2,13 +2,14 @@ import prismadb from "@/lib/prismadb";
 import React from "react";
 import AdminSubscriptionForm from "./components/admin-subscription-form";
 
-const AdminSubsPage = async ({
-  params,
-}: {
-  params: {
-    subscriptionId: string;
-  };
-}) => {
+const AdminSubsPage = async (
+  props: {
+    params: Promise<{
+      subscriptionId: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   let subscription;
 
   if (params.subscriptionId === "new") {

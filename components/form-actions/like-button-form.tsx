@@ -4,9 +4,12 @@ import { addFavourite } from "@/lib/actions";
 import React from "react";
 
 function LikeButtonForm({ id }: { id: string }) {
-  const addFavouriteWithId = addFavourite.bind(null);
+  // React 19 form actions must resolve to void.
+  const addFavouriteAction = async (formData: FormData) => {
+    await addFavourite(formData);
+  };
   return (
-    <form action={addFavouriteWithId}>
+    <form action={addFavouriteAction}>
       <button className="p-1 rounded-full bg-slate-200  bg-opacity-50 absolute top-2 right-2 transition delay-100 duration-300 hover:bg-opacity-80">
         <svg
           xmlns="http://www.w3.org/2000/svg"

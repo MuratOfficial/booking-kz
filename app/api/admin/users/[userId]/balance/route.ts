@@ -4,10 +4,8 @@ import prismadb from "@/lib/prismadb";
 import { requireAdmin } from "@/lib/auth-guard";
 import { hash } from "bcrypt";
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { userId: string } }
-) {
+export async function PATCH(req: Request, props: { params: Promise<{ userId: string }> }) {
+  const params = await props.params;
   try {
     const { error: authError } = await requireAdmin();
     if (authError) return authError;

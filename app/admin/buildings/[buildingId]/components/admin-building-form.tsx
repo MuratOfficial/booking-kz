@@ -30,6 +30,7 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
+  CommandList,
   CommandItem,
 } from "@/components/ui/command";
 import { Textarea } from "@/components/ui/textarea";
@@ -271,6 +272,7 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
                     </PopoverTrigger>
                     <PopoverContent className="w-[280px] p-0">
                       <Command>
+                        <CommandList>
                         <CommandGroup>
                           {services.map((service) => (
                             <CommandItem
@@ -292,6 +294,7 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
                             </CommandItem>
                           ))}
                         </CommandGroup>
+                        </CommandList>
                       </Command>
                     </PopoverContent>
                   </Popover>
@@ -399,6 +402,7 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
                     <PopoverContent className="w-full p-0 max-h-40">
                       <Command>
                         <CommandInput placeholder="Найти..." />
+                        <CommandList>
                         <CommandEmpty>Не найдено.</CommandEmpty>
                         <CommandGroup>
                           {cities?.map((city) => (
@@ -426,6 +430,7 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
                             </CommandItem>
                           ))}
                         </CommandGroup>
+                        </CommandList>
                       </Command>
                     </PopoverContent>
                   </Popover>
@@ -465,6 +470,7 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
                       <PopoverContent className="w-full p-0 max-h-40">
                         <Command>
                           <CommandInput placeholder="Найти..." />
+                          <CommandList>
                           <CommandEmpty>Не найдено.</CommandEmpty>
                           <CommandGroup>
                             {cities
@@ -492,6 +498,7 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
                                 </CommandItem>
                               ))}
                           </CommandGroup>
+                          </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>
@@ -537,6 +544,7 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
                       <PopoverContent className="w-full p-0 max-h-40">
                         <Command>
                           <CommandInput placeholder="Найти..." />
+                          <CommandList>
                           <CommandEmpty>Не найдено.</CommandEmpty>
                           <CommandGroup>
                             {cities
@@ -565,6 +573,7 @@ function AdminBuildingForm({ initialData, cities }: AdminBuildingFormProps) {
                                 </CommandItem>
                               ))}
                           </CommandGroup>
+                          </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>

@@ -3,13 +3,14 @@ import React from "react";
 import { PaymentColumn, columns } from "./components/columns";
 import prismadb from "@/lib/prismadb";
 
-async function AdminPaymentsPage({
-  searchParams,
-}: {
-  searchParams: {
-    filter?: string;
-  };
-}) {
+async function AdminPaymentsPage(
+  props: {
+    searchParams: Promise<{
+      filter?: string;
+    }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const payments = await prismadb.payment.findMany({
     include: {
       user: true,

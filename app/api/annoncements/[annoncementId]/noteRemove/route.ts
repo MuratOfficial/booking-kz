@@ -3,10 +3,8 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { requireUser } from "@/lib/auth-guard";
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { annoncementId: string } }
-) {
+export async function PATCH(req: Request, props: { params: Promise<{ annoncementId: string }> }) {
+  const params = await props.params;
   try {
     const { user, error } = await requireUser();
     if (error) return error;

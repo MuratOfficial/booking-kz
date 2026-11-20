@@ -2,13 +2,14 @@ import prismadb from "@/lib/prismadb";
 import React from "react";
 import AdminPaymentForm from "./components/admin-payment-form";
 
-const AdminPaymentPage = async ({
-  params,
-}: {
-  params: {
-    paymentId: string;
-  };
-}) => {
+const AdminPaymentPage = async (
+  props: {
+    params: Promise<{
+      paymentId: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   let payment;
 
   if (params.paymentId === "new") {

@@ -13,10 +13,8 @@ const RANKING_KEYS = [
   "ranking6",
 ] as const;
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { annoncementId: string } }
-) {
+export async function PATCH(req: Request, props: { params: Promise<{ annoncementId: string }> }) {
+  const params = await props.params;
   try {
     const { user, error } = await requireUser();
     if (error) return error;

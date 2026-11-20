@@ -10,11 +10,12 @@ import { fetchUserData } from "@/lib/fetchUserData";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { chatId: string; annoncementId: string };
-}) {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ chatId: string; annoncementId: string }>;
+  }
+) {
+  const params = await props.params;
   const chat = await fetchChat(params.chatId, params.annoncementId);
 
   return {
@@ -22,11 +23,12 @@ export async function generateMetadata({
   };
 }
 
-const ChatPage = async ({
-  params,
-}: {
-  params: { chatId: string; annoncementId: string };
-}) => {
+const ChatPage = async (
+  props: {
+    params: Promise<{ chatId: string; annoncementId: string }>;
+  }
+) => {
+  const params = await props.params;
   const chat = await fetchChat(params.chatId, params.annoncementId);
 
   const postUpdate = chat ? true : false;
