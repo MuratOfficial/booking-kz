@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
+import { requireAdmin } from "@/lib/auth-guard";
 
 export async function DELETE(
   req: Request,
   { params }: { params: { subscriptionId: string } }
 ) {
   try {
+    const { error: authError } = await requireAdmin();
+    if (authError) return authError;
+
     const subscription = await prismadb.subscription.delete({
       where: {
         id: params.subscriptionId,
@@ -25,6 +29,9 @@ export async function PATCH(
   { params }: { params: { subscriptionId: string } }
 ) {
   try {
+    const { error: authError } = await requireAdmin();
+    if (authError) return authError;
+
     const body = await req.json();
 
     const { description, name, price, icon, color, days } = body;

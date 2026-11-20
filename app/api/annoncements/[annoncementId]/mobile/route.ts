@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
-import { redirect } from "next/navigation";
 import { fetchUserData } from "@/lib/fetchUserData";
 
 export async function PATCH(
@@ -25,12 +22,6 @@ export async function PATCH(
         id: params.annoncementId,
       },
       include: {
-        testimonials: {
-          include: {
-            user: true,
-          },
-        },
-        user: true,
         analytics: true,
       },
     });
@@ -94,7 +85,12 @@ export async function PATCH(
         });
       }
     }
-    return NextResponse.json(annoncement);
+    if (!annoncement) {
+      return new NextResponse("Not found", { status: 404 });
+    }
+
+    // Only the public contact phone is needed by the client.
+    return NextResponse.json({ id: annoncement.id, phone: annoncement.phone });
   } catch (error) {
     console.log("[ANNONCEMENTS_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });

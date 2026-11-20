@@ -2,7 +2,8 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { Annoncement, Chat, Message, User } from "@prisma/client";
+import { Annoncement, Chat, Message } from "@prisma/client";
+import type { PublicUser as User } from "@/lib/types";
 import { Check, CheckCheck, Circle } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";

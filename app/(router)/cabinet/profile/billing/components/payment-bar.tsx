@@ -22,6 +22,7 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 
 const RefillSchema = z.object({
+  refillId: z.string().optional(),
   sum: z.string().optional(),
   bonus: z.string().optional(),
   userId: z.string().optional(),
@@ -100,6 +101,7 @@ function PaymentBar({ refills, userId, phone, email }: PaymentBarProps) {
                 key={ind}
                 onClick={() => {
                   setPicked(el.id);
+                  form.setValue("refillId", el.id);
                   form.setValue("sum", el.total.toString());
                   form.setValue("bonus", el?.bonus?.toString());
                 }}

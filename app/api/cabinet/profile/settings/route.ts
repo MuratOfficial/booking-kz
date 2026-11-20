@@ -1,51 +1,33 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
+import { requireUser } from "@/lib/auth-guard";
+
+const optionalString = (value: unknown, max = 200) =>
+  value === undefined ||
+  value === null ||
+  (typeof value === "string" && value.length <= max);
 
 export async function PATCH(req: Request) {
   try {
+    const { user: currentUser, error } = await requireUser();
+    if (error) return error;
+
     const body = await req.json();
 
-    const session = await getServerSession(authOptions);
-    const userIdData = JSON.parse(JSON.stringify(session))?.user;
+    const { username, email, phone, name } = body ?? {};
 
-    let userData;
-
-    if (session?.user) {
-      userData = await prismadb?.user?.findUnique({
-        where: {
-          id: userIdData?.id,
-        },
-      });
-    } else {
-      userData = null;
+    if (
+      !optionalString(username, 100) ||
+      !optionalString(email, 254) ||
+      !optionalString(phone, 30) ||
+      !optionalString(name, 100)
+    ) {
+      return new NextResponse("Invalid data", { status: 400 });
     }
 
-    const currentUser = await prismadb.user.findUnique({
-      where: {
-        id: userData?.id,
-      },
-    });
-
-    // const session = await getServerSession(authOptions);
-    // const userIdData = JSON.parse(JSON.stringify(session));
-
-    // const admin = await prismadb.user.findUnique({
-    //   where: {
-    //     id: userIdData?.user?.id,
-    //   },
-    // });
-
-    // if (admin?.isAdmin === false) {
-    //   return new NextResponse("Access denied", { status: 401 });
-    // }
-
-    const { username, email, phone, name } = body;
-
-    if (!currentUser) {
-      return new NextResponse("user id is required", { status: 400 });
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return new NextResponse("Invalid email", { status: 400 });
     }
 
     const user = await prismadb.user.update({
@@ -66,6 +48,7 @@ export async function PATCH(req: Request) {
           },
         ],
       },
+      select: { id: true, username: true, email: true, phone: true, name: true },
     });
 
     return NextResponse.json(user);

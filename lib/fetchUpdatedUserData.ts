@@ -4,6 +4,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import { Payment } from "@prisma/client";
 import axios from "axios";
 import { HmacSHA512 } from "crypto-js";
+import { applyConfirmedPayment } from "./billing";
 
 async function processPendingPayments(
   pendingPayments: Payment[] | null | undefined
@@ -46,7 +47,7 @@ async function processPendingPayments(
             ? "success"
             : "fail";
 
-        await prismadb.payment.update({
+        const updatedPayment = await prismadb.payment.update({
           where: {
             id: payment.id,
           },
@@ -54,6 +55,9 @@ async function processPendingPayments(
             status: newStatus,
           },
         });
+
+        // Activate a paid modifier / subscription only after confirmation.
+        await applyConfirmedPayment(updatedPayment);
 
         console.log("updated payments");
       } catch (error) {

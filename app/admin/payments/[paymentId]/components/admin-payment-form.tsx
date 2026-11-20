@@ -33,7 +33,8 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { Textarea } from "@/components/ui/textarea";
-import { Building, Payment, Refill, Subscription, User } from "@prisma/client";
+import { Building, Payment, Refill, Subscription } from "@prisma/client";
+import type { SafeUser as User } from "@/lib/types";
 
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";

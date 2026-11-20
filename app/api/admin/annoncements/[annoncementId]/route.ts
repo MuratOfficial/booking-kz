@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
+import { requireAdmin } from "@/lib/auth-guard";
 import { hash } from "bcrypt";
 
 export async function DELETE(
@@ -8,6 +9,9 @@ export async function DELETE(
   { params }: { params: { annoncementId: string } }
 ) {
   try {
+    const { error: authError } = await requireAdmin();
+    if (authError) return authError;
+
     // const session = await getServerSession(authOptions);
 
     // const annoncementIdData = JSON.parse(JSON.stringify(session));
@@ -40,6 +44,9 @@ export async function PATCH(
   { params }: { params: { annoncementId: string } }
 ) {
   try {
+    const { error: authError } = await requireAdmin();
+    if (authError) return authError;
+
     const body = await req.json();
 
     // const session = await getServerSession(authOptions);

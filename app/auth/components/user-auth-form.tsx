@@ -59,11 +59,11 @@ const registerFormSchema = z.object({
     .object({
       password: z
         .string()
-        .min(2, {
-          message: "Пароль должен быть не меньше 5 значении.",
+        .min(6, {
+          message: "Пароль должен быть не меньше 6 значении.",
         })
-        .max(12, {
-          message: "Пароль должен быть не больше 12 значении.",
+        .max(128, {
+          message: "Пароль должен быть не больше 128 значении.",
         }),
       confirmPassword: z.string(),
     })

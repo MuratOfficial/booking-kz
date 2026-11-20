@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
+import { requireAdmin } from "@/lib/auth-guard";
 import { hash } from "bcrypt";
 
 export async function DELETE(
@@ -8,6 +9,9 @@ export async function DELETE(
   { params }: { params: { userId: string } }
 ) {
   try {
+    const { error: authError } = await requireAdmin();
+    if (authError) return authError;
+
     // const session = await getServerSession(authOptions);
 
     // const userIdData = JSON.parse(JSON.stringify(session));
@@ -40,6 +44,9 @@ export async function PATCH(
   { params }: { params: { userId: string } }
 ) {
   try {
+    const { error: authError } = await requireAdmin();
+    if (authError) return authError;
+
     const body = await req.json();
 
     // const session = await getServerSession(authOptions);
@@ -71,7 +78,16 @@ export async function PATCH(
       return new NextResponse("user id is required", { status: 400 });
     }
 
-    const hashedPassword = await hash(password, 12);
+    // An empty password field in the admin form means "keep the current one".
+    let passwordHash: string | undefined;
+    if (typeof password === "string" && password.length > 0) {
+      if (password.length < 6) {
+        return new NextResponse("Password must be at least 6 characters", {
+          status: 400,
+        });
+      }
+      passwordHash = await hash(password, 12);
+    }
 
     const user = await prismadb.user.update({
       where: {
@@ -85,8 +101,7 @@ export async function PATCH(
         bonusBalance,
         name,
         email,
-        passwordHash: hashedPassword,
-        password,
+        ...(passwordHash ? { passwordHash, password: null } : {}),
         notifications: {
           type: "Аккаунт",
           text: "Данные аккаунта были изменены",

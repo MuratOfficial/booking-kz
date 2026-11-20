@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
+import { requireAdmin } from "@/lib/auth-guard";
 import { hash } from "bcrypt";
 // import { getServerSession } from "next-auth";
 // import { authOptions } from "../auth/[...nextauth]/auth";
 
 export async function POST(req: Request) {
   try {
+    const { error: authError } = await requireAdmin();
+    if (authError) return authError;
+
     // const session = await getServerSession(authOptions);
 
     // const userIdData = JSON.parse(JSON.stringify(session));

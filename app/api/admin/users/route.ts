@@ -1,25 +1,13 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
+import { requireAdmin } from "@/lib/auth-guard";
 import { hash } from "bcrypt";
-// import { getServerSession } from "next-auth";
-// import { authOptions } from "../auth/[...nextauth]/auth";
 
 export async function POST(req: Request) {
   try {
-    // const session = await getServerSession(authOptions);
-
-    // const userIdData = JSON.parse(JSON.stringify(session));
-
-    // const admin = await prismadb.user.findUnique({
-    //   where: {
-    //     id: userIdData?.user?.id,
-    //   },
-    // });
-
-    // if (admin?.isAdmin === false) {
-    //   return new NextResponse("Access denied", { status: 401 });
-    // }
+    const { error: authError } = await requireAdmin();
+    if (authError) return authError;
 
     const body = await req.json();
 
@@ -39,6 +27,12 @@ export async function POST(req: Request) {
       return new NextResponse("Email is required", { status: 400 });
     }
 
+    if (typeof password !== "string" || password.length < 6) {
+      return new NextResponse("Password must be at least 6 characters", {
+        status: 400,
+      });
+    }
+
     const hashedPassword = await hash(password, 12);
 
     const user = await prismadb.user.create({
@@ -51,7 +45,7 @@ export async function POST(req: Request) {
         name,
         email,
         passwordHash: hashedPassword,
-        password,
+        isVerified: true,
         notifications: {
           type: "Регистрация",
           text: "Вы успешно зарегистрировались в системе",

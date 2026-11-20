@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
+import { requireAdmin } from "@/lib/auth-guard";
 import { hash } from "bcrypt";
 
 export async function POST(req: Request) {
   try {
+    const { error: authError } = await requireAdmin();
+    if (authError) return authError;
+
     const body = await req.json();
 
     const { description, name, price, day1, day2, day3, price2, price3 } = body;

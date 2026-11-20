@@ -1,32 +1,29 @@
 import { NextResponse } from "next/server";
+import { randomInt } from "crypto";
 
 import prismadb from "@/lib/prismadb";
 import { hash } from "bcrypt";
-// import { getServerSession } from "next-auth";
-// import { authOptions } from "../auth/[...nextauth]/auth";
+import { escapeHtml } from "@/lib/auth-guard";
 
 import { transporter } from "@/config/nodemailer";
-import { User } from "@prisma/client";
 
-export async function POST(req: Request) {
-  try {
-    const generateRandomCode = () => {
-      return Math.floor(1000 + Math.random() * 9000).toString(); // Generates a random number between 1000 and 9999
-    };
+const CODE_TTL_MS = 15 * 60 * 1000; // 15 minutes
 
-    const verificationCode = generateRandomCode();
+const generateEmailContent = (
+  data: { email: string; name: string | null },
+  verificationCode: string
+) => {
+  const email = escapeHtml(data.email);
+  const name = escapeHtml(data.name);
 
-    const generateEmailContent = (data: User) => {
-      const { email, name } = data;
+  // Background text and welcome text
+  const backgroundText = "Вы авторизировались в системе etazhi.kz";
+  const welcomeText = `Уважаемый ${name}, приветствуем вас в нашей платформе etazhi.kz`;
 
-      // Background text and welcome text
-      const backgroundText = "Вы авторизировались в системе etazhi.kz";
-      const welcomeText = `Уважаемый ${name}, приветствуем вас в нашей платформе etazhi.kz`;
+  // Company information (footer)
+  const companyInfo = "© 2024 “etazhi.kz” | etazhi.kz | kzbooking@mail.ru";
 
-      // Company information (footer)
-      const companyInfo = "© 2024 “etazhi.kz” | etazhi.kz | kzbooking@mail.ru";
-
-      const html = `
+  const html = `
       <!DOCTYPE html>
       <html>
         <head>
@@ -97,7 +94,7 @@ export async function POST(req: Request) {
               <h3>Имя:</h3>
               <p>${name}</p>
               <h3>Код подтверждения:</h3>
-              
+
             </div>
             <div class="code-text">${verificationCode}</div>
             <div class="company-info">${companyInfo}</div>
@@ -106,41 +103,68 @@ export async function POST(req: Request) {
       </html>
     `;
 
-      return { html };
-    };
-    // const session = await getServerSession(authOptions);
+  return { html };
+};
 
-    // const userIdData = JSON.parse(JSON.stringify(session));
+const isNonEmptyString = (value: unknown, max = 200): value is string =>
+  typeof value === "string" && value.trim().length > 0 && value.length <= max;
 
-    // const admin = await prismadb.user.findUnique({
-    //   where: {
-    //     id: userIdData?.user?.id,
-    //   },
-    // });
-
-    // if (admin?.isAdmin === false) {
-    //   return new NextResponse("Access denied", { status: 401 });
-    // }
-
+export async function POST(req: Request) {
+  try {
     const body = await req.json();
 
-    const { username, email, phone, name, password } = body;
+    const { username, email, phone, name, password } = body ?? {};
+    const plainPassword = password?.password;
 
-    if (!name) {
+    if (!isNonEmptyString(name)) {
       return new NextResponse("Name is required", { status: 400 });
     }
+    if (
+      !isNonEmptyString(email, 254) ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
+      return new NextResponse("Valid email is required", { status: 400 });
+    }
+    if (!isNonEmptyString(username, 100)) {
+      return new NextResponse("Username is required", { status: 400 });
+    }
+    if (phone !== undefined && phone !== null && typeof phone !== "string") {
+      return new NextResponse("Invalid phone", { status: 400 });
+    }
+    if (
+      typeof plainPassword !== "string" ||
+      plainPassword.length < 6 ||
+      plainPassword.length > 128
+    ) {
+      return new NextResponse("Password must be 6-128 characters", {
+        status: 400,
+      });
+    }
 
-    const hashedPassword = await hash(password.password, 12);
+    // A pending (never verified) registration for the same e-mail may be
+    // replaced — otherwise a lost code would lock the address forever.
+    const existing = await prismadb.user.findUnique({ where: { email } });
+    if (existing) {
+      if (existing.isVerified === false) {
+        await prismadb.user.delete({ where: { id: existing.id } });
+      } else {
+        return new NextResponse("User already exists", { status: 409 });
+      }
+    }
 
-    const users = await prismadb.user.create({
+    const verificationCode = randomInt(1000, 10000).toString();
+    const hashedPassword = await hash(plainPassword, 12);
+
+    const user = await prismadb.user.create({
       data: {
         username,
         isVerified: false,
-        verificationCode: verificationCode,
+        verificationCode: await hash(verificationCode, 10),
+        verificationCodeExpires: new Date(Date.now() + CODE_TTL_MS),
+        verificationAttempts: 0,
         email,
         phone,
         name,
-        password: password.password,
         passwordHash: hashedPassword,
         notifications: {
           text: "Добро пожаловать в etazhi.kz",
@@ -148,31 +172,25 @@ export async function POST(req: Request) {
           isOpened: false,
         },
       },
+      select: { id: true, email: true, name: true },
     });
-
-    // try {
-    //   await sendWhatsAppNotification(
-    //     userPhoneNumber,
-    //     "Автошкола TORE приветствует вас!"
-    //   );
-    //   NextResponse.json({ message: "Registration successful!" });
-    // } catch (error) {
-    //   console.error("Failed to send welcome notification:", error);
-    //   NextResponse.json({ error: "Failed to send welcome notification" });
-    // }
 
     try {
       await transporter.sendMail({
         from: process.env.EMAIL,
-        to: users.email,
-        ...generateEmailContent(users),
+        to: user.email,
+        ...generateEmailContent(user, verificationCode),
         subject: "Валидация почты",
       });
-
-      return NextResponse.json(users);
     } catch (err) {
-      console.log(err);
+      console.log("[REGISTER_MAIL]", err);
+      await prismadb.user.delete({ where: { id: user.id } });
+      return new NextResponse("Failed to send verification e-mail", {
+        status: 502,
+      });
     }
+
+    return NextResponse.json({ ok: true });
   } catch (error) {
     console.log("[REGISTER_POST]", error);
     return new NextResponse("Internal error", { status: 500 });

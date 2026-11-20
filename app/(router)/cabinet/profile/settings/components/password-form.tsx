@@ -24,7 +24,11 @@ import { Loader2 } from "lucide-react";
 
 const FormSchema = z
   .object({
-    password: z.string(),
+    currentPassword: z.string().min(1, "Укажите текущий пароль"),
+    password: z
+      .string()
+      .min(6, "Пароль должен быть не меньше 6 значении")
+      .max(128, "Пароль должен быть не больше 128 значении"),
     confirmPassword: z.string(),
   })
   .refine(
@@ -42,6 +46,7 @@ export function PasswordForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      currentPassword: "",
       password: "",
       confirmPassword: "",
     },
@@ -54,6 +59,7 @@ export function PasswordForm() {
     try {
       setLoading(true);
       await axios.patch(`/api/cabinet/profile/settings/password`, data);
+      form.reset();
       setTimeout(() => {
         router.refresh();
         toast({
@@ -61,7 +67,13 @@ export function PasswordForm() {
         });
       }, 1000);
     } catch (error: any) {
-      toast({ description: "Что-то пошло не так...", variant: "destructive" });
+      toast({
+        description:
+          error?.response?.status === 403
+            ? "Текущий пароль указан неверно"
+            : "Что-то пошло не так...",
+        variant: "destructive",
+      });
       console.log(error);
     } finally {
       setLoading(false);
@@ -74,6 +86,25 @@ export function PasswordForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full md:grid lg:grid lg:grid-cols-2 gap-6 xs:flex xs:flex-col md:grid-cols-2 "
       >
+        <FormField
+          control={form.control}
+          name="currentPassword"
+          render={({ field }) => (
+            <FormItem className="text-slate-800 lg:col-span-2 md:col-span-2">
+              <FormLabel>Текущий пароль</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  autoComplete="current-password"
+                  className="rounded-xl placeholder:text-slate-300"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="password"

@@ -1,28 +1,15 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { hash } from "bcrypt";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
+import { requireAnnoncementOwner } from "@/lib/auth-guard";
 
 export async function DELETE(
   req: Request,
   { params }: { params: { annoncementId: string } }
 ) {
   try {
-    // const session = await getServerSession(authOptions);
-
-    // const annoncementIdData = JSON.parse(JSON.stringify(session));
-
-    // const admin = await prismadb.user.findUnique({
-    //   where: {
-    //     id: annoncementIdData?.user?.id,
-    //   },
-    // });
-
-    // if (admin?.isAdmin === false) {
-    //   return new NextResponse("Access denied", { status: 401 });
-    // }
+    const { error } = await requireAnnoncementOwner(params.annoncementId);
+    if (error) return error;
 
     const annoncement = await prismadb.annoncement.delete({
       where: {
@@ -42,24 +29,12 @@ export async function PATCH(
   { params }: { params: { annoncementId: string } }
 ) {
   try {
+    const { annoncement: existing, error } = await requireAnnoncementOwner(
+      params.annoncementId
+    );
+    if (error) return error;
+
     const body = await req.json();
-
-    const session = await getServerSession(authOptions);
-    const userIdData = JSON.parse(JSON.stringify(session))?.user;
-    const userId = userIdData?.id;
-
-    // const session = await getServerSession(authOptions);
-    // const annoncementIdData = JSON.parse(JSON.stringify(session));
-
-    // const admin = await prismadb.user.findUnique({
-    //   where: {
-    //     id: annoncementIdData?.user?.id,
-    //   },
-    // });
-
-    // if (admin?.isAdmin === false) {
-    //   return new NextResponse("Access denied", { status: 401 });
-    // }
 
     const {
       additionalFilters,
@@ -84,8 +59,6 @@ export async function PATCH(
       comeOut,
       images,
       townOrStreet,
-      isChecked,
-      subscriptionDate,
       description,
       coordinateX,
       coordinateY,
@@ -104,11 +77,10 @@ export async function PATCH(
 
     const annoncement = await prismadb.annoncement.update({
       where: {
-        id: params.annoncementId,
+        id: existing.id,
       },
       data: {
         description,
-        userId,
         serviceType,
         categoryType,
         serviceTypeExt,
@@ -130,8 +102,8 @@ export async function PATCH(
         comeOut,
         images,
         townOrStreet,
-        isChecked,
-        subscriptionDate,
+        // Any edit sends the listing back to moderation.
+        isChecked: false,
         phase: "проверка",
         coordinateX,
         coordinateY,

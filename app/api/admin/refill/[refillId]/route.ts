@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
+import { requireAdmin } from "@/lib/auth-guard";
 
 export async function DELETE(
   req: Request,
   { params }: { params: { refillId: string } }
 ) {
   try {
+    const { error: authError } = await requireAdmin();
+    if (authError) return authError;
+
     const refill = await prismadb.refill.delete({
       where: {
         id: params.refillId,
@@ -25,6 +29,9 @@ export async function PATCH(
   { params }: { params: { refillId: string } }
 ) {
   try {
+    const { error: authError } = await requireAdmin();
+    if (authError) return authError;
+
     const body = await req.json();
 
     const { title, total, bonus, bonusPerc } = body;

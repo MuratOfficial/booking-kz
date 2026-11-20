@@ -1,43 +1,40 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { hash } from "bcrypt";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
+import { requireAnnoncementOwner } from "@/lib/auth-guard";
 
+// Owners may only archive an active listing or re-activate an archived one
+// that has already passed moderation. Moving out of "проверка" (moderation)
+// is reserved for admins via /api/admin/annoncements.
 export async function PATCH(req: Request) {
   try {
     const body = await req.json();
 
-    // const session = await getServerSession(authOptions);
-    // const annoncementIdData = JSON.parse(JSON.stringify(session));
+    const { id, phase } = body ?? {};
 
-    // const admin = await prismadb.user.findUnique({
-    //   where: {
-    //     id: annoncementIdData?.user?.id,
-    //   },
-    // });
+    const { annoncement, error } = await requireAnnoncementOwner(id);
+    if (error) return error;
 
-    // if (admin?.isAdmin === false) {
-    //   return new NextResponse("Access denied", { status: 401 });
-    // }
+    const allowed =
+      (annoncement.phase === "активно" && phase === "блокировано") ||
+      (annoncement.phase === "блокировано" &&
+        phase === "активно" &&
+        annoncement.isChecked === true);
 
-    const { id, phase } = body;
-
-    if (!id) {
-      return new NextResponse("user id is required", { status: 400 });
+    if (!allowed) {
+      return new NextResponse("Phase change not allowed", { status: 403 });
     }
 
-    const annoncement = await prismadb.annoncement.update({
+    const updated = await prismadb.annoncement.update({
       where: {
-        id: id,
+        id: annoncement.id,
       },
       data: {
         phase,
       },
     });
 
-    return NextResponse.json(annoncement);
+    return NextResponse.json(updated);
   } catch (error) {
     console.log("[ANNONCEMENT_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });

@@ -1,161 +1,99 @@
 import { NextResponse } from "next/server";
-import hmacSHA512 from "crypto-js/hmac-sha512";
 
-import axios from "axios";
 import prismadb from "@/lib/prismadb";
+import { requireAnnoncementOwner } from "@/lib/auth-guard";
+import {
+  applySubscription,
+  createGatewayPayment,
+  getUserBalances,
+} from "@/lib/billing";
 
 export async function POST(req: Request) {
-  const dataObject = await req.json();
+  try {
+    const dataObject = await req.json();
 
-  const { sum, type, userId, email, phone, id, subsId, subsDays } = dataObject;
+    // sum / subsDays / userId from the body are ignored: price and duration
+    // come from the subscription record, the payer is the signed-in owner.
+    const { type, id, subsId } = dataObject ?? {};
 
-  let adddays: Date = new Date();
-  adddays.setDate(adddays.getDate() + subsDays);
+    const { user, annoncement, error } = await requireAnnoncementOwner(id);
+    if (error) return error;
 
-  if (type === "wallet") {
-    const payment = await prismadb.payment.create({
-      data: {
-        userId: userId,
-        sum: sum,
-        transactionType: "subscription",
-        status: "success",
-        annoncementId: id,
-      },
-    });
+    if (typeof subsId !== "string" || !subsId) {
+      return new NextResponse("subsId is required", { status: 400 });
+    }
 
-    await prismadb.annoncement.update({
-      where: {
-        id: id,
-      },
-      data: {
-        subscriptionId: subsId,
-        companySubscription: adddays.toLocaleDateString(),
-        subsStatus: payment.id,
-      },
-    });
-    return Response.json({});
-  }
-  if (type === "bonus") {
-    const payment = await prismadb.payment.create({
-      data: {
-        userId: userId,
-        bonus: sum,
-        transactionType: "subscription",
-        status: "success",
-        annoncementId: id,
-      },
-    });
+    const subscription = await prismadb.subscription
+      .findUnique({ where: { id: subsId } })
+      .catch(() => null);
 
-    await prismadb.annoncement.update({
-      where: {
-        id: id,
-      },
-      data: {
-        subscriptionId: subsId,
-        companySubscription: adddays.toLocaleDateString(),
-        subsStatus: payment.id,
-      },
-    });
-    return Response.json({});
-  }
+    if (!subscription || subscription.price < 0 || subscription.days <= 0) {
+      return new NextResponse("Unknown subscription", { status: 400 });
+    }
 
-  if (type === "direct") {
-    const payment = await prismadb.payment.create({
-      data: {
-        userId: userId,
-        sum: sum,
-        transactionType: "subscription",
-        paymentType: "direct",
-        annoncementId: id,
-      },
-    });
+    const price = subscription.price;
 
-    await prismadb.annoncement.update({
-      where: {
-        id: id,
-      },
-      data: {
-        subscriptionId: subsId,
-        companySubscription: adddays.toLocaleDateString(),
-        subsStatus: payment.id,
-      },
-    });
+    if (type === "wallet" || type === "bonus") {
+      const balances = await getUserBalances(user.id);
+      const available = type === "wallet" ? balances.total : balances.bonus;
 
-    const dataJson = JSON.stringify({
-      amount: parseFloat(payment.sum),
-      currency: "KZT",
-      order_id: payment.id,
-      description: "subscription",
-      payment_type: "pay",
-      payment_method: "ecom",
-      items: [
-        {
-          merchant_id: "8133b22d-e91b-4176-a1b8-9b7cd0e07cf4",
-          service_id: "e7146794-14bc-4e0c-8831-0234937fbc3f",
-          merchant_name: "маркетплейс",
-          name: "subscription",
+      if (available < price) {
+        return new NextResponse("Insufficient balance", { status: 402 });
+      }
 
-          quantity: 1,
-          amount_one_pcs: parseFloat(payment.sum),
-          amount_sum: parseFloat(payment.sum),
-        },
-      ],
-      user_id: payment.userId,
-      email: email || "test@example.com",
-      phone: phone || "+77777777777",
-      success_url: "http://etazhi.kz/cabinet/annoncements",
-      // "failure_url"
-      // :
-      // http://example.com
-      // "callback_url"
-      // :
-      // http://example.com
-      payment_lifetime: 3600,
-      create_recurrent_profile: false,
-      recurrent_profile_lifetime: 0,
-      lang: "ru",
-    });
-
-    const reqData: any = Buffer.from(dataJson).toString("base64");
-    const sign = hmacSHA512(reqData, process.env.ONEVISION_API_SECRET!);
-    try {
-      // const body = await req.json();
-
-      const token = Buffer.from(process.env.ONEVISION_API_KEY!).toString(
-        "base64"
-      );
-
-      const body = { data: reqData, sign: sign.toString() };
-
-      const response = await axios.post(
-        "https://api.onevisionpay.com/payment/create",
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await response.data.data;
-      const decodedData = JSON.parse(
-        Buffer.from(data, "base64").toString("utf-8")
-      );
-
-      await prismadb.payment.update({
-        where: {
-          id: payment.id,
-        },
+      const payment = await prismadb.payment.create({
         data: {
-          paymentUrl: decodedData?.payment_page_url,
-          transactionId: decodedData?.payment_id.toString(),
+          userId: user.id,
+          ...(type === "wallet"
+            ? { sum: price.toString() }
+            : { bonus: price.toString() }),
+          transactionType: "subscription",
+          status: "success",
+          annoncementId: annoncement.id,
+          subscriptionId: subscription.id,
+          days: subscription.days,
+          applied: true,
         },
       });
 
-      return Response.json(decodedData?.payment_page_url);
-    } catch (error) {
-      console.log("[subs_POST]", error);
-      return new NextResponse("Internal error", { status: 500 });
+      await applySubscription(
+        annoncement.id,
+        subscription.id,
+        subscription.days,
+        payment.id
+      );
+
+      return Response.json({});
     }
+
+    if (type === "direct") {
+      // The subscription is activated only after the gateway confirms payment.
+      const payment = await prismadb.payment.create({
+        data: {
+          userId: user.id,
+          sum: price.toString(),
+          transactionType: "subscription",
+          paymentType: "direct",
+          annoncementId: annoncement.id,
+          subscriptionId: subscription.id,
+          days: subscription.days,
+          applied: false,
+        },
+      });
+
+      const paymentUrl = await createGatewayPayment(
+        payment,
+        "subscription",
+        user,
+        "/cabinet/annoncements"
+      );
+
+      return Response.json(paymentUrl);
+    }
+
+    return new NextResponse("Unknown payment type", { status: 400 });
+  } catch (error) {
+    console.log("[subs_POST]", error);
+    return new NextResponse("Internal error", { status: 500 });
   }
 }

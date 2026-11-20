@@ -14,10 +14,12 @@ export async function fetchAnnoncement(id: string) {
       include: {
         testimonials: {
           include: {
-            user: true,
+            user: { select: { id: true, name: true, username: true } },
           },
         },
-        user: true,
+        user: {
+          select: { id: true, name: true, username: true, phone: true },
+        },
         analytics: true,
         buildingName: true,
       },

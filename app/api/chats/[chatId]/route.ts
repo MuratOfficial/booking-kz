@@ -1,27 +1,61 @@
-import { fetchUserData } from "@/lib/fetchUserData";
 import prismadb from "@/lib/prismadb";
+import { isAdmin, requireUser } from "@/lib/auth-guard";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
+
+/**
+ * Loads the chat and checks that the signed-in user may access it:
+ * participants always, admins only for support chats (no announcement).
+ */
+async function loadChatForUser(chatId: string) {
+  const { user, error } = await requireUser();
+  if (error) return { user: null, chat: null, error };
+
+  const chat = await prismadb.chat
+    .findUnique({ where: { id: chatId } })
+    .catch(() => null);
+
+  if (!chat) {
+    return {
+      user: null,
+      chat: null,
+      error: new NextResponse("Not found", { status: 404 }),
+    };
+  }
+
+  const isParticipant = chat.userIds.includes(user.id);
+  const isSupportChat = !chat.annoncementId;
+
+  if (!isParticipant && !(isSupportChat && isAdmin(user))) {
+    return {
+      user: null,
+      chat: null,
+      error: new NextResponse("Forbidden", { status: 403 }),
+    };
+  }
+
+  return { user, chat, error: null };
+}
 
 export async function DELETE(
   req: Request,
   { params }: { params: { chatId: string } }
 ) {
   try {
-    const chat = await prismadb.chat.delete({
+    const { chat, error } = await loadChatForUser(params.chatId);
+    if (error) return error;
+
+    await prismadb.chat.delete({
       where: {
-        id: params.chatId,
+        id: chat.id,
       },
     });
 
-    return NextResponse.json(chat);
+    revalidatePath(`/cabinet/chats`);
+    return NextResponse.json({ ok: true });
   } catch (error) {
     console.log("[chat_DELETE]", error);
     return new NextResponse("Internal error", { status: 500 });
-  } finally {
-    revalidatePath(`/cabinet/chats`);
-    redirect(`/cabinet/chats`);
   }
 }
 
@@ -30,19 +64,22 @@ export async function POST(
   { params }: { params: { chatId: string } }
 ) {
   try {
+    const { user, chat, error } = await loadChatForUser(params.chatId);
+    if (error) return error;
+
     const body = await req.json();
 
-    const { author, text } = body;
+    const { text } = body ?? {};
 
-    if (!params.chatId) {
-      return new NextResponse("chat id is required", { status: 400 });
+    if (typeof text !== "string" || !text.trim() || text.length > 5000) {
+      return new NextResponse("Invalid message", { status: 400 });
     }
 
     const message = await prismadb.message.create({
       data: {
-        author: author,
+        author: user.id,
         text,
-        chatId: params.chatId,
+        chatId: chat.id,
       },
     });
 
@@ -52,3 +89,6 @@ export async function POST(
     return new NextResponse("Internal error", { status: 500 });
   }
 }
+
+// The announcement chat UI sends follow-up messages with PATCH.
+export const PATCH = POST;

@@ -8,7 +8,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronsUp, MessageCircle, Star, X } from "lucide-react";
-import { Testimonial, User } from "@prisma/client";
+import { Testimonial } from "@prisma/client";
+import type { PublicUser } from "@/lib/types";
 import { Element } from "react-scroll";
 import {
   Dialog,
@@ -22,7 +23,7 @@ import { NewTestimonialForm } from "./new-testimonial-form";
 import { NewCommentaryForm } from "./new-commentary-form";
 
 interface AnnoncementTestimonials {
-  testimonials: (Testimonial & { user: User })[] | [] | null;
+  testimonials: (Testimonial & { user: PublicUser })[] | [] | null;
   isUserValid: boolean | null;
   serviceType?: string | null;
 }

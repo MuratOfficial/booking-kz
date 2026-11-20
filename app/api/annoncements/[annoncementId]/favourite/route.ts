@@ -48,7 +48,7 @@ export async function PATCH(
             },
           ]);
 
-      const userUpdate = await prismadb.user.update({
+      await prismadb.user.update({
         where: {
           id: user.id,
         },
@@ -57,9 +57,9 @@ export async function PATCH(
         },
       });
 
-      return NextResponse.json(userUpdate);
+      return NextResponse.json({ isFavorite: !isFavorite });
     } else {
-      return new NextResponse("USER_AUTH_ERROR", { status: 500 });
+      return new NextResponse("USER_AUTH_ERROR", { status: 401 });
     }
   } catch (error) {
     console.log("[USER_PATCH]", error);

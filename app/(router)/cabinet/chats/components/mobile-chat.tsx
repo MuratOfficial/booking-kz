@@ -2,7 +2,8 @@
 import { Loader } from "lucide-react";
 import React, { Suspense } from "react";
 import ChatList from "./chat-list";
-import { Annoncement, Chat, Message, User } from "@prisma/client";
+import { Annoncement, Chat, Message } from "@prisma/client";
+import type { PublicUser as User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useParams, usePathname } from "next/navigation";
 

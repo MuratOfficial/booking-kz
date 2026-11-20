@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
-import { User } from "@prisma/client";
+import type { SafeUser as User } from "@/lib/types";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import axios from "axios";

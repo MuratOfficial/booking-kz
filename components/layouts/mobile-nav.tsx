@@ -62,7 +62,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import Image from "next/image";
 import { signOut } from "next-auth/react";
-import { Annoncement, Chat, Message, User } from "@prisma/client";
+import { Annoncement, Chat, Message } from "@prisma/client";
+import type { SafeUser as User } from "@/lib/types";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 

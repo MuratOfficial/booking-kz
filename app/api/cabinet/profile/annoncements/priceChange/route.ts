@@ -1,27 +1,32 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
+import { requireAnnoncementOwner } from "@/lib/auth-guard";
 
 export async function PATCH(req: Request) {
   try {
     const body = await req.json();
 
-    const { id, price } = body;
+    const { id, price } = body ?? {};
 
-    if (!id) {
-      return new NextResponse("id is required", { status: 400 });
+    const { annoncement, error } = await requireAnnoncementOwner(id);
+    if (error) return error;
+
+    const numericPrice = Number(price);
+    if (!Number.isInteger(numericPrice) || numericPrice < 0) {
+      return new NextResponse("Invalid price", { status: 400 });
     }
 
-    const annoncement = await prismadb.annoncement.update({
+    const updated = await prismadb.annoncement.update({
       where: {
-        id: id,
+        id: annoncement.id,
       },
       data: {
-        price,
+        price: numericPrice,
       },
     });
 
-    return NextResponse.json(annoncement);
+    return NextResponse.json(updated);
   } catch (error) {
     console.log("[ANNONCEMENT_PRICE_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });

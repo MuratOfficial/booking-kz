@@ -1,79 +1,44 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
+import { requireUser } from "@/lib/auth-guard";
 
 export async function PATCH(req: Request) {
   try {
+    const { user, error } = await requireUser();
+    if (error) return error;
+
     const body = await req.json();
 
-    const session = await getServerSession(authOptions);
-    const userIdData = JSON.parse(JSON.stringify(session))?.user;
-
-    // const admin = await prismadb.user.findUnique({
-    //   where: {
-    //     id: userIdData?.user?.id,
-    //   },
-    // });
-
-    // if (admin?.isAdmin === false) {
-    //   return new NextResponse("Access denied", { status: 401 });
-    // }
-
-    const { createdAt, notifications } = body;
+    const { createdAt } = body ?? {};
 
     if (!createdAt) {
       return new NextResponse("createdAt is required", { status: 400 });
     }
 
-    if (!userIdData) {
-      return new NextResponse("userIdData is required", { status: 400 });
+    const target = new Date(createdAt).getTime();
+    if (Number.isNaN(target)) {
+      return new NextResponse("Invalid createdAt", { status: 400 });
     }
 
-    interface Notification {
-      type: string;
-      isOpened: boolean;
-      text: string;
-      createdAt: Date;
-    }
-
-    const updateNotificationByDate = (
-      notifications: Notification[],
-      createdAt: Date,
-      updatedNotification: Partial<Notification>
-    ): Notification[] => {
-      const index = notifications.findIndex(
-        (notification) => notification.createdAt === createdAt
-      );
-      if (index === -1) {
-        return notifications;
-      }
-
-      const updatedNotifications = [...notifications];
-      updatedNotifications[index] = {
-        ...updatedNotifications[index],
-        ...updatedNotification,
-      };
-      return updatedNotifications;
-    };
-
-    const updatedNotifications = updateNotificationByDate(
-      notifications,
-      createdAt,
-      { isOpened: true }
+    // Only the stored notifications are modified — the client can no longer
+    // overwrite the whole list with arbitrary content.
+    const updatedNotifications = user.notifications.map((notification) =>
+      new Date(notification.createdAt).getTime() === target
+        ? { ...notification, isOpened: true }
+        : notification
     );
 
-    const notification = await prismadb.user.update({
+    await prismadb.user.update({
       where: {
-        id: userIdData.id,
+        id: user.id,
       },
       data: {
         notifications: updatedNotifications,
       },
     });
 
-    return NextResponse.json(notification);
+    return NextResponse.json({ ok: true });
   } catch (error) {
     console.log("[user_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });

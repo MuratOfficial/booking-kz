@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -15,7 +16,9 @@ model User {
   email         String         @unique
   username      String         @unique
   name          String?
-  password      String
+  // Legacy plaintext password field: no longer written, kept optional only so
+  // old documents still load. Run scripts/remove-plaintext-passwords.mjs once.
+  password      String?
   passwordHash  String
   phone         String?
   notifications Notification[]
@@ -31,8 +34,10 @@ model User {
   chats        Chat[]        @relation(fields: [chatIds], references: [id])
   chatIds      String[]      @db.ObjectId
 
-  isVerified       Boolean?
-  verificationCode String?
+  isVerified               Boolean?
+  verificationCode         String?
+  verificationCodeExpires  DateTime?
+  verificationAttempts     Int?      @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -118,6 +123,11 @@ model Payment {
   paymentUrl      String?
   transactionId   String?
   transactionType String   @default("refill")
+  // What a "direct" (card) payment should activate once the gateway confirms it.
+  modifierType    String?
+  days            Int?
+  subscriptionId  String?
+  applied         Boolean? @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }

@@ -2,13 +2,12 @@ import { getServerSession } from "next-auth";
 import prismadb from "./prismadb";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import { fetchUserData } from "./fetchUserData";
-import { fetchAnnoncement } from "./fetchAnnoncement";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function fetchChat(chatId: string, annoncementId: string) {
   const user = await fetchUserData();
-  const annoncement = await fetchAnnoncement(annoncementId);
+  if (!user) return null;
 
   // const users = await prismadb.user.findMany();
   // const anotherUser = await prismadb.user.findUnique({
@@ -19,7 +18,7 @@ export async function fetchChat(chatId: string, annoncementId: string) {
   const possibleChat = await prismadb.chat.findFirst({
     where: {
       userIds: {
-        hasEvery: [user?.id || "", chatId],
+        hasEvery: [user.id, chatId],
       },
       annoncementId: annoncementId,
     },
@@ -50,11 +49,9 @@ export async function fetchChat(chatId: string, annoncementId: string) {
     //   return chat;
     // }
   } else {
-    const chat = await prismadb.chat.findFirst({
+    const chat = await prismadb.chat.findUnique({
       where: {
-        userIds: {
-          hasEvery: [user?.id || "", annoncement?.userId || ""],
-        },
+        id: possibleChat.id,
       },
       include: {
         messages: true,
@@ -90,11 +87,11 @@ export async function fetchUserChats() {
         include: {
           annoncement: {
             include: {
-              user: true,
+              user: { select: { id: true, name: true, username: true } },
             },
           },
           messages: true,
-          users: true,
+          users: { select: { id: true, name: true, username: true } },
         },
       });
 
@@ -112,6 +109,7 @@ export async function fetchChatUsers(chatId: string) {
     try {
       const anotherUser = await prismadb.user?.findUnique({
         where: { id: chatId },
+        select: { id: true, name: true, username: true },
       });
 
       return anotherUser;
@@ -122,7 +120,18 @@ export async function fetchChatUsers(chatId: string) {
   }
 }
 
-export async function fetchSupportChat(userId: string) {
+export async function fetchSupportChat(requestedUserId: string) {
+  // A user may only open their own support chat; admins may open anyone's.
+  const currentUser = await fetchUserData();
+  if (!currentUser) return null;
+  if (
+    requestedUserId !== currentUser.id &&
+    currentUser.accessType !== "admin"
+  ) {
+    return null;
+  }
+  const userId = requestedUserId;
+
   const possibleChat = await prismadb.chat.findFirst({
     where: {
       userIds: {

@@ -1,237 +1,91 @@
 import { NextResponse } from "next/server";
-import hmacSHA512 from "crypto-js/hmac-sha512";
 
-import axios from "axios";
 import prismadb from "@/lib/prismadb";
+import { requireAnnoncementOwner } from "@/lib/auth-guard";
+import {
+  applyModifier,
+  createGatewayPayment,
+  getUserBalances,
+  resolveModifierPrice,
+} from "@/lib/billing";
 
 export async function POST(req: Request) {
-  const dataObject = await req.json();
+  try {
+    const dataObject = await req.json();
 
-  const { sum, type, userId, email, phone, id, days, modifierType } =
-    dataObject;
+    // sum / userId / email / phone from the body are ignored: the price comes
+    // from the DB and the payer is always the signed-in owner.
+    const { type, id, days, modifierType } = dataObject ?? {};
 
-  let adddays: Date = new Date();
-  adddays.setDate(adddays.getDate() + days);
+    const { user, annoncement, error } = await requireAnnoncementOwner(id);
+    if (error) return error;
 
-  const modType: string = modifierType;
-  const lowerModType = modType.toLowerCase();
-
-  if (type === "wallet") {
-    const payment = await prismadb.payment.create({
-      data: {
-        userId: userId,
-        sum: sum,
-        transactionType: "modifier",
-        status: "success",
-        annoncementId: id,
-      },
-    });
-    if (lowerModType.includes("ячие")) {
-      await prismadb.annoncement.update({
-        where: {
-          id: id,
-        },
-        data: {
-          hotModifierDate: adddays,
-
-          hotModifierPaidStatus: payment.id,
-        },
-      });
-    }
-    if (lowerModType.includes("топ")) {
-      await prismadb.annoncement.update({
-        where: {
-          id: id,
-        },
-        data: {
-          topModifierDate: adddays,
-          topModifierPaidStatus: payment.id,
-        },
-      });
-    }
-    if (lowerModType.includes("очно")) {
-      await prismadb.annoncement.update({
-        where: {
-          id: id,
-        },
-        data: {
-          hurryModifierDate: adddays,
-          hurryModifierPaidStatus: payment.id,
-        },
-      });
+    const modifier = await resolveModifierPrice(modifierType, days);
+    if (!modifier) {
+      return new NextResponse("Unknown modifier or duration", { status: 400 });
     }
 
-    return Response.json({});
-  }
-  if (type === "bonus") {
-    const payment = await prismadb.payment.create({
-      data: {
-        userId: userId,
-        bonus: sum,
-        transactionType: "modifier",
-        status: "success",
-        annoncementId: id,
-      },
-    });
-    if (lowerModType.includes("ячие")) {
-      await prismadb.annoncement.update({
-        where: {
-          id: id,
-        },
-        data: {
-          hotModifierDate: adddays,
+    if (type === "wallet" || type === "bonus") {
+      const balances = await getUserBalances(user.id);
+      const available = type === "wallet" ? balances.total : balances.bonus;
 
-          hotModifierPaidStatus: payment.id,
+      if (available < modifier.price) {
+        return new NextResponse("Insufficient balance", { status: 402 });
+      }
+
+      const payment = await prismadb.payment.create({
+        data: {
+          userId: user.id,
+          ...(type === "wallet"
+            ? { sum: modifier.price.toString() }
+            : { bonus: modifier.price.toString() }),
+          transactionType: "modifier",
+          status: "success",
+          annoncementId: annoncement.id,
+          modifierType: modifier.name,
+          days: modifier.days,
+          applied: true,
         },
       });
-    }
-    if (lowerModType.includes("топ")) {
-      await prismadb.annoncement.update({
-        where: {
-          id: id,
-        },
-        data: {
-          topModifierDate: adddays,
-          topModifierPaidStatus: payment.id,
-        },
-      });
-    }
-    if (lowerModType.includes("очно")) {
-      await prismadb.annoncement.update({
-        where: {
-          id: id,
-        },
-        data: {
-          hurryModifierDate: adddays,
-          hurryModifierPaidStatus: payment.id,
-        },
-      });
-    }
 
-    return Response.json({});
-  }
-
-  if (type === "direct") {
-    const payment = await prismadb.payment.create({
-      data: {
-        userId: userId,
-        sum: sum,
-        transactionType: "modifier",
-        paymentType: "direct",
-        annoncementId: id,
-      },
-    });
-
-    if (lowerModType.includes("ячие")) {
-      await prismadb.annoncement.update({
-        where: {
-          id: id,
-        },
-        data: {
-          hotModifierDate: adddays,
-
-          hotModifierPaidStatus: payment.id,
-        },
-      });
-    }
-    if (lowerModType.includes("топ")) {
-      await prismadb.annoncement.update({
-        where: {
-          id: id,
-        },
-        data: {
-          topModifierDate: adddays,
-          topModifierPaidStatus: payment.id,
-        },
-      });
-    }
-    if (lowerModType.includes("очно")) {
-      await prismadb.annoncement.update({
-        where: {
-          id: id,
-        },
-        data: {
-          hurryModifierDate: adddays,
-          hurryModifierPaidStatus: payment.id,
-        },
-      });
-    }
-
-    const dataJson = JSON.stringify({
-      amount: parseFloat(payment.sum),
-      currency: "KZT",
-      order_id: payment.id,
-      description: "modifier",
-      payment_type: "pay",
-      payment_method: "ecom",
-      items: [
-        {
-          merchant_id: "8133b22d-e91b-4176-a1b8-9b7cd0e07cf4",
-          service_id: "e7146794-14bc-4e0c-8831-0234937fbc3f",
-          merchant_name: "маркетплейс",
-          name: "modifier",
-
-          quantity: 1,
-          amount_one_pcs: parseFloat(payment.sum),
-          amount_sum: parseFloat(payment.sum),
-        },
-      ],
-      user_id: payment.userId,
-      email: email || "test@example.com",
-      phone: phone || "+77777777777",
-      success_url: "http://etazhi.kz/cabinet/annoncements",
-      // "failure_url"
-      // :
-      // http://example.com
-      // "callback_url"
-      // :
-      // http://example.com
-      payment_lifetime: 3600,
-      create_recurrent_profile: false,
-      recurrent_profile_lifetime: 0,
-      lang: "ru",
-    });
-
-    const reqData: any = Buffer.from(dataJson).toString("base64");
-    const sign = hmacSHA512(reqData, process.env.ONEVISION_API_SECRET!);
-    try {
-      // const body = await req.json();
-
-      const token = Buffer.from(process.env.ONEVISION_API_KEY!).toString(
-        "base64"
+      await applyModifier(
+        annoncement.id,
+        modifier.kind,
+        modifier.days,
+        payment.id
       );
 
-      const body = { data: reqData, sign: sign.toString() };
+      return Response.json({});
+    }
 
-      const response = await axios.post(
-        "https://api.onevisionpay.com/payment/create",
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await response.data.data;
-      const decodedData = JSON.parse(
-        Buffer.from(data, "base64").toString("utf-8")
-      );
-
-      await prismadb.payment.update({
-        where: {
-          id: payment.id,
-        },
+    if (type === "direct") {
+      // The modifier is activated only after the gateway confirms the payment.
+      const payment = await prismadb.payment.create({
         data: {
-          paymentUrl: decodedData?.payment_page_url,
-          transactionId: decodedData?.payment_id.toString(),
+          userId: user.id,
+          sum: modifier.price.toString(),
+          transactionType: "modifier",
+          paymentType: "direct",
+          annoncementId: annoncement.id,
+          modifierType: modifier.name,
+          days: modifier.days,
+          applied: false,
         },
       });
 
-      return Response.json(decodedData?.payment_page_url);
-    } catch (error) {
-      console.log("[subs_POST]", error);
-      return new NextResponse("Internal error", { status: 500 });
+      const paymentUrl = await createGatewayPayment(
+        payment,
+        "modifier",
+        user,
+        "/cabinet/annoncements"
+      );
+
+      return Response.json(paymentUrl);
     }
+
+    return new NextResponse("Unknown payment type", { status: 400 });
+  } catch (error) {
+    console.log("[modifier_POST]", error);
+    return new NextResponse("Internal error", { status: 500 });
   }
 }

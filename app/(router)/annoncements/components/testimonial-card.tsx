@@ -1,11 +1,12 @@
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { Testimonial, User } from "@prisma/client";
+import { Testimonial } from "@prisma/client";
+import type { PublicUser } from "@/lib/types";
 import { UserCircle2 } from "lucide-react";
 import React from "react";
 
 interface TestimonialCardProps {
-  cardData: Testimonial & { user: User };
+  cardData: Testimonial & { user: PublicUser };
   serviceType?: string | null;
 }
 

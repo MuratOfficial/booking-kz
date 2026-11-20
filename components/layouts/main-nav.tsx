@@ -56,7 +56,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
-import { Annoncement, Chat, Message, User } from "@prisma/client";
+import { Annoncement, Chat, Message } from "@prisma/client";
+import type { SafeUser as User } from "@/lib/types";
 import MobileNav from "./mobile-nav";
 
 interface MainNavProps {

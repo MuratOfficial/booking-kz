@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
+import { requireAdmin } from "@/lib/auth-guard";
 import { hash } from "bcrypt";
 
 export async function PATCH(
@@ -8,6 +9,9 @@ export async function PATCH(
   { params }: { params: { userId: string } }
 ) {
   try {
+    const { error: authError } = await requireAdmin();
+    if (authError) return authError;
+
     const body = await req.json();
 
     const {
@@ -27,7 +31,7 @@ export async function PATCH(
 
     const defined = await prismadb.user.findUnique({
       where: {
-        id: userId,
+        id: params.userId,
       },
     });
 

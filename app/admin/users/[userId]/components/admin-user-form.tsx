@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
-import { User } from "@prisma/client";
+import type { SafeUser as User } from "@/lib/types";
 import { Check, ChevronsUpDown, Loader2, Puzzle } from "lucide-react";
 import {
   Popover,
@@ -52,9 +52,13 @@ const userFormSchema = z.object({
       message: "Заполните поле",
     })
     .email("Эта почта не валидна"),
+  // Leave empty when editing to keep the current password.
   password: z
-    .string({ required_error: "Укажите пароль" })
-    .min(4, "Значение не должно быть меньше 4"),
+    .string()
+    .refine((value) => value === "" || value.length >= 6, {
+      message: "Значение не должно быть меньше 6",
+    })
+    .optional(),
   accessType: z
     .string({ required_error: "Выберите тип доступа" })
     .default("user"),
@@ -79,7 +83,7 @@ export function AdminUserForm({ initialData }: AdminUserFormProps) {
       name: initialData?.name || "",
       phone: initialData?.phone || "",
       email: initialData?.email || "",
-      password: initialData?.password || "",
+      password: "",
       accessType: initialData?.accessType || "user",
       status: initialData?.status || "active",
       totalBalance: initialData?.totalBalance || "0",
